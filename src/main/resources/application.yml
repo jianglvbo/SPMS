@@ -1,0 +1,38 @@
+server:
+  port: 80
+---
+spring:
+  mvc:
+    servlet:
+      load-on-startup: 1
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/spms?serverTimezone=UTC
+    username: root
+    password: root
+  jpa:
+    database: mysql
+  thymeleaf:
+    cache: false
+    mode: HTML5
+    prefix: classpath:/pages/
+    encoding: UTF-8
+  freemarker:
+    cache: false
+  devtools:
+    restart:
+      enabled: true
+---
+logging:
+  level:
+    com.mieo: debug
+  path: "./src/main/resources/log"
+---
+mybatis:
+  #配置别名
+  configuration:
+    map-underscore-to-camel-case: true
+    #配置mapper xml 的所在位置
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  #配置别名扫描所在的位置
+  type-aliases-package: com.mieo.model

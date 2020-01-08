@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>登录</title>
+	<!-- Styles -->
+    <link th:href="@{/css/lib/font-awesome.min.css}" rel="stylesheet">
+    <link th:href="@{/css/lib/themify-icons.css}" rel="stylesheet">
+    <link th:href="@{/css/lib/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/lib/simdahs.css}" rel="stylesheet">
+    <link th:href="@{/css/login-style.css}" rel="stylesheet">
+	<link th:href="@{/css/lib/verifyCode/verifyCode.css}" rel="stylesheet">
+</head>
+
+<body class="bg-info">
+
+	<div>
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6 col-lg-offset-3">
+					<div class="login-content">
+						<div class="login-logo">
+							<a th:href="index.html"><span></span></a>
+						</div>
+						<div class="login-form">
+							<h4>Administratior Login</h4>
+							<form th:action="@{/login/verifyAccount}">
+								<div class="form-group">
+									<label>Email address</label>
+									<input type="email" class="form-control col-md-9" placeholder="Email" name="username">
+								</div>
+								<div class="form-group">
+									<label>Password</label>
+									<input type="password" class="form-control" placeholder="Password" name="password">
+								</div>
+								<div id="verifyCode">
+									<input id="verifyStatu" class="hidden" type="text" name="verifyCode" value="0">
+								</div>
+								<div class="checkbox">
+									<label>
+										<input type="checkbox"> Remember Me
+									</label>
+									<label class="pull-right">
+										<a th:href="page-reset-password.html">Forgotten Password?</a>
+									</label>
+								</div>
+								<button  type="submit" class="btn btn-primary btn-flat m-b-30 m-t-30">Sign in</button>
+								<div class="social-login-content">
+									<div class="social-button">
+										<button type="button" class="btn btn-primary bg-facebook btn-flat btn-addon m-b-10"><i class="ti-facebook"></i>Sign in with facebook</button>
+										<button type="button" class="btn btn-primary bg-twitter btn-flat btn-addon m-t-10"><i class="ti-twitter"></i>Sign in with twitter</button>
+									</div>
+								</div>
+								<div class="register-link m-t-15 text-center">
+									<p>Don't have account ? <a th:href="@{/page-register.html}"> Sign Up Here</a></p>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade " id="message" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-sm " role="document" style="top: 30%;">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" style="color: black"><strong>提示</strong></h4>
+					</div>
+					<div class="modal-body">
+						<p id="messageBody" th:text="${message}" style="color: red">测试一下</p>
+					</div>
+					<div class="modal-footer" style="border-top: none">
+						<button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript" th:src="@{/js/lib/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/lib/bootstrap.min.js}"></script>
+	<script type="text/javascript" th:src="@{/js/lib/varifyCode/verifyCode.js}"></script>
+	<script type="text/javascript">
+		var message=$("#messageBody").text();
+		if(message!=''){
+			$("#message").modal("show");
+		}
+		$("#verifyCode").slideVerify({
+			type : 1,		//类型
+			vOffset : 5,	//误差量，根据需求自行调整
+			barSize : {
+				width : '100%',
+				height : '40px'
+			},
+			ready : function() {
+			},
+			success : function() {
+				$("#verifyStatu").val("1");
+			},
+			error : function() {
+				$("#verifyStatu").val("0");
+			}
+		});
+
+		// $("input[name='username']").blur(function () {
+		// 	var data={"username":$("input[name='username']").val(),"password":$("input[name='password']").val()};
+		// 		$.ajax({
+		// 			url: "/login/verifyUsername",
+		// 			contentType: "application/json;charset=UTF-8",
+		// 			//str这个json对象变成json字符串，让springmvc能够解析（springmvc只能解析json字符串，而不是json对象）
+		// 			data: JSON.stringify(data),
+		// 			dataType: "json",
+		// 			type: "post",
+		// 			success: function (data) {
+		// 				console.log(data);
+		// 				$("#message").modal("show");
+		// 			},
+		// 			error: function (e) {
+		// 				alert("失败");
+		// 			}
+		// 		});
+		// });
+	</script>
+</body>
+</html>

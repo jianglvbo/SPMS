@@ -1,0 +1,1 @@
+2020-01-08 00:00:49.081  INFO 200160 --- [Thread-96] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
