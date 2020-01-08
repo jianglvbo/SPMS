@@ -74,7 +74,7 @@ public class LoginController {
         String isAtAll="true";
         List<String > mobiles=new ArrayList<>();
         mobiles.add("15960717193");
-        String content="好吧好吧";
+        String content="好吧好22124吧";
         DingTalkText dingTalkText=new DingTalkText(isAtAll, mobiles, content);
         dingTalkText.dingTalkExecute();
     }
