@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>成员 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-toolbar clearfix">
+                            <div id="member_toolbar">
+                                <div class="form-group pull-left">
+                                        <a id="member_add" class="btn btn-primary m-r-5 btn-round" onclick="add()" shiro:hasPermission="member:add"><i class="mdi mdi-plus"></i> 新增</a>
+                                        <a id="member_remove" class="btn btn-danger btn-round" onclick="removeById()" shiro:hasPermission="member:delete"><i class="mdi mdi-window-close"></i> 删除</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="member_table" class="table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        //初始化table
+        var oTable = new tableInit();
+        oTable.init();
+    });
+
+    //成员表的初始化
+    var tableInit=function (){
+        var oTableInit=new Object();
+        oTableInit.init=function () {
+            //销毁上一个bootstrapTbale对象
+            $('#member_table').bootstrapTable('destroy');
+            $('#member_table').bootstrapTable({
+                    url: "/member/queryMemberAll",  //请求地址
+                    striped: true, //是否显示行间隔色
+                    pageNumber: 1, //初始化加载第一页
+                    pagination: true,//是否分页
+                    sidePagination: 'client',//server:服务器端分页|client：前端分页
+                    pageSize: 10,//单页记录数
+                    pageList: [10, 15, 20],//可选择单页记录数
+                    method: 'post',//请求方式
+                    toolbar:"#member_toolbar",//指定工具栏
+                    checkboxHeader: true,//显示表头的复选框
+                    trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                    search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    showColumns: true,                  //是否显示所有的列
+                    clickToSelect: true,                //是否启用点击选中行
+                classes:"table table-no-bordered table-hover", //设置表格样式
+                columns: [{
+                        checkbox: true//显示复选框
+                    }, {
+                        title: '#',
+                        field: 'memberId',
+                        align: "center",
+                        sortable: true,
+                        switchable:false
+                    },{
+                        title: '性别',
+                        field: 'memberGender',
+                        sortable: true,
+                        align:"center",
+                        formatter:function (value) {
+                            if(value==="1"){
+                                return "<span class='label label-info'>男</span>"
+                            }else if (value==="2"){
+                                return "<span class='label-pink label'>女</span>"
+                            }
+                        }
+                    },{
+                        title: '职位',
+                        field: 'memberRole',
+                        sortable: true,
+                        align:"center",
+                        formatter:function (value, row, index) {
+                            if(value==="1"){
+                                return "<span class='label label-dark'>管理员</span>"
+                            }
+                            if(value==="2"){
+                                return "<span class='label label-warning'>项目经理</span>"
+                            }
+                            if(value==="3"){
+                                return "<span class='label label-info'>研发人员</span>"
+                            }
+                            if(value==="4"){
+                                return "<span class='label label-danger'>测试人员</span>"
+                            }
+                        }
+                    },{
+                        title: '姓名',
+                        field: 'memberName',
+                        sortable: true,
+                        switchable:false,
+                        valign:"center",
+                        align:"center",
+                        formatter:function (value,row,index) {
+                            return '' +
+                                '<div class="col-md-4">' +
+                                '<img class=" img-circle img-responsive" style="height: 30px;width: 30px" src="'+row.memberIcon+'">' +
+                                '</div>' +
+                                '<div class="col-md-5"><label>' +
+                                '<a href="#" onclick="toMemberDetail('+row.memberId+')">' +
+                                row.memberName +
+                                '</a>' +
+                                '</label></div>';
+                        }
+                    }, {
+                        title: '电话',
+                        field: 'memberPhone',
+                        sortable: true,
+                        align:"center"
+
+                    }, {
+                        title: '成员团队',
+                        field: 'memberTeam.teamName',
+                        sortable: true,
+                        align:"center"
+                    }, {
+                        title: '加入时间',
+                        field: 'memberCreateTime',
+                        sortable: true,
+                        align:"center"
+                    }],
+                    onLoadSuccess: function (result) {
+                        console.info("成员数据加载完成");
+                    }
+                }
+            );
+        };
+        return oTableInit;
+    };
+
+    //单个删除
+    function deleteById(memberId){
+        var r = confirm("是否要删除改成员?");
+                    if (r) {
+                        var str = {
+                            "id": memberId
+                        };
+                        $.ajax({
+                            url: "/member/deleteMemberById",
+                            contentType: "application/json;charset=UTF-8",
+                            type: "post",
+                            data: JSON.stringify(str),
+                            dataType: "json",
+                            success: function (status) {
+                                $("#member_table").bootstrapTable('refresh');
+                            }
+                        });
+                    }
+    }
+
+    //批量删除
+    function removeById() {
+        var members=$("#member_table").bootstrapTable("getSelections");
+        if(members.length<1){
+            alert("请至少选择一个要删除的成员");
+        }else{
+            var r = confirm("是否要删除改成员?");
+            if(r){
+                var memberIds=new Array();
+                members.forEach(function (value,index) {
+                    memberIds.push(value.memberId);
+                });
+                //通过“，”分割插入字符串
+                $.ajax({
+                    url: "/member/removeMemberByIds",
+                    contentType: "application/json;charset=UTF-8",
+                    type: "post",
+                    data: JSON.stringify(memberIds),
+                    dataType: "json",
+                    success: function (result) {
+                        $("#member_table").bootstrapTable('refresh');
+                    }
+                });
+            }
+        }
+    }
+
+    //添加成员表单提交事件
+    function memberSubmit() {
+        $("#member_add_form").submit();
+    }
+
+    //编辑信息
+    function memberEdit(id) {
+        var str={"id":id};
+        $.ajax({
+            url: "/member/queryMemberById",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            data: JSON.stringify(str),
+            dataType: "json",
+            success: function (member) {
+                //清楚模态框数据
+                clearModal();
+                //头像
+                $("#member_icon_thumbnail").attr("src",member.memberIcon);
+                //名字
+                $("#member_add_name").val(member.memberName);
+                //职位
+                $("#member_add_role").val(member.memberRole);
+                //团队
+                $("#member_add_team").val(member.memberTeam);
+                //加入时间
+                $("#member_add_createTime").val(member.memberCreateTime);
+                //性别
+                if(member.memberGender==='1'){
+                    $("#member_add_gender_radio1").attr("checked",'true');
+                }
+                if(member.memberGender==='2')
+                {
+                    $("#member_add_gender_radio2").attr("checked",'true');
+                }
+                //成员电话
+                $("#member_add_phone").val(member.memberPhone);
+                //成员账号
+                $("#member_add_account").val(member.memberAccount);
+                //成员密码
+                $("#member_add_password").val(member.memberPassword);
+                $("#member_modal").modal('show');
+            }
+        });
+    }
+
+
+    //跳转到添加成员页面
+    function add() {
+        //跳转到修改资料页面
+        url='/member/toMemberAdd';
+        window.location.href=encodeURI(url);
+    }
+
+    //清除模态框数据
+    function clearModal() {
+        //头像
+        $("#member_icon_thumbnail").attr("src",null);
+        //名字
+        $("#member_add_name").val(null);
+        //职位
+        $("#member_add_role").val(null);
+        //团队
+        $("#member_add_team").val(null);
+        //加入时间
+        $("#member_add_createTime").val(null);
+        //性别
+        $("#member_add_gender_radio1").removeAttr("checked");
+        $("#member_add_gender_radio2").removeAttr("checked");
+        //成员电话
+        $("#member_add_phone").val(null);
+        //成员账号
+        $("#member_add_account").val(null);
+        //成员密码
+        $("#member_add_password").val(null);
+    }
+
+    //上传图片
+    $("#member_icon_submit").on("click",function iconSubmit() {
+        $.ajax({
+            url: "/icon/uploadIcon",
+            type: "post",
+            data: new FormData($("#member_add_icon_form")[0]),
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (status) {
+                var fileName="/localImages/member/"+status.fileName;
+                $("#member_icon_thumbnail").attr("src",fileName);
+                $("#member_icon_input").val(fileName);
+            }
+        });
+    });
+
+</script>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>成员 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<style type="text/css">
+    .table_td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <!--模态框-->
+                        <div tabindex="-1" class="modal fade" id="team_modal" role="dialog" style="display: none;" >
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button class="close" aria-label="Close" type="button" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title">添加团队</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="team_modal_team_name">团队名称</label>
+                                            <input class="form-control" id="team_modal_team_name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="team_modal_team_name">团队描述</label>
+                                            <textarea class="form-control" rows="6" id="team_modal_team_description" maxlength="200" placeholder="请输入...最多200字"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-default btn-round" type="button" data-dismiss="modal">关闭</button>
+                                        <button class="btn btn-primary btn-round" type="button" id="team_modal_save">保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-toolbar clearfix">
+                            <div id="member_toolbar">
+                                <div class="form-group pull-left">
+                                    <a id="team_add" class="btn btn-primary m-r-5 btn-round" shiro:hasPermission="team:add"><i class="mdi mdi-plus"></i>新增</a>
+                                    <a id="team_delete" class="btn btn-danger btn-round" shiro:hasPermission="team:delete"><i class="mdi mdi-window-close"></i> 删除</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="team_table" class="table-responsive"  style="table-layout:fixed"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        //初始化table
+        var oTable = new tableInit();
+        oTable.init();
+    });
+
+    //团队表的初始化
+    var tableInit = function () {
+        var oTableInit = new Object();
+        oTableInit.init = function () {
+            //销毁上一个bootstrapTbale对象
+            $('#team_table').bootstrapTable('destroy');
+            $('#team_table').bootstrapTable({
+                    url: "/team/queryAllTeam",  //请求地址
+                    striped: true, //是否显示行间隔色
+                    pageNumber: 1, //初始化加载第一页
+                    pagination: true,//是否分页
+                    sidePagination: 'client',//server:服务器端分页|client：前端分页
+                    pageSize: 10,//单页记录数
+                    pageList: [10, 15, 20],//可选择单页记录数
+                    method: 'post',//请求方式
+                    toolbar: "#member_toolbar",//指定工具栏
+                    checkboxHeader: true,//显示表头的复选框
+                    trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                    search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    showColumns: true,                  //是否显示所有的列
+                    clickToSelect: true,                //是否启用点击选中行
+                    classes: "table table-no-bordered table-hover ", //设置表格样式
+                    columns: [{
+                        checkbox: true//显示复选框
+                    }, {
+                        title: '#',
+                        field: 'teamId',
+                        align: "center",
+                        sortable: true,
+                        switchable: false
+                    }, {
+                        title: '团队名称',
+                        field: 'teamName',
+                        sortable: true,
+                        align: "center",
+                        formatter:function (value, row, index) {
+                            return  '<a href="#" onclick="toTeamDetail('+row.teamId+')">' +
+                                row.teamName +
+                                '</a>';
+                        }
+                    }, {
+                        title: '团队描述',
+                        field: 'teamDescription',
+                        sortable: true,
+                        formatter:function (value) {
+                            return "<p class='table_td'>"+value+"</p>";
+                        }
+                    }, {
+                        title: '团队创建时间',
+                        field: 'teamCreateTime',
+                        sortable: true,
+                        align: "center"
+                    }],
+                    onLoadSuccess: function (result) {
+                        console.info("团队数据加载完成");
+                    }
+                }
+            );
+        };
+        return oTableInit;
+    };
+
+    //新增按钮点击事件
+    $("#team_add").on('click',function () {
+        $("#team_modal").modal("show");
+    });
+
+    //新增按钮点击事件
+    $("#team_delete").on('click',function () {
+      var teams=$("#team_table").bootstrapTable("getSelections");
+        if(teams.length<1){
+            alert("请至少选择一个要删除的团队");
+        }else{
+            var r = confirm("是否要删除该团队?");
+            if(r){
+                var teamIds=new Array();
+                teams.forEach(function (value,index) {
+                    teamIds.push(value.teamId);
+                });
+                //通过“，”分割插入字符串
+                $.ajax({
+                    url: "/team/deleteTeamByTeamIds",
+                    contentType: "application/json;charset=UTF-8",
+                    type: "post",
+                    data: JSON.stringify(teamIds),
+                    dataType: "json",
+                    success: function (status) {
+                        $("#team_table").bootstrapTable('refresh');
+                    }
+                });
+            }
+        }
+    });
+
+    //添加团队保存事件
+    $("#team_modal_save").on('click',function () {
+        var str={'teamName':$("#team_modal_team_name").val(),
+        "teamDescription":$("#team_modal_team_description").val()};
+        $.ajax({
+            url: "/team/addTeam",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            data: JSON.stringify(str),
+            dataType: "json",
+            success: function (result) {
+                setTimeout(function() {
+                    lightyear.notify(result.msg, 'success', 2000);
+                }, 1e3);
+                $("#team_modal_team_name").val('');
+                $("#team_modal_team_description").val('');
+                $("#team_modal").modal("hide");
+                $("#team_table").bootstrapTable('refresh');
+            }
+        });
+    });
+
+</script>
+</html>

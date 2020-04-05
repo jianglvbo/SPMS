@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>项目添加 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="col-10">
+                                <div class="col-md-1">
+                                    <button class="btn btn-default btn-lg btn-round" onclick="back()">
+                                        <i class="mdi mdi-keyboard-backspace" data-toggle="tooltip" data-placement="top"
+                                           title="" data-original-title="返回上一级"></i>
+                                    </button>
+                                </div>
+                                <div id="project_add_project_name_div" class="col-md-11">
+                                    <input class="form-control input-lg" id="project_add_project_name" th:placeholder="请输入项目名称...">
+                                </div>
+                            </div>
+                            <div class="pull-right">
+                                <button class="btn btn-success btn-round m-b-10" id="project_add_save">保存</button>
+                                <button class="btn btn-danger btn-round m-b-10" id="project_add_cancel">撤销</button>
+                            </div>
+                        </div>
+                        <div class="card-body container-fluid">
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label" th:for="project_add_principal">项目负责人:</label>
+                                        <select class="form-control selectpicker" data-live-search="true" id="project_add_principal">
+                                        </select>
+                                </div>
+                              <div class="col-md-12 m-b-10">
+                                  <label class="control-label" th:for="project_add_principal_team">项目负责团队:</label>
+                                       <select class="form-control selectpicker" data-live-search="true" id="project_add_principal_team">
+                                      </select>
+                               </div>
+                                <div id="project_add_time_div" class="col-md-12 m-b-10">
+                                    <label class="control-label" for="project_add_start_time">项目时间:</label>
+                                    <div class="input-group" style="padding-left:15px">
+                                        <input class="form-control js-datetimepicker"  data-date-format="YYYY-MM-DD HH:mm" data-locale="zh-cn" type="text" id="project_add_start_time" placeholder="从">
+                                        <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
+                                        <input class="form-control js-datetimepicker" data-date-format="YYYY-MM-DD HH:mm" data-locale="zh-cn" type="text" id="project_add_end_time" placeholder="至" >
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label" for="project_add_schedule">项目进度:</label>
+                                        <input id="project_add_schedule" name="projectSchedule">
+                                </div>
+                            <div class="col-md-12">
+                                <div class=" m-b-10">
+                                    <label class="control-label m-b-5" th:for="project_add_content">项目描述:</label>
+                                    <textarea class="form-control" id="project_add_content" rows="7" placeholder="请输入内容..."></textarea>
+                                </div>
+                            </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+
+    $(document).ready(function () {
+        //进度条初始化
+        $("#project_add_schedule").ionRangeSlider({
+            min:0,
+            max:100
+        });
+        //下拉框初始化
+        projectPrincipalSelect();
+        projectTeamSelect();
+        //监听事件
+    });
+
+    //查询指派人下拉框数据
+    function projectPrincipalSelect() {
+        $.ajax({
+            url: "/team/queryTeamAll",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                result.forEach(function (value1, index1) {
+                    str='';
+                    str+="<optgroup label="+value1.teamName+">";
+                    value1.teamMembers.forEach(function (value2, index2) {
+                        str+="<option value="+value2.memberId+">"+value2.memberName+"</option>";
+                    });
+                    str+="</optgroup>";
+                    $("#project_add_principal").append(str);
+                    //动态加载数据的selectpicker赋值
+                    $("#project_add_principal").selectpicker("refresh");
+                })
+            }
+        });
+    }
+
+    //查询项目负责团队下拉框数据
+    function projectTeamSelect() {
+        $.ajax({
+            url: "/team/queryTeamAll",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                result.forEach(function (value1, index1) {
+                    str='';
+                    str='<option value='+value1.teamId+'>'+value1.teamName+'</option>';
+                    $("#project_add_principal_team").append(str);
+                    $("#project_add_principal_team").selectpicker("refresh");
+                })
+            }
+        });
+    }
+
+
+
+    //项目详情保存按钮
+    $("#project_add_save").on('click',function () {
+        //任务添加保存
+        if($("#project_add_project_name").val()==""){
+            $("#project_add_project_name_div").addClass("has-error");
+            setTimeout(function() {
+                lightyear.notify('请输入项目名称', 'danger', 100);
+            }, 1e3);
+            return;
+        }
+        if($("#project_add_start_time").val()==""||$("#project_add_end_time").val()==""){
+            $("#project_add_time_div").addClass("has-error");
+            setTimeout(function() {
+                lightyear.notify('请输入项目时间', 'danger', 100);
+            }, 1e3);
+            return;
+        }
+        var str={
+            'projectName':$("#project_add_project_name").val(),
+            'projectCreateId':[[${session.user.memberId}]],
+            'projectStartTime':$("#project_add_start_time").val(),
+            'projectEndTime':$("#project_add_end_time").val(),
+            'projectSchedule':$("#project_add_schedule").val(),
+            'projectPrincipalId':$("#project_add_principal").val(),
+            'projectPrincipalTeamId':$("#project_add_principal_team").val(),
+            'projectContent':$("#project_add_content").val()
+        };
+        $.ajax({
+            url: "/project/addProject",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            data:JSON.stringify(str),
+            dataType: "json",
+            success: function (result) {
+                setTimeout(function() {
+                    lightyear.notify(result.msg, 'success', 2000);
+                }, 1e3);
+            }
+        });
+    })
+
+</script>
+</html>

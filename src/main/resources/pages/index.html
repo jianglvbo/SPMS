@@ -1,10 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>首页 - 项目管理</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
 </head>
 <body>
-<h1>成功</h1>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!--End 头部信息-->
+        <!--页面主要内容-->
+        <main class="lyear-layout-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body container-fluid">
+                            <div class="col-md-6">
+                                <div class="col-md-2">
+                                    <img class=" img-circle img-responsive" style="height: 65px;width: 65px" th:src="${session.user.memberIcon}">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="col-md-12">
+                                        <h5><p id="index_user_role"></p></h5>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <h4><strong><p th:text="${session.user.memberName}+',欢迎你'"></p></strong></h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-4">
+                                    <div class="col-md-12">
+                                        <h4 ><strong>项目数:</strong></h4>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <h5><strong>14</strong></h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="col-md-12">
+                                        <h4 ><strong>未完成任务数:</strong></h4>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <h5><strong>14</strong></h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="col-md-12">
+                                        <h4 ><strong>成员数:</strong></h4>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <h5><strong>14</strong></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header"></div>
+                            <div class="card-body"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header"></div>
+                            <div class="card-body"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!--End 页面主要内容-->
+    </div>
+</div>
 </body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            var role=[[${session.user.memberRole}]];
+            if(role==[[${session.MEMBER_ROLE_ADMINISTRATOR}]]){
+                $("#index_user_role").text("管理员");
+            }
+            if(role==[[${session.MEMBER_ROLE_PM}]]){
+                $("#index_user_role").text("项目经理");
+
+            }
+
+        });
+    </script>
+</footer>
 </html>

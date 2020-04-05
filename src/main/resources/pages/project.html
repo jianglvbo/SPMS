@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>项目 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-toolbar ">
+                            <div id="project_toolbar">
+                                <a id="project_add" class="btn btn-primary m-r-5 btn-round" onclick="add()" shiro:hasPermission="project:add"><i class="mdi mdi-plus"></i> 新增</a>
+                                <a id="project_remove" class="btn btn-danger btn-round" onclick="removeById()" shiro:hasPermission="project:delete"><i class="mdi mdi-window-close"></i> 删除</a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table id="project_table" class="table table-striped"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        //初始化table
+        var oTable = new tableInit();
+        oTable.init();
+    });
+
+    //项目表的初始化
+    var tableInit=function (){
+        var oTableInit=new Object();
+        oTableInit.init=function () {
+            //销毁上一个bootstrapTbale对象
+            $('#project_table').bootstrapTable('destroy');
+            $('#project_table').bootstrapTable({
+                    url: "/project/queryProjectAll",  //请求地址
+                    striped: true, //是否显示行间隔色
+                    pageNumber: 1, //初始化加载第一页
+                    pagination: true,//是否分页
+                    sidePagination: 'client',//server:服务器端分页|client：前端分页
+                    pageSize: 10,//单页记录数
+                    pageList: [10, 15, 20],//可选择单页记录数
+                    method: 'post',//请求方式
+                    toolbar:"#project_toolbar",//指定工具栏
+                    checkboxHeader: true,//显示表头的复选框
+                    trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                    search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    showColumns: true,                  //是否显示所有的列
+                    clickToSelect: true,                //是否启用点击选中行
+                    classes:"table table-hover", //设置表格样式
+                    columns: [{
+                        checkbox: true//显示复选框
+                    }, {
+                        title: '#',
+                        field: 'projectId',
+                        align: "center",
+                        sortable: true,
+                        switchable:false
+                    }, {
+                        title: '项目名称',
+                        field: 'projectName',
+                        align: "center",
+                        sortable: true,
+                        switchable:false,
+                        formatter:function (value,row,index) {
+                            var str='';
+                            str+= '<a href="#" onclick="toProjectDetail('+row.projectId+')">' +
+                                row.projectName+
+                                '</a>';
+                            if(row.projectPostPhone==true){
+                                str+="<label class='label label-danger'>逾 期</label>";
+                            }
+                            return str;
+                        }
+                    }, {
+                        title: '项目创建人',
+                        field: 'projectCreator',
+                        align: "center",
+                        sortable: true,
+                        switchable:false,
+                        formatter:function (value, row, index) {
+                            return  '<a href="#" onclick="toMemberDetail('+value.memberId+')">'+
+                                    value.memberName +
+                                     '</a>';
+                        }
+                    }, {
+                        title: '项目负责人',
+                        field: 'projectPrincipal',
+                        align: "center",
+                        sortable: true,
+                        switchable:false,
+                        formatter:function (value,row,index) {
+                                return '<a href="#" onclick="toMemberDetail('+value.memberId+')">'+
+                                    value.memberName +
+                                    '</a>';
+                        }
+                    },  {
+                        title: '项目负责团队',
+                        field: 'projectPrincipalTeam',
+                        align: "center",
+                        sortable: true,
+                        switchable:false,
+                        formatter:function (value,row,index) {
+                            var str="";
+                                str+='<a href="#" onclick="toTeamDetail('+value.teamId+')">'+
+                                    value.teamName +
+                                    '</a>';
+                            return str;
+                        }
+                    }, {
+                        title: '项目创建时间',
+                        field: 'projectStartTime',
+                        align: "center",
+                        sortable: true,
+                        switchable:true
+                    }, {
+                        title: '项目截止时间',
+                        field: 'projectEndTime',
+                        align: "center",
+                        sortable: true,
+                        switchable:true
+                    }, {
+                        title: '项目进度',
+                        field: 'projectSchedule',
+                        align: "center",
+                        sortable: true,
+                        switchable:true,
+                        formatter:function (value,row,index) {
+                            return '<div class="progress">\n' +
+                                '<div class="progress-bar progress-bar-info active progress-bar-striped" role="progressbar" style="width: '+value+'%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">' +
+                                    value+'%'+
+                                '</div>\n' +
+                                '</div>'
+                        }
+                    }],
+                    onLoadSuccess: function (result) {
+                        console.info("项目数据加载完成");
+                    }
+                }
+            );
+        };
+        return oTableInit;
+    };
+
+    function add() {
+        url = '/project/toProjectAdd';
+        window.location.href = encodeURI(url);
+    }
+
+    //批量删除
+    function removeById() {
+        var projects=$("#project_table").bootstrapTable("getSelections");
+        if(projects.length<1){
+            alert("请至少选择一个要删除的项目");
+        }else{
+            var r = confirm("删除该项目会删除项目下的所有任务");
+            if(r){
+                var projectIds=new Array();
+                projects.forEach(function (value,index) {
+                    projectIds.push(value.projectId);
+                });
+                //通过“，”分割插入字符串
+                $.ajax({
+                    url: "/project/removeProjectByProjectIds",
+                    contentType: "application/json;charset=UTF-8",
+                    type: "post",
+                    data: JSON.stringify(projectIds),
+                    dataType: "json",
+                    success: function (result) {
+                        $("#project_table").bootstrapTable('refresh');
+                    }
+                });
+            }
+        }
+    }
+
+</script>
+</html>

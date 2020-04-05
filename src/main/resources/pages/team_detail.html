@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>任务详情 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                 <div class="card">
+                    <div class="card-header">
+                        <div class="col-10">
+                            <div class="col-md-1">
+                                <button class="btn btn-default btn-lg btn-round" id="team_detail_back">
+                                    <i class="mdi mdi-keyboard-backspace"  data-toggle="tooltip" data-placement="top" title="" data-original-title="返回上一级"></i>
+                                </button>
+                            </div>
+                            <div id="team_detail_team_name_div" class="col-md-11">
+                                <input class="form-control input-lg" id="team_detail_team_name">
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <button class="btn btn-success btn-round m-b-10" id="team_detail_save">保存</button>
+                            <button class="btn btn-danger btn-round m-b-10" id="team_detail_cancel">撤销</button>
+                        </div>
+                    </div>
+                    <div class="card-body container-fluid">
+                            <div id="team_detail_create_time_div"  class="form-group col-md-12">
+                                <label class="control-label col-md-12" for="team_detail_create_time">创建时间:</label>
+                                <div class="col-md-6">
+                                    <input class="form-control js-datetimepicker"  data-date-format="YYYY-MM-DD HH:mm" data-locale="zh-cn" type="text" id="team_detail_create_time" placeholder="创建时间">
+                                </div>
+                            </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <div class=" m-b-10">
+                                    <label class="control-label m-b-5" th:for="team_detail_description">团队描述:</label>
+                                    <textarea class="form-control" id="team_detail_description" rows="5" maxlength="200" placeholder="请输入...最多200字"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body container-fluid">
+                            <div class="col-md-12">
+                                <label class="control-label m-b-5" for="team_detail_member_table">团队成员:</label>
+                                <table id="team_detail_member_table" class="table"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body container-fluid">
+                            <div class="col-md-12">
+                                <label class="control-label m-b-5" for="team_detail_dynamic_state_table">日志:</label>
+                                <table id="team_detail_dynamic_state_table" class="table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+
+    $(document).ready(function () {
+        //页面初始化
+            //页面表单赋值
+        teamDetailInit();
+            //动态格初始化
+        dynamicStateTableInit();
+            //成员表初始化
+        memberTableInit();
+    });
+    
+    //页面数据初始化
+    function teamDetailInit() {
+        $("#team_detail_team_name").val([[${team.teamName}]]);
+        $("#team_detail_create_time").val([[${team.teamCreateTime}]]);
+        $("#team_detail_description").val([[${team.teamDescription}]]);
+    }
+    //成员表的初始化
+    function memberTableInit(){
+            //销毁上一个bootstrapTbale对象
+            $('#team_detail_member_table').bootstrapTable('destroy');
+            $('#team_detail_member_table').bootstrapTable({
+                    url: "/member/queryMemberByTeamId?teamId="+[[${team.teamId}]],  //请求地址
+                    striped: true, //是否显示行间隔色
+                    pageNumber: 1, //初始化加载第一页
+                    pagination: true,//是否分页
+                    sidePagination: 'client',//server:服务器端分页|client：前端分页
+                    pageSize: 10,//单页记录数
+                    pageList: [10, 15, 20],//可选择单页记录数
+                    method: 'post',//请求方式
+                    toolbar:"#member_toolbar",//指定工具栏
+                    checkboxHeader: true,//显示表头的复选框
+                    trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                    search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    showColumns: true,                  //是否显示所有的列
+                    clickToSelect: true,                //是否启用点击选中行
+                    classes:"table table-no-bordered table-hover", //设置表格样式
+                    columns: [{
+                        checkbox: true//显示复选框
+                    }, {
+                        title: '#',
+                        field: 'memberId',
+                        align: "center",
+                        sortable: true,
+                        switchable:false
+                    },{
+                        title: '性别',
+                        field: 'memberGender',
+                        sortable: true,
+                        align:"center",
+                        formatter:function (value) {
+                            if(value==="1"){
+                                return "<span class='label label-info'>男</span>"
+                            }else if (value==="2"){
+                                return "<span class='label-pink label'>女</span>"
+                            }
+                        }
+                    },{
+                        title: '职位',
+                        field: 'memberRole',
+                        sortable: true,
+                        align:"center",
+                        formatter:function (value, row, index) {
+                            if(value==="1"){
+                                return "<span class='label label-dark'>管理员</span>"
+                            }
+                            if(value==="2"){
+                                return "<span class='label label-warning'>项目经理</span>"
+                            }
+                            if(value==="3"){
+                                return "<span class='label label-info'>研发人员</span>"
+                            }
+                            if(value==="4"){
+                                return "<span class='label label-danger'>测试人员</span>"
+                            }
+                        }
+                    },{
+                        title: '姓名',
+                        field: 'memberName',
+                        sortable: true,
+                        switchable:false,
+                        valign:"center",
+                        align:"center",
+                        formatter:function (value,row,index) {
+                            return '' +
+                                '<div class="col-md-4">' +
+                                '<img class=" img-circle img-responsive" style="height: 30px;width: 30px" src="'+row.memberIcon+'">' +
+                                '</div>' +
+                                '<div class="col-md-5"><label>' +
+                                '<a href="#" onclick="toMemberDetail('+row.memberId+')">' +
+                                row.memberName +
+                                '</a>' +
+                                '</label></div>';
+                        }
+                    }, {
+                        title: '电话',
+                        field: 'memberPhone',
+                        sortable: true,
+                        align:"center"
+
+                    }, {
+                        title: '加入时间',
+                        field: 'memberCreateTime',
+                        sortable: true,
+                        align:"center"
+                    }],
+                    onLoadSuccess: function (result) {
+                        console.info("成员数据加载完成");
+                    }
+                }
+            );
+    };
+
+    //动态表的初始化
+        function dynamicStateTableInit() {
+            //销毁上一个bootstrapTbale对象
+            $('#team_detail_dynamic_state_table').bootstrapTable('destroy');
+            $('#team_detail_dynamic_state_table').bootstrapTable({
+                    url: "/dynamicState/queryDynamicStateByTypeAndTypeId",  //请求地址
+                    pageNumber: 1, //初始化加载第一页
+                    pagination: true,//是否分页
+                    sidePagination: 'client',//server:服务器端分页|client：前端分页
+                    pageSize: 5,//单页记录数
+                    pageList: [10, 15, 20],//可选择单页记录数
+                    method: 'post',//请求方式
+                    classes:"table table-no-bordered table-hover", //设置表格样式
+                    queryParams:{
+                        'type':4,
+                        'typeId':[[${team.teamId}]]
+                            },//查询参数
+                    columns: [{
+                        field: 'dynamicStateCreator',
+                        align: "left",
+                        sortable: true,
+                        switchable:false,
+                        formatter:function (value, row, index) {
+                            str=' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="'+value.memberIcon+'" alt="'+value.memberName+'"/>'
+                            str+='<a href="#" onclick="toMemberDetail('+value.memberId+')" style="padding-right: 5px">' +
+                                value.memberName +
+                                '</a>';
+                            str+="<span class='label label-success' style='padding-left: 5px'>"+row.dynamicStateAction+"</span>" +
+                                "<strong  style='padding-left: 5px'>"+row.dynamicStateContent+"</strong>";
+                            return str;
+                        }
+                    },{
+                        field: 'dynamicStateCreateTime',
+                        align: "right",
+                        sortable: true,
+                        switchable:false
+                    }],
+                    onLoadSuccess: function (result) {
+                        console.info("团队详情 活动日志 加载完成");
+                    }
+                }
+            );
+        };
+
+    //返回上一级
+    $("#team_detail_back").on('click',function () {
+        window.history.back();
+    });
+
+    //撤消按钮事件
+    $("#team_detail_cancel").on("click",function () {
+        teamDetailInit();
+    })
+
+    //团队修改保存
+        $("#team_detail_save").on('click',function () {
+            if($("#team_detail_team_name").val()==""){
+                $("#team_detail_team_name_div").addClass("has-error");
+                setTimeout(function() {
+                    lightyear.notify('请输入团队名称', 'danger', 100);
+                }, 1e3);
+                return;
+            }
+            if($("#team_detail_create_time").val()==""){
+                $("#team_detail_create_time_div").addClass("has-error");
+                setTimeout(function() {
+                    lightyear.notify('创建时间不能为空', 'danger', 100);
+                }, 1e3);
+                return;
+            }
+            var str={
+                "teamId":[[${team.teamId}]],
+                "teamName":$("#team_detail_team_name").val(),
+                'teamCreateTime':$("#team_detail_create_time").val(),
+                'teamDescription':$("#team_detail_description").val(),
+            };
+            $.ajax({
+                url: "/team/updateTeam",
+                contentType: "application/json;charset=UTF-8",
+                type: "post",
+                data:JSON.stringify(str),
+                dataType: "json",
+                success: function (result) {
+                    setTimeout(function() {
+                        lightyear.notify(result.msg, 'success', 2000);
+                    }, 1e3);
+                }
+            });
+        });
+
+</script>
+</html>

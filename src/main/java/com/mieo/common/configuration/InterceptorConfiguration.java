@@ -10,6 +10,7 @@ import java.util.List;
 @Configuration
 
 public class InterceptorConfiguration implements WebMvcConfigurer {
+    //可能可以合并
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 //        registry.addInterceptor(myInterceptor).addPathPatterns("/**");

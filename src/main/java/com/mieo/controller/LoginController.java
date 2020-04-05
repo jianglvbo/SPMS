@@ -1,85 +1,118 @@
 package com.mieo.controller;
 
-import com.mieo.common.util.dingTalk.DingTalkText;
-import com.mieo.mapper.LoginMapper;
-import com.mieo.model.User;
+import com.mieo.model.Member;
+import com.mieo.service.MemberService;
 import com.taobao.api.ApiException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
 @Slf4j
-@RequestMapping("/login")
+@RequestMapping("login")
 public class LoginController {
-
     @Autowired
-    LoginMapper loginMapper;
+    MemberService memberService;
+    @Autowired
+    Member member;
 
-    @RequestMapping("/verifyAccount")
-    public ModelAndView verifyAccount(String username, String password, String verifyCode, HttpServletRequest request){
-        ModelAndView modelAndView=new ModelAndView();
-        modelAndView.addObject("message","用户名或密码不正确");
-        modelAndView.setViewName("login");
-        if("0".equals(verifyCode)){
-            modelAndView.addObject("message","请完成验证后登录");
-            modelAndView.setViewName("login");
-            return modelAndView;
+    @RequestMapping("test")
+    public String test(String username, String password) {
+        username = "15960717193";
+        password = "123";
+        //1.获取Shiro的subject
+        Subject subject = SecurityUtils.getSubject();
+        //2.封装用户数据
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        //3.执行登录校验
+        try {
+            //使用realm中的认证逻辑进行认证
+            subject.login(token);
+            //认证成功后的操作
+            //页面信息初始化
+            webInit(username);
+        } catch (UnknownAccountException e) {
+            //用户名不存在
+            log.debug("用户名不存在");
+        } catch (IncorrectCredentialsException e) {
+            //密码错误
+            log.debug("用户名存在但密码错误");
         }
-        List<User> list=loginMapper.queryUserInfo();
-        for (User user : list) {
-            if(user.getUsername().equals(username)&&user.getPassword().equals(password)){
-                request.getSession().setAttribute("user",user);
-                modelAndView.setViewName("index");
-                return modelAndView;
-            }
-        }
-        return modelAndView;
-    }
-    @RequestMapping("/test")
-    public String  test(){
-
-        return "test";
-    }
-
-    @RequestMapping("/verifyUsername")
-    public @ResponseBody  Map<String,String> verifyUsername(@RequestBody Map<String,String> map){
-        Map<String,String> result=new HashMap<>();
-        List<User> list=loginMapper.queryUserInfo();
-        String username= map.get("username");
-        for (User user : list) {
-            if(user.getUsername().equals(username)){
-                result.put("message", "用户名正确");
-                return result;
-            }
-        }
-        result.put("message", "用户不存在");
-        return result;
+        return "index";
     }
 
+
+    @RequestMapping("verifyAccount")
+    @ResponseBody
+    public Map<String, String> verifyAccount(@RequestBody Map<String, String> map1) {
+        String username = MapUtils.getString(map1, "username");
+        String password = MapUtils.getString(map1, "password");
+        Map<String, String> map = new HashMap<>();
+        map.put("temp", "1");
+        //1.获取Shiro的subject
+        Subject subject = SecurityUtils.getSubject();
+        //2.封装用户数据
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        //3.执行登录校验
+        try {
+            //使用realm中的认证逻辑进行认证
+            subject.login(token);
+            //认证成功后的操作
+            map.put("msg", "登录成功，正在跳转页面");
+            //页面信息初始化
+            webInit(username);
+        } catch (UnknownAccountException e) {
+            //用户名不存在
+            log.debug("用户名不存在");
+            map.put("temp", "0");
+            map.put("msg", "账号或密码错误，请重新输入");
+        } catch (IncorrectCredentialsException e) {
+            //密码错误
+            log.debug("用户名存在但密码错误");
+            map.put("temp", "0");
+            map.put("msg", "账号或密码错误，请重新输入");
+        }
+        return map;
+    }
+
+    //发送信息到钉钉
     @RequestMapping("/dingTalk")
     public void dingTalk(HttpServletRequest request, HttpServletResponse response) throws IOException, ApiException {
-        String isAtAll="true";
-        List<String > mobiles=new ArrayList<>();
-        mobiles.add("15960717193");
-        String content="好吧好22124吧";
-        DingTalkText dingTalkText=new DingTalkText(isAtAll, mobiles, content);
-        dingTalkText.dingTalkExecute();
+
     }
 
+    /**
+     * 页面的准备
+     */
+    private void webInit(String username) {
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession();
+        session.setTimeout(10000000);
+        System.out.println(session.getClass());
+        session.setAttribute("user", memberService.queryMemberInfoByAccount(username));
+    }
 
+    @RequestMapping("toLogin")
+    public String toLogin() {
+        log.debug("跳转到登录页面");
+        return "login";
+    }
 
 
 }

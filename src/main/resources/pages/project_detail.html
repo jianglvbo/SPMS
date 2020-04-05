@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>任务详情 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="col-10">
+                                <div class="col-md-1">
+                                    <button class="btn btn-default btn-lg btn-round" id="project_detail_back">
+                                        <i class="mdi mdi-keyboard-backspace" data-toggle="tooltip" data-placement="top"
+                                           title="" data-original-title="返回上一级"></i>
+                                    </button>
+                                </div>
+                                <div id="project_detail_project_name_div" class="col-md-11">
+                                    <input class="form-control input-lg" id="project_detail_project_name">
+                                </div>
+                            </div>
+                            <div class="pull-right">
+                                <button class="btn btn-success btn-round m-b-10" id="project_detail_save">保存</button>
+                                <button class="btn btn-danger btn-round m-b-10" id="project_detail_cancel">撤销</button>
+                            </div>
+                        </div>
+                        <div class="card-body container-fluid">
+                            <div class="col-md-6">
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="project_detail_principal">项目负责人:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" data-live-search="true" id="project_detail_principal">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="project_detail_time_div" class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="project_detail_start_time">项目时间:</label>
+                                    <div class="input-group" style="padding-left:15px">
+                                        <input class="form-control js-datetimepicker"  data-date-format="YYYY-MM-DD HH:mm" data-locale="zh-cn" type="text" id="project_detail_start_time" placeholder="从">
+                                        <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
+                                        <input class="form-control js-datetimepicker" data-date-format="YYYY-MM-DD HH:mm" data-locale="zh-cn" type="text" id="project_detail_end_time" placeholder="至" >
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="project_detail_schedule">项目进度:</label>
+                                    <div class="col-md-9">
+                                        <input id="project_detail_schedule" name="projectSchedule" th:value="${project.projectSchedule}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="project_detail_principal_team">项目负责团队:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" data-live-search="true" id="project_detail_principal_team">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class=" m-b-10">
+                                    <label class="control-label m-b-5" th:for="project_detail_content">项目描述:</label>
+                                    <textarea class="form-control" id="project_detail_content" rows="5" placeholder="内容..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body container-fluid">
+                            <label class="control-label m-b-5" th:for="project_detail_comment">评论:</label>
+                            <textarea class="form-control" id="project_detail_comment" rows="5" placeholder="请输入......按回车结束"></textarea>
+                            <table id="project_detail_comment_table" class="table"></table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body container-fluid">
+                            <div class="col-md-12">
+                                <label class="control-label m-b-5" for="project_detail_dynamic_state_table">日志:</label>
+                                <table id="project_detail_dynamic_state_table" class="table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+
+    $(document).ready(function () {
+        //进度条初始化
+        $("#project_detail_schedule").ionRangeSlider({
+            min:0,
+            max:100
+        });
+        //表格初始化
+        commentTableInit();
+        dynamicStateTableInit();
+        //下拉框初始化
+        projectPrincipalSelect();
+        projectTeamSelect();
+        //页面赋值
+        projectDetailInit();
+        //监听事件
+        commentEventListener();
+    });
+
+    //动态表的初始化
+    function dynamicStateTableInit() {
+        //销毁上一个bootstrapTbale对象
+        $('#project_detail_dynamic_state_table').bootstrapTable('destroy');
+        $('#project_detail_dynamic_state_table').bootstrapTable({
+                url: "/dynamicState/queryDynamicStateByTypeAndTypeId",  //请求地址
+                pageNumber: 1, //初始化加载第一页
+                pagination: true,//是否分页
+                sidePagination: 'client',//server:服务器端分页|client：前端分页
+                pageSize: 5,//单页记录数
+                pageList: [10, 15, 20],//可选择单页记录数
+                method: 'post',//请求方式
+                classes: "table table-no-bordered table-hover", //设置表格样式
+                trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                queryParams: {
+                    'type': 1,
+                    'typeId': [[${project.projectId}]]
+                },//查询参数
+                columns: [{
+                    field: 'dynamicStateCreator',
+                    align: "left",
+                    sortable: true,
+                    switchable: false,
+                    formatter: function (value, row, index) {
+                        str = ' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="' + value.memberIcon + '" alt="' + value.memberName + '"/>'
+                        str += '<a href="#" onclick="toMemberDetail(' + value.memberId + ')" style="padding-right: 5px">' +
+                            value.memberName +
+                            '</a>';
+                        str += "<span class='label label-success' style='padding-left: 5px'>" + row.dynamicStateAction + "</span>" +
+                            "<strong  style='padding-left: 5px'>" + row.dynamicStateContent + "</strong>";
+                        return str;
+                    }
+                }, {
+                    field: 'dynamicStateCreateTime',
+                    align: "right",
+                    sortable: true,
+                    switchable: false
+                }],
+                onLoadSuccess: function (result) {
+                    console.info("项目详情 活动日志 加载完成");
+                }
+            }
+        );
+    };
+
+    //评论表初始化
+    function commentTableInit() {
+        //销毁上一个bootstrapTbale对象
+        $('#project_detail_comment_table').bootstrapTable('destroy');
+        $('#project_detail_comment_table').bootstrapTable({
+                url: "/comment/queryCommentByTypeAndTypeId",  //请求地址
+                pageNumber: 1, //初始化加载第一页
+                pagination: true,//是否分页
+                sidePagination: 'client',//server:服务器端分页|client：前端分页
+                pageSize: 5,//单页记录数
+                pageList: [10, 15, 20],//可选择单页记录数
+                method: 'post',//请求方式
+                classes: "table table-no-bordered table-hover", //设置表格样式
+                sortName: "commentCreateTime",//排序字段
+                trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                sortOrder: "desc",//排序方式
+                queryParams: {
+                    'type': 1,
+                    'typeId': [[${project.projectId}]]
+                },//查询参数
+                columns: [{
+                    field: 'commentCreator',
+                    align: "left",
+                    sortable: true,
+                    switchable: false,
+                    formatter: function (value, row, index) {
+                        str = ' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="' + value.memberIcon + '" alt="' + value.memberName + '"/>'
+                        str += '<a href="#" onclick="toMemberDetail(' + value.memberId + ')" style="padding-right: 5px">' +
+                            value.memberName +
+                            '</a>';
+                        str += "<strong  style='padding-left: 5px'>:&nbsp;" + row.commentContent + "</strong>";
+                        return str;
+                    }
+                }, {
+                    field: 'commentCreateTime',
+                    align: "right",
+                    sortable: true,
+                    switchable: false
+                }],
+                onLoadSuccess: function (result) {
+                    console.info("任务详情 评论 加载完成");
+                }
+            }
+        );
+    };
+
+    //查询指派人下拉框数据
+    function projectPrincipalSelect() {
+        $.ajax({
+            url: "/team/queryTeamAll",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                result.forEach(function (value1, index1) {
+                    str='';
+                    str+="<optgroup label="+value1.teamName+">";
+                    value1.teamMembers.forEach(function (value2, index2) {
+                        str+="<option value="+value2.memberId+">"+value2.memberName+"</option>";
+                    });
+                    str+="</optgroup>";
+                    $("#project_detail_principal").append(str);
+                    //动态加载数据的selectpicker赋值
+                    $("#project_detail_principal").selectpicker('val',[[${project.projectPrincipal.memberId}]]);
+                    $("#project_detail_principal").selectpicker("refresh");
+                })
+            }
+        });
+    }
+
+    //查询项目负责团队下拉框数据
+    function projectTeamSelect() {
+        $.ajax({
+            url: "/team/queryTeamAll",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                result.forEach(function (value1, index1) {
+                    str='';
+                    str='<option value='+value1.teamId+'>'+value1.teamName+'</option>';
+                    $("#project_detail_principal_team").append(str);
+                    $("#project_detail_principal_team").selectpicker("refresh");
+                })
+            }
+        });
+    }
+
+    //页面赋值
+    function projectDetailInit(){
+        $("#project_detail_project_name").val([[${project.projectName}]]);
+        $("#project_detail_principal").val([[${project.projectPrincipal.memberId}]]);
+        $("#project_detail_start_time").val([[${project.projectStartTime}]]);
+        $("#project_detail_end_time").val([[${project.projectEndTime}]]);
+        $("#project_detail_principal_team").val([[${project.projectPrincipalTeam}]]);
+        $("#project_detail_content").val([[${project.projectContent}]])
+    }
+    
+    //项目详情保存按钮
+    $("#project_detail_save").on('click',function () {
+        //任务添加保存
+        if($("#project_detail_project_name").val()==""){
+            $("#project_detail_project_name_div").addClass("has-error");
+            setTimeout(function() {
+                lightyear.notify('请输入项目名称', 'danger', 100);
+            }, 1e3);
+            return;
+        }
+        if($("#project_detail_start_time").val()==""||$("#project_detail_end_time").val()==""){
+            $("#project_detail_time_div").addClass("has-error");
+            setTimeout(function() {
+                lightyear.notify('请输入项目时间', 'danger', 100);
+            }, 1e3);
+            return;
+        }
+        var str={
+            'projectId':[[${project.projectId}]],
+            'projectName':$("#project_detail_project_name").val(),
+            'projectStartTime':$("#project_detail_start_time").val(),
+            'projectEndTime':$("#project_detail_end_time").val(),
+            'projectSchedule':$("#project_detail_schedule").val(),
+            'projectPrincipalId':$("#project_detail_principal").val(),
+            'projectPrincipalTeamId':$("#project_detail_principal_team").val(),
+            'projectContent':$("#project_detail_content").val()
+        };
+        $.ajax({
+            url: "/project/updateProjectByProjectId",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            data:JSON.stringify(str),
+            dataType: "json",
+            success: function (result) {
+                setTimeout(function() {
+                    lightyear.notify(result.msg, 'success', 2000);
+                }, 1e3);
+                $("#project_detail_dynamic_state_table").bootstrapTable("refresh");
+            }
+        });
+    })
+    
+    //返回上一级
+    $("#project_detail_back").on('click', function () {
+        window.history.back();
+    });
+
+    //监听评论组件的回车事件
+    function commentEventListener() {
+        $("#project_detail_comment").keydown(function (e) {
+            if (e.keyCode === 13){
+                str={'commentType':'项目',
+                    'commentTypeId':[[${project.projectId}]],
+                    'commentContent':$("#project_detail_comment").val()
+                };
+                $.ajax({
+                    url: "/comment/addComment",
+                    contentType: "application/json;charset=UTF-8",
+                    type: "post",
+                    data: JSON.stringify(str),
+                    dataType: "json",
+                    success: function (result) {
+                        setTimeout(function() {
+                            lightyear.notify(result.msg, 'success', 2000);
+                        }, 1e3);
+                        $("#project_detail_comment_table").bootstrapTable('refresh');
+                        $("#project_detail_comment").val(null);
+                        console.log('评论成功');
+                    }
+                });
+            }
+        })
+    }
+    
+</script>
+</html>

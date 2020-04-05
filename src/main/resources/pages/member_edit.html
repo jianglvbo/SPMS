@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>成员信息 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card container-fluid">
+                        <div class="card-body">
+                            <img id="member_add_icon_thumbnail" class="m-b-10 img-circle img-responsive  center-block" style="height: 100px;width: 100px" alt="头像" th:src="@{/localImages/member/timg.jpg}">
+                            <div class="col-md-8 col-md-offset-1">
+                                <div class="col-md-12 m-b-10">
+                                <form id="member_add_icon_form" class="form-group form-horizontal"  enctype="multipart/form-data">
+                                    <label class="col-md-3" for="member_add_icon">头像:</label>
+                                    <input name="memberIcon" id="member_add_icon_input" type="text" class="hidden">
+                                    <input class="col-md-6" id="member_add_icon" th:name="iconFile" type="file">
+                                    <button content="col-md-3" id="member_add_icon_submit" type="button" class="btn btn-primary btn-sm btn-round">上传</button>
+                                </form>
+                                </div>
+                                <div class="col-md-12 m-b-10" id="member_add_member_name_div">
+                                    <label class="control-label col-md-3" for="member_add_member_name">用户名称:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="member_add_member_name">
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="member_add_gender">用户性别:</label>
+                                    <div class="col-md-9">
+                                       <select class="form-control selectpicker" id="member_add_gender">
+                                           <option data-content="<span class='label label-info'>男</span>" th:value="1"></option>
+                                           <option data-content="<span class='label label-pink'>女</span>" th:value="2"></option>
+                                      </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="member_add_role">用户角色:</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control selectpicker " id="member_add_role">
+                                            <option data-content="<span class='label label-dark'>管理员</span>" th:value="1"></option>
+                                            <option data-content="<span class='label label-warning'>项目经理</span>" th:value="2"></option>
+                                            <option data-content="<span class='label label-info'>研发人员</span>" th:value="3"></option>
+                                            <option data-content="<span class='label label-danger'>测试人员</span>" th:value="4"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="member_add_team">所在团队:</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control selectpicker col-md-9" id="member_add_team">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="member_add_phone">手机号码:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="member_add_phone">
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10" id="member_add_create_time_div">
+                                    <label class="control-label col-md-3"  for="member_add_create_time">加入时间:</label>
+                                    <div class="col-md-9">
+                                        <input th:name="memberCreateTime" data-date-format="YYYY-MM-DD HH:mm:ss" class="form-control js-datetimepicker" id="member_add_create_time">
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10" id="member_add_account_div">
+                                    <label class="control-label col-md-3" for="member_add_account">账号:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="member_add_account">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="pull-right" shiro:hasPermission="1">
+                                    <button id="member_add_save" class="btn btn-round btn-success">
+                                        保存
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        //页面初始化
+        memberTeamSelect();
+        memberEditInit();
+    });
+
+    //查询团队下拉框数据
+    function memberTeamSelect() {
+        $.ajax({
+            url: "/team/queryTeamAll",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                result.forEach(function (value1, index1) {
+                    str='';
+                    str='<option value='+value1.teamId+'>'+value1.teamName+'</option>';
+                    $("#member_add_team").append(str);
+                    $("#member_add_team").selectpicker('val',[[${member.memberTeam.teamId}]]);
+                    $("#member_add_team").selectpicker("refresh");
+                })
+            }
+        });
+    }
+
+    //上传图片
+    $("#member_add_icon_submit").on("click",function () {
+        $.ajax({
+            url: "/icon/uploadIcon",
+            type: "post",
+            data: new FormData($("#member_add_icon_form")[0]),
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (status) {
+                var fileName="/localImages/member/"+status.fileName;
+                $("#member_add_icon_thumbnail").attr("src",fileName);
+                $("#member_add_icon_input").val(fileName);
+            }
+        });
+    });
+
+    //成员添加保存
+    $("#member_add_save").on("click",function () {
+            if($("#member_add_member_name").val()==""){
+                $("#member_add_member_name_div").addClass("has-error");
+                setTimeout(function() {
+                    lightyear.notify('请输入成员名称', 'danger', 100);
+                }, 1e3);
+                return;
+            }
+            if($("#member_add_create_time").val()==""){
+                $("#member_add_create_time_div").addClass("has-error");
+                setTimeout(function() {
+                    lightyear.notify('请输入时间', 'danger', 100);
+                }, 1e3);
+                return;
+            }
+            if($("#member_add_account").val()==""){
+                $("#member_add_account_div").addClass("has-error");
+                setTimeout(function() {
+                    lightyear.notify('请输入账号', 'danger', 100);
+                }, 1e3);
+                return;
+            }
+        var str={
+                "memberId":[[${member.memberId}]],
+            "memberRole":$("#member_add_role").val(),
+            'memberName':$("#member_add_member_name").val(),
+            'taskCreateId':[[${session.user.memberId}]],
+            'memberPhone':$("#member_add_phone").val(),
+            'memberTeamId':$("#member_add_team").val(),
+            'memberCreateTime':$("#member_add_create_time").val(),
+            'memberAccount':$("#member_add_account").val(),
+            'memberGender':$("#member_add_gender").val(),
+            'memberIcon':$("#member_add_icon_input").val()
+        };
+        $.ajax({
+            url: "/member/updateMember",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            data:JSON.stringify(str),
+            dataType: "json",
+            success: function (result) {
+                setTimeout(function() {
+                    lightyear.notify('添加成功','success', 2000);
+                }, 1e3);
+            }
+        });
+    });
+
+    function memberEditInit() {
+        //头像
+        $("#member_add_icon_thumbnail").attr("src",[[${member.memberIcon}]]);
+        $("#member_add_icon_input").val([[${member.memberIcon}]]);
+        $("#member_add_role").val([[${member.memberRole}]]);
+        $("#member_add_member_name").val([[${member.memberName}]]);
+        $("#member_add_phone").val([[${member.memberPhone}]]);
+        $("#member_add_team").val([[${member.memberTeamId}]]);
+        $("#member_add_create_time").val([[${member.memberCreateTime}]]);
+        $("#member_add_account").val([[${member.memberAccount}]]);
+        $("#member_add_gender").val([[${member.memberGender}]]);
+    }
+</script>
+</html>

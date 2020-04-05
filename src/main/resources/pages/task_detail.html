@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>任务详情 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                 <div class="card">
+                    <div class="card-header">
+                        <div class="col-10">
+                            <div class="col-md-1">
+                                <button class="btn btn-default btn-lg btn-round" onclick="back()">
+                                    <i class="mdi mdi-keyboard-backspace"  data-toggle="tooltip" data-placement="top" title="" data-original-title="返回上一级"></i>
+                                </button>
+                            </div>
+                            <div class="col-md-11">
+                                <input class="form-control input-lg" id="task_detail_task_name">
+                            </div>
+                        </div>
+                        <div class="pull-right" shiro:hasPermission="task:edit">
+                            <button class="btn btn-success btn-round m-b-10" id="task_detail_save">保存</button>
+                            <button class="btn btn-danger btn-round m-b-10" id="task_detail_cancel">撤销</button>
+                        </div>
+                    </div>
+                    <div class="card-body container-fluid">
+                            <div class="col-md-6">
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="task_detail_schedule">关联项目:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" data-live-search="true" id="task_detail_relate_project" >
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="task_detail_type">任务类型:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker"  id="task_detail_type">
+                                            <option data-content="<span class='label label-success'>需求</span>"  th:value="1"></option>
+                                            <option data-content="<span class='label label-warning'>Bug</span>" th:value="2"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="task_detail_status">任务状态:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker"  id="task_detail_status">
+                                            <option data-content="<span class='label label-secondary'>待办的</span>"  th:value="1"></option>
+                                            <option data-content="<span class='label label-warning'>进行中</span>" th:value="2"></option>
+                                            <option data-content="<span class='label label-success'>已完成</span>" th:value="3"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="task_detail_start_time">任务时间:</label>
+                                    <div class="input-group" style="padding-left:15px">
+                                        <input class="form-control js-datetimepicker"  data-date-format="YYYY-MM-DD HH:mm" data-locale="zh-cn" type="text" id="task_detail_start_time"  placeholder="从">
+                                        <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
+                                        <input class="form-control js-datetimepicker" data-date-format="YYYY-MM-DD HH:mm" data-locale="zh-cn" type="text" id="task_detail_end_time"  placeholder="至" >
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="task_detail_schedule">任务进度:</label>
+                                    <div class="col-md-9">
+                                        <input id="task_detail_schedule" th:value="${task.taskSchedule}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="task_detail_priority">优先级:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" id="task_detail_priority">
+                                            <option data-content="<span class='label label-secondary'>不重要</span>" th:value="1"></option>
+                                            <option data-content="<span class='label label-primary'>次 要</span>" th:value="2"></option>
+                                            <option data-content="<span class='label label-warning'>主 要</span>" th:value="3"></option>
+                                            <option data-content="<span class='label label-danger'>严 重</span>" th:value="4"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="task_detail_executor">指派人:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" data-live-search="true"  id="task_detail_executor">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class=" m-b-10">
+                                    <label class="control-label m-b-5" th:for="task_detail_content">任务描述:</label>
+                                    <textarea class="form-control" id="task_detail_content" rows="5" placeholder="内容..."></textarea>
+                                </div>
+                            </div>
+                    </div>
+                 </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body container-fluid">
+                            <label class="control-label m-b-5" th:for="task_detail_comment">评论:</label>
+                            <textarea class="form-control" id="task_detail_comment" rows="5" placeholder="请输入......按回车结束"></textarea>
+                            <table id="task_detail_comment_table" class="table"></table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body container-fluid">
+                            <div class="col-md-12">
+                                <label class="control-label m-b-5" for="task_detail_dynamic_state_table">日志:</label>
+                                <table id="task_detail_dynamic_state_table" class="table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+
+    $(document).ready(function () {
+        //初始化table
+        dynamicStateTableInit();
+        commentTableInit();
+        //进度条初始化
+        $("#task_detail_schedule").ionRangeSlider({
+            min:0,
+            max:100
+        });
+        //select初始化
+        teamExecuteSelect();
+        relateProjectSelect();
+
+        //页面赋值
+        taskDetailInit();
+        //监听事件
+        commentEventListener();
+    });
+
+    //动态表的初始化
+    function dynamicStateTableInit() {
+            //销毁上一个bootstrapTbale对象
+            $('#task_detail_dynamic_state_table').bootstrapTable('destroy');
+            $('#task_detail_dynamic_state_table').bootstrapTable({
+                    url: "/dynamicState/queryDynamicStateByTypeAndTypeId",  //请求地址
+                    pageNumber: 1, //初始化加载第一页
+                    pagination: true,//是否分页
+                    sidePagination: 'client',//server:服务器端分页|client：前端分页
+                    pageSize: 5,//单页记录数
+                    pageList: [10, 15, 20],//可选择单页记录数
+                    method: 'post',//请求方式
+                    classes:"table table-no-bordered table-hover", //设置表格样式
+                    queryParams:{
+                        'type':2,
+                        'typeId':[[${task.taskId}]]
+                            },//查询参数
+                    columns: [{
+                        field: 'dynamicStateCreator',
+                        align: "left",
+                        sortable: true,
+                        switchable:false,
+                        formatter:function (value, row, index) {
+                            str=' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="'+value.memberIcon+'" alt="'+value.memberName+'"/>'
+                            str+='<a href="#" onclick="toMemberDetail('+value.memberId+')" style="padding-right: 5px">' +
+                                value.memberName +
+                                '</a>';
+                            str+="<span class='label label-success' style='padding-left: 5px'>"+row.dynamicStateAction+"</span>" +
+                                "<strong  style='padding-left: 5px'>"+row.dynamicStateContent+"</strong>";
+                            return str;
+                        }
+                    },{
+                        field: 'dynamicStateCreateTime',
+                        align: "right",
+                        sortable: true,
+                        switchable:false
+                    }],
+                    onLoadSuccess: function (result) {
+                        console.info("任务详情 活动日志 加载完成");
+                    }
+                }
+            );
+        };
+
+    //评论表初始化
+    function commentTableInit() {
+        //销毁上一个bootstrapTbale对象
+        $('#task_detail_comment_table').bootstrapTable('destroy');
+        $('#task_detail_comment_table').bootstrapTable({
+                url: "/comment/queryCommentByTypeAndTypeId",  //请求地址
+                pageNumber: 1, //初始化加载第一页
+                pagination: true,//是否分页
+                sidePagination: 'client',//server:服务器端分页|client：前端分页
+                pageSize: 5,//单页记录数
+                pageList: [10, 15, 20],//可选择单页记录数
+                method: 'post',//请求方式
+                classes:"table table-no-bordered table-hover", //设置表格样式
+                sortName:"commentCreateTime",//排序字段
+                sortOrder:"desc",//排序方式
+                queryParams:{
+                    'type':2,
+                    'typeId':[[${task.taskId}]]
+                },//查询参数
+                columns: [{
+                    field: 'commentCreator',
+                    align: "left",
+                    sortable: true,
+                    switchable:false,
+                    formatter:function (value, row, index) {
+                        str=' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="'+value.memberIcon+'" alt="'+value.memberName+'"/>'
+                        str+='<a href="#" onclick="toMemberDetail('+value.memberId+')" style="padding-right: 5px">' +
+                            value.memberName +
+                            '</a>';
+                           str+= "<strong  style='padding-left: 5px'>:&nbsp;"+row.commentContent+"</strong>";
+                        return str;
+                    }
+                },{
+                    field: 'commentCreateTime',
+                    align: "right",
+                    sortable: true,
+                    switchable:false
+                }],
+                onLoadSuccess: function (result) {
+                    console.info("任务详情 评论 加载完成");
+                }
+            }
+        );
+    }
+
+    //返回上一级
+    $("#task_detail_back").on('click',function () {
+        window.history.back();
+    });
+
+    //监听评论组件的回车事件
+    function commentEventListener() {
+        $("#task_detail_comment").keydown(function (e) {
+            if (e.keyCode === 13){
+                str={'commentType':'任务',
+                    'commentTypeId':[[${task.taskId}]],
+                    'commentContent':$("#task_detail_comment").val()};
+                $.ajax({
+                    url: "/comment/addComment",
+                    contentType: "application/json;charset=UTF-8",
+                    type: "post",
+                    data: JSON.stringify(str),
+                    dataType: "json",
+                    success: function (result) {
+                        setTimeout(function() {
+                            lightyear.notify(result.msg, 'success', 2000);
+                        }, 1e3);
+                        $("#task_detail_comment_table").bootstrapTable('refresh');
+                        $("#task_detail_comment").val(null);
+                        console.log('评论成功');
+                    }
+                });
+            }
+        })
+    }
+
+    //查询指派人下拉框数据
+    function teamExecuteSelect() {
+        $.ajax({
+            url: "/team/queryTeamAll",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                result.forEach(function (value1, index1) {
+                    str='';
+                    str+="<optgroup label="+value1.teamName+">";
+                    value1.teamMembers.forEach(function (value2, index2) {
+                        str+="<option value="+value2.memberId+">"+value2.memberName+"</option>";
+                    });
+                    str+="</optgroup>";
+                    $("#task_detail_executor").append(str);
+                    //动态加载数据的selectpicker赋值
+                    $("#task_detail_executor").selectpicker('val',[[${task.taskExecutor.memberId}]]);
+                    $("#task_detail_executor").selectpicker("refresh");
+                })
+            }
+        });
+    }
+
+    //查询关联项目下拉框数据
+    function relateProjectSelect() {
+        $.ajax({
+            url: "/project/queryProjectAll",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                var str='';
+                result.forEach(function (value, index) {
+                        str+="<option value="+value.projectId+">"+value.projectName+"</option>";
+                });
+                    $("#task_detail_relate_project").append(str);
+                    //动态加载数据的selectpicker赋值
+                    $("#task_detail_relate_project").selectpicker('val',[[${task.taskRelateProject.projectId}]]);
+                    $("#task_detail_relate_project").selectpicker("refresh");
+            }
+        });
+    }
+    
+    function taskDetailInit() {
+        $("#task_detail_task_name").val([[${task.taskName}]]);
+        $("#task_detail_relate_project").val([[${task.taskRelateProject.projectId}]]);
+        $("#task_detail_type").val([[${task.taskType}]]);
+        $("#task_detail_status").val([[${task.taskStatus}]]);
+        $("#task_detail_start_time").val([[${task.taskStartTime}]]);
+        $("#task_detail_end_time").val([[${task.taskEndTime}]]);
+        $("#task_detail_priority").val([[${task.taskPriority}]]);
+        $("#task_detail_executor").val([[${task.taskExecutor.memberId}]]);
+        $("#task_detail_content").val([[${task.taskContent}]]);
+    }
+
+
+    $("#task_detail_cancel").on('click',function () {
+        window.location.reload();
+    });
+
+    $("#task_detail_save").on('click',function () {
+        //任务添加保存
+            if($("#task_detail_task_name").val()==""){
+                $("#task_detail_task_name_div").addClass("has-error");
+                setTimeout(function() {
+                    lightyear.notify('请输入项目名称', 'danger', 100);
+                }, 1e3);
+                return;
+            }
+            if($("#task_detail_start_time").val()==""||$("#task_detail_end_time").val()==""){
+                $("#task_detail_time_div").addClass("has-error");
+                setTimeout(function() {
+                    lightyear.notify('请输入项目时间', 'danger', 100);
+                }, 1e3);
+                return;
+            }
+            var str={
+                'taskId':[[${task.taskId}]],
+                'taskName':$("#task_detail_task_name").val(),
+                'taskPriority':$("#task_detail_priority").val(),
+                'taskCreateId':[[${session.user.memberId}]],
+                'taskExecuteId':$("#task_detail_executor").val(),
+                'taskRelateProjectId':$("#task_detail_relate_project").val(),
+                'taskType':$("#task_detail_type").val(),
+                'taskStartTime':$("#task_detail_start_time").val(),
+                'taskEndTime':$("#task_detail_end_time").val(),
+                'taskStatus':$("#task_detail_status").val(),
+                'taskContent':$("#task_detail_content").val(),
+                'taskSchedule':$("#task_detail_schedule").val()
+            };
+            $.ajax({
+                url: "/task/updateTask",
+                contentType: "application/json;charset=UTF-8",
+                type: "post",
+                data:JSON.stringify(str),
+                dataType: "json",
+                success: function (result) {
+                    setTimeout(function() {
+                        lightyear.notify(result.msg, 'success', 2000);
+                    }, 1e3);
+                }
+            });
+    })
+
+</script>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<nav th:fragment="sidebar">
+    <body data-theme="default" data-logobg="color_8" data-headerbg="color_8" data-sidebarbg="color_8">
+<!--左侧导航-->
+<aside class="lyear-layout-sidebar">
+    <!-- logo -->
+    <div id="logo" class="sidebar-header">
+        <a th:href="@{/common/toIndex}"><img th:src="@{/images/logo-sidebar.png}" title="LightYear" alt="LightYear" /></a>
+    </div>
+    <div class="lyear-layout-sidebar-scroll">
+        <nav class="sidebar-main">
+            <ul class="nav nav-drawer" id="sidebar">
+                <li class="nav-item">
+                    <a th:href="@{/common/toIndex}" th:onclick="sidebarJump(0)"><i class="mdi mdi-home"></i> 后台首页</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/project/toProject}"  th:onclick="sidebarJump(1)"><i class="mdi mdi-grid-large"></i>项目</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/task/toTask}"  th:onclick="sidebarJump(2)"><i class="mdi mdi-content-paste"></i>任务</a>
+                </li>
+                <li class="nav-item">
+                    <a  th:href="@{/member/toMember}"  th:onclick="sidebarJump(3)"><i class="mdi mdi-account"></i>成员</a>
+                </li>
+                <li class="nav-item">
+                    <a  th:href="@{/team/toTeam}"  th:onclick="sidebarJump(4)"><i class="mdi mdi-account-multiple"></i>团队</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/setting/toSetting}"  th:onclick="sidebarJump(5)"><i class="mdi mdi-menu"></i> 设置</a>
+                </li>
+            </ul>
+        </nav>
+   </div>
+
+</aside>
+<!--End 左侧导航-->
+<!--头部信息-->
+<header class="lyear-layout-header">
+
+    <nav class="navbar navbar-default">
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="lyear-aside-toggler">
+                    <span class="lyear-toggler-bar"></span>
+                    <span class="lyear-toggler-bar"></span>
+                    <span class="lyear-toggler-bar"></span>
+                </div>
+                <span class="navbar-page-title"> 后台首页 </span>
+            </div>
+
+            <ul class="topbar-right">
+                <li class="dropdown dropdown-profile">
+                    <a href="javascript:void(0)" data-toggle="dropdown">
+                        <img class="img-avatar img-avatar-48 m-r-10" th:src="${session.user.memberIcon}" th:alt="${session.user.memberName}" />
+                        <span>[[${session.user.memberName}]]<span class="caret"></span></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li> <a href="#" th:onclick='toMemberDetail([[${session.user.memberId}]])'><i class="mdi mdi-account"></i> 个人信息</a> </li>
+                        <li> <a href="lyear_pages_edit_pwd.html"><i class="mdi mdi-lock-outline"></i> 修改密码</a> </li>
+                        <li class="divider"></li>
+                        <li> <a th:href="@{/login/toLogin}"><i class="mdi mdi-logout-variant"></i> 退出登录</a> </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+</header>
+<!--End 头部信息-->
+    </body>
+</nav>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>新增任务 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                 <div class="card">
+                    <div class="card-header">
+                        <div class="col-10">
+                            <div class="col-md-1">
+                                <button class="btn btn-default btn-lg btn-round" id="task_add_back">
+                                    <i class="mdi mdi-keyboard-backspace"  data-toggle="tooltip" data-placement="top" title="" data-original-title="返回上一级"></i>
+                                </button>
+                            </div>
+                            <div id="task_add_task_name_div" class="col-md-11">
+                                <input class="form-control input-lg" id="task_add_task_name" th:placeholder="请输入项目名称">
+                            </div>
+                        </div>
+                        <div class="pull-right"><button class="btn btn-success btn-round" id="task_add_save">保存</button></div>
+                    </div>
+                    <div class="card-body container-fluid">
+                        <form id="task_add_form" class="form-horizontal" th:action="@{/task/editTask}">
+                            <div class="col-md-6">
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="task_add_schedule">关联项目:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" data-live-search="true" id="task_add_relate_project" name="taskRelateProjectId">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="task_add_type">任务类型:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" name="taskType" id="task_add_type">
+                                            <option data-content="<span class='label label-success'>需求</span>"  th:value="1"></option>
+                                            <option data-content="<span class='label label-warning'>Bug</span>" th:value="2"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="task_add_status">任务状态:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" name="taskStatus" id="task_add_status">
+                                            <option data-content="<span class='label label-secondary'>待办的</span>"  th:value="1"></option>
+                                            <option data-content="<span class='label label-warning'>进行中</span>" th:value="2"></option>
+                                            <option data-content="<span class='label label-success'>已完成</span>" th:value="3"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="task_add_time_div" class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="task_add_start_time">任务时间:</label>
+                                    <div class="input-group" style="padding-left:15px">
+                                        <input class="form-control js-datetimepicker"  data-date-format="YYYY-MM-DD HH:mm" data-locale="zh-cn" type="text" id="task_add_start_time" name="taskStartTime" placeholder="从">
+                                        <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
+                                        <input class="form-control js-datetimepicker" data-date-format="YYYY-MM-DD HH:mm" data-locale="zh-cn" type="text" id="task_add_end_time" name="taskEndTime" placeholder="至" >
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" for="task_add_schedule">任务进度:</label>
+                                    <div class="col-md-9">
+                                        <input id="task_add_schedule" name="taskSchedule">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="task_add_priority">优先级:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" name="taskPriority" id="task_add_priority">
+                                            <option data-content="<span class='label label-secondary'>不重要</span>" th:value="1"></option>
+                                            <option data-content="<span class='label label-primary'>次 要</span>" th:value="2"></option>
+                                            <option data-content="<span class='label label-warning'>主 要</span>" th:value="3"></option>
+                                            <option data-content="<span class='label label-danger'>严 重</span>" th:value="4"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="task_add_executor">指派人:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" data-live-search="true" name="taskExecuteId" id="task_add_executor">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                            <div class="col-md-12">
+                                <div class=" m-b-10">
+                                    <label class="control-label m-b-5" th:for="task_add_content">任务描述:</label>
+                                    <textarea class="form-control" id="task_add_content" rows="5" name="taskContent" placeholder="内容..."></textarea>
+                                </div>
+                            </div>
+                    </div>
+                 </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+
+    $(document).ready(function () {
+        //进度条
+        $("#task_add_schedule").ionRangeSlider({
+            min:0,
+            max:100
+        });
+        //页面赋值
+        teamExecuteSelect();
+        relateProjectSelect();
+        //监听事件
+    });
+
+
+    //返回上一级
+    $("#task_add_back").on('click',function () {
+        window.history.back();
+    });
+
+
+
+    //查询指派人下拉框数据
+    function teamExecuteSelect() {
+        $.ajax({
+            url: "/team/queryTeamAll",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                result.forEach(function (value1, index1) {
+                    str='';
+                    str+="<optgroup label="+value1.teamName+">";
+                    value1.teamMembers.forEach(function (value2, index2) {
+                        str+="<option value="+value2.memberId+">"+value2.memberName+"</option>";
+                    });
+                    str+="</optgroup>";
+                    $("#task_add_executor").append(str);
+                    $("#task_add_executor").selectpicker("refresh");
+                })
+            }
+        });
+    }
+
+    //查询关联项目下拉框数据
+    function relateProjectSelect() {
+        $.ajax({
+            url: "/project/queryProjectAll",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                var str='';
+                result.forEach(function (value, index) {
+                        str+="<option value="+value.projectId+">"+value.projectName+"</option>";
+                });
+                    $("#task_add_relate_project").append(str);
+                    $("#task_add_relate_project").selectpicker("refresh");
+            }
+        });
+    }
+
+    //任务添加保存
+        $("#task_add_save").on('click',function () {
+            if($("#task_add_task_name").val()==""){
+                $("#task_add_task_name_div").addClass("has-error");
+                setTimeout(function() {
+                    lightyear.notify('请输入项目名称', 'danger', 100);
+                }, 1e3);
+                return;
+            }
+            if($("#task_add_start_time").val()==""||$("#task_add_end_time").val()==""){
+                $("#task_add_time_div").addClass("has-error");
+                setTimeout(function() {
+                    lightyear.notify('请输入项目时间', 'danger', 100);
+                }, 1e3);
+                return;
+            }
+            var str={
+            "taskName":$("#task_add_task_name").val(),
+            'taskPriority':$("#task_add_priority").val(),
+                'taskCreateId':[[${session.user.memberId}]],
+                'taskExecuteId':$("#task_add_executor").val(),
+                'taskRelateProjectId':$("#task_add_relate_project").val(),
+                'taskType':$("#task_add_type").val(),
+                'taskStartTime':$("#task_add_start_time").val(),
+                'taskEndTime':$("#task_add_end_time").val(),
+                'taskStatus':$("#task_add_status").val(),
+                'taskContent':$("#task_add_content").val(),
+                'taskSchedule':$("#task_add_schedule").val()
+            };
+            $.ajax({
+                url: "/task/addTask",
+                contentType: "application/json;charset=UTF-8",
+                type: "post",
+                data:JSON.stringify(str),
+                dataType: "json",
+                success: function (result) {
+                    setTimeout(function() {
+                        lightyear.notify(result.msg, 'success', 2000);
+                    }, 1e3);
+                }
+            });
+        })
+
+</script>
+</html>

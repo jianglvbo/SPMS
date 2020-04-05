@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>成员详情 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="pull-right" shiro:hasPermission="member:edit">
+                <button class="btn btn-round btn-secondary" id="member_detail_edit">
+                    <i class="mdi mdi-account-edit"  data-toggle="tooltip" data-placement="left" title="" data-original-title="修改用户信息"></i>
+                </button>
+            </div>
+                <div class="row col-md-12" style="padding: 2%" >
+                    <div class="col-md-offset-6">
+                        <img class="img-avatar m-r-10" th:src="${member.memberIcon}" th:alt="${member.memberName}" />
+                    </div>
+                </div>
+                <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a th:href="@{/member/toMemberDetailDynamicState?memberId=}+${member.memberId}">
+                                        <i class=" mdi mdi-calendar-range"></i>
+                                        活动日志
+                                    </a>
+                                </li>
+                                <li>
+                                    <a th:href="@{/member/toMemberDetailProject?memberId=}+${member.memberId}">
+                                        <i class="mdi mdi-hexagon-multiple"></i>
+                                        参与的项目
+                                    </a>
+                                </li>
+                                <li>
+                                    <a th:href="@{/member/toMemberDetailTask?memberId=}+${member.memberId}">
+                                        <i class="mdi mdi-calendar-multiple-check"></i>
+                                        任务
+                                    </a>
+                                </li>
+                            </ul>
+                            <table id="member_detail_dynamic_state_table" class="table table-striped"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        //初始化table
+        memberDetailDynamicStateTable();
+        //页面初始化
+        toEditMember();
+    });
+
+    //动态表的初始化
+    function memberDetailDynamicStateTable(){
+            //销毁上一个bootstrapTbale对象
+            $('#member_detail_dynamic_state_table').bootstrapTable('destroy');
+            $('#member_detail_dynamic_state_table').bootstrapTable({
+                    url: "/dynamicState/queryDynamicStateByMemberId?memberId="+[[${member.memberId}]],  //请求地址
+                    striped: true, //是否显示行间隔色
+                    pageNumber: 1, //初始化加载第一页
+                    pagination: true,//是否分页
+                    sidePagination: 'client',//server:服务器端分页|client：前端分页
+                    pageSize: 10,//单页记录数
+                    pageList: [10, 15, 20],//可选择单页记录数
+                    method: 'post',//请求方式
+                    trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                    search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    classes:"table table-no-bordered table-hover", //设置表格样式
+                    //设置排序列
+                    sortName: 'dynamicStateCreateTime',
+                    //设置排序方式
+                    sortOrder: 'desc',
+                columns: [ {
+                        field: 'dynamicStateAction',
+                        align: "left",
+                        formatter:function (value, row, index) {
+                            return "<span class='label label-success'>"+value+"</span>" +
+                                "<a style='padding-left: 5px' href='#' onclick='toDynamicTypeDetail("+row.dynamicStateType+","+row.dynamicStateTypeId+")'>"+row.dynamicStateContent+"</a>";
+                        }
+                    },{
+                        field: 'dynamicStateCreateTime',
+                        align: "right"
+                    }],
+                    onLoadSuccess: function (result) {
+                        console.info("动态数据加载完成");
+                    }
+                });
+    };
+
+    function toEditMember() {
+        $("#member_detail_edit").on('click',function () {
+            //跳转到修改资料页面
+            url='/member/toEditMember?memberId='+[[${member.memberId}]];
+            window.location.href=encodeURI(url);
+        })
+    }
+</script>
+</html>

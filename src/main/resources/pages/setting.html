@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>设置 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<style type="text/css">
+    .table_td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="col-md-1">
+                                <button class="btn btn-default btn-lg btn-round" onclick="back()">
+                                    <i class="mdi mdi-keyboard-backspace"  data-toggle="tooltip" data-placement="top" title="" data-original-title="返回上一级"></i>
+                                </button>
+                            </div>
+                            <div class="pull-right" shiro:hasPermission="setting:edit">
+                                <button class="btn btn-success btn-round m-b-10" id="setting_save">保存</button>
+                                <button class="btn btn-danger btn-round m-b-10" onclick="settingCancel()">撤销</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group  col-md-11">
+                                <label for="dingTalkWebHook">钉钉机器人地址:</label>
+                                <input class="form-control" id="dingTalkWebHook" th:placeholder="WebHook地址...">
+                            </div>
+                            <div class="input-group col-md-11">
+                                <label for="dingTalkSecretKey">钉钉机器人密钥:</label>
+                                <input type="password" class="form-control" id="dingTalkSecretKey" th:placeholder="密钥...">
+                            </div>
+                            <div class="input-group col-md-11">
+                                <label for="dingTalkSecretKey">短信AppId:</label>
+                                <input class="form-control" id="messageAppId" th:placeholder="短信SDK AppId...">
+                            </div>
+                            <div class="input-group col-md-11">
+                                <label for="dingTalkSecretKey">短信AppKey:</label>
+                                <input type="password" class="form-control" id="messageAppKey" th:placeholder="短信AppKey...">
+                            </div>
+                            <div class="input-group col-md-11">
+                                <label for="dingTalkSecretKey">短信模板Id:</label>
+                                <input class="form-control" id="messageTemplateId" th:placeholder="短信模板Id...">
+                            </div>
+                            <div class="input-group col-md-11">
+                                <label for="dingTalkSecretKey">短信签名:</label>
+                                <input type="password" class="form-control" id="messageSign" th:placeholder="短信签名内容...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="input-group m-t-10 m-10">
+                            <label for="setting_role">角色权限配置:</label>
+                            <div class="col-md-9">
+                            <select id="setting_role" class="form-control selectpicker">
+                                <option data-content="<span class='label label-dark'>管理员</span>" th:value="1"></option>
+                                <option data-content="<span class='label label-warning'>项目经理</span>" th:value="2"></option>
+                                <option data-content="<span class='label label-info'>研发人员</span>" th:value="3"></option>
+                                <option data-content="<span class='label label-danger'>测试人员</span>" th:value="4"></option>
+                            </select>
+                            </div>
+                        </div>
+                        <table class="table table-responsive table-striped">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <label class="lyear-checkbox checkbox-primary">
+                                        <input type="checkbox" id="check-all">
+                                        <span> 全选</span>
+                                    </label>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="p-l-20">
+                                    <label class="lyear-checkbox checkbox-primary">
+                                        <input type="checkbox" class="checkbox-parent checkbox-child" dataid="id-100" value="100">
+                                        <span>项目配置</span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-l-40">
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-100-1" value="1">
+                                        <span> 添加项目</span>
+                                    </label>
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-100-2" value="2">
+                                        <span> 编辑项目</span>
+                                    </label>
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-100-3" value="3">
+                                        <span> 删除项目</span>
+                                    </label>
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-100-4" value="4">
+                                        <span> 项目评论</span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-l-20">
+                                    <label class="lyear-checkbox checkbox-primary">
+                                        <input type="checkbox" class="checkbox-parent checkbox-child" dataid="id-101" value="101">
+                                        <span>任务配置</span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-l-40">
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-101-1" value="5">
+                                        <span> 添加任务</span>
+                                    </label>
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-101-2" value="6">
+                                        <span> 编辑任务</span>
+                                    </label>
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-101-3" value="7">
+                                        <span> 删除任务</span>
+                                    </label>
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-101-4" value="8">
+                                        <span> 项目任务</span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-l-20">
+                                    <label class="lyear-checkbox checkbox-primary">
+                                        <input type="checkbox" class="checkbox-parent checkbox-child" dataid="id-102" value="101">
+                                        <span>成员配置</span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-l-40">
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-102-1" value="9">
+                                        <span> 添加成员</span>
+                                    </label>
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-102-2" value="10">
+                                        <span> 编辑成员信息</span>
+                                    </label>
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-102-3" value="11">
+                                        <span> 删除成员</span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-l-20">
+                                    <label class="lyear-checkbox checkbox-primary">
+                                        <input type="checkbox" class="checkbox-parent checkbox-child" dataid="id-103" value="101">
+                                        <span>团队配置</span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-l-40">
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-103-1" value="12">
+                                        <span> 添加团队</span>
+                                    </label>
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-103-2" value="13">
+                                        <span> 编辑团队信息</span>
+                                    </label>
+                                    <label class="lyear-checkbox checkbox-primary checkbox-inline">
+                                        <input  type="checkbox" class="checkbox-child" dataid="id-103-3" value="14">
+                                        <span> 删除团队</span>
+                                    </label>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+    $(function(){
+        //动态选择框，上下级选中状态变化
+        $('input.checkbox-parent').on('change', function(){
+            var dataid = $(this).attr("dataid");
+            $('input[dataid^=' + dataid + '-]').prop('checked', $(this).is(':checked'));
+        });
+        $('input.checkbox-child').on('change', function(){
+            var dataid = $(this).attr("dataid");
+            dataid = dataid.substring(0, dataid.lastIndexOf("-"));
+            var parent = $('input[dataid=' + dataid + ']');
+            if($(this).is(':checked')){
+                parent.prop('checked', true);
+                //循环到顶级
+                while(dataid.lastIndexOf("-") != 2){
+                    dataid = dataid.substring(0, dataid.lastIndexOf("-"));
+                    parent = $('input[dataid=' + dataid + ']');
+                    parent.prop('checked', true);
+                }
+            }else{
+                //父级
+                if($('input[dataid^=' + dataid + '-]:checked').length == 0){
+                    parent.prop('checked', false);
+                    //循环到顶级
+                    while(dataid.lastIndexOf("-") != 2){
+                        dataid = dataid.substring(0, dataid.lastIndexOf("-"));
+                        parent = $('input[dataid=' + dataid + ']');
+                        if($('input[dataid^=' + dataid + '-]:checked').length == 0){
+                            parent.prop('checked', false);
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+    //跳转到团队详情页面
+    function settingCancel() {
+        url = '/setting/toSetting';
+        window.location.href = encodeURI(url);
+    }
+    
+    function settingSave() {
+        
+    }
+</script>
+</html>

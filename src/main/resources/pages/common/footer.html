@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<footer th:fragment="footer">
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/perfect-scrollbar.min.js}"></script>
+    <!--消息提示-->
+    <script type="text/javascript" th:src="@{/js/bootstrap-notify.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lightyear.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.cookie.js}"></script>
+    <!--图表插件-->
+    <script type="text/javascript" th:src="@{/js/Chart.js}"></script>
+    <!--bootstrap-table插件-->
+    <script type="text/javascript" th:src="@{/js/bootstrap-table/bootstrap-table.min.js}"></script>
+    <!--    bootstrap-table插件中文语言包-->
+    <script type="text/javascript" th:src="@{/js/bootstrap-table/locale/bootstrap-table-zh-CN.js}"></script>
+    <!--时间选择插件-->
+    <script type="text/javascript" th:src="@{/js/bootstrap-datetimepicker/moment.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-datetimepicker/locale/zh-cn.js}"></script>
+    <!--日期选择插件-->
+    <script type="text/javascript" th:src="@{/js/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
+    <script type="text/javascript"
+            th:src="@{/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
+    <!--滑块插件-->
+    <script type="text/javascript" th:src="@{/js/ion-rangeslider/ion.rangeSlider.min.js}"></script>
+    <!--选择下拉框插件-->
+    <script type="text/javascript" th:src="@{/js/bootstrap-select/js/bootstrap-select.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap-select/js/i18n/defaults-zh_CN.min.js}"></script>
+
+    <script type="text/javascript" th:src="@{/js/main.min.js}"></script>
+    <script th:inline="javascript">
+        $(function () {
+            sidebarSelect();
+        });
+
+        //侧边栏选中状态
+        function sidebarSelect() {
+            var index = sessionStorage.getItem("sidebar_index");
+            if (index != null) {
+                $($("#sidebar li")[index]).addClass("active");
+            }
+        }
+
+        //侧边栏跳转事件
+        function sidebarJump(id) {
+            sessionStorage.setItem("sidebar_index", id);
+        }
+
+        //跳转到用户详情
+        function toMemberDetail(memberId) {
+            url = '/member/toMemberDetailDynamicState?memberId=' + memberId;
+            window.location.href = encodeURI(url);
+        }
+
+        //跳转到团队详情页面
+        function toTeamDetail(teamId) {
+            url = '/team/toTeamDetail?teamId=' + teamId;
+            window.location.href = encodeURI(url);
+        }
+
+        //跳转到项目详情
+        function toProjectDetail(projectId) {
+            url = '/project/toProjectDetail?projectId=' + projectId;
+            window.location.href = encodeURI(url);
+        }
+
+        //跳转到任务详情
+        function toTaskDetail(taskId) {
+            url = '/task/toTaskDetail?taskId=' + taskId;
+            window.location.href = encodeURI(url);
+        }
+
+        function toDynamicTypeDetail(type, typeId) {
+            if (type === "0") {
+                return;
+            } else if (type == "1") {
+                toProjectDetail(typeId);
+            } else if (type == "2") {
+                toTaskDetail(typeId);
+            } else if(type=="3"){
+                toMemberDetail(typeId);
+            } else if (typeId == "4") {
+                toTeamDetail(typeId);
+            }
+        }
+
+        //返回上一级
+       function back(){
+           window.history.back();
+       }
+
+        //获取系统本地时间
+        function localTIme() {
+            function getNow(s) {
+                return s < 10 ? '0' + s : s;
+            }
+
+            var myDate = new Date();
+
+            var year = myDate.getFullYear();        //获取当前年
+            var month = myDate.getMonth() + 1;   //获取当前月
+            var date = myDate.getDate();            //获取当前日
+
+
+            var h = myDate.getHours();              //获取当前小时数(0-23)
+            var m = myDate.getMinutes();          //获取当前分钟数(0-59)
+            var s = myDate.getSeconds();
+
+            var now = year + '-' + getNow(month) + "-" + getNow(date) + " " + getNow(h) + ':' + getNow(m) + ":" + getNow(s);
+
+            return now;
+        }
+    </script>
+</footer>
+</html>
