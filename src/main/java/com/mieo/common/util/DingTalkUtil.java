@@ -92,9 +92,9 @@ public class DingTalkUtil {
     }
 
     private void dingTalkExecute(DingTalk dingTalk) {
-        DingTalkClient client = new DefaultDingTalkClient(dingTalkEncrypt(dingTalk));
-        OapiRobotSendResponse response = new OapiRobotSendResponse();
         try {
+            DingTalkClient client = new DefaultDingTalkClient(dingTalkEncrypt(dingTalk));
+            OapiRobotSendResponse response = new OapiRobotSendResponse();
             response = client.execute(dingTalk.getRequest());
         } catch (ApiException e) {
             log.debug("调用钉钉api失败:");

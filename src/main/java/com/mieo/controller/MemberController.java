@@ -63,6 +63,24 @@ public class MemberController {
     }
 
     /**
+     * 修改成员的密码
+     * @return
+     */
+    @RequestMapping("updateMemberPasswordByPhone")
+    @ResponseBody
+    public Map<String,String> updateMemberPasswordByPhone(String password,String phone) {
+        Member member=new Member();
+        Map<String, String> map1 = encipher.encypt(password);
+        member.setMemberPassword(MapUtils.getString(map1, "password"));
+        member.setMemberSalt(MapUtils.getString(map1, "salt"));;
+        member.setMemberPhone(phone);
+        memberService.updateMemberPasswordByPhone(member);
+        Map<String,String> map2=new HashMap<>();
+        return map2;
+    }
+
+
+    /**
      * 批量删除成员信息
      *
      * @param ids

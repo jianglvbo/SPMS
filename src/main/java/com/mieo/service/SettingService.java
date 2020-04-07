@@ -11,4 +11,9 @@ public interface SettingService {
      * @return
      */
     List<Setting> querySettingAll();
+
+    /**
+     * 修改配置信息
+     */
+    void updateSetting(Setting setting);
 }

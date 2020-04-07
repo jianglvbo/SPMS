@@ -26,9 +26,16 @@ public interface MemberMapper {
      */
     @Update("update member set member_role=#{memberRole},member_name=#{memberName}," +
             "member_phone=#{memberPhone},member_team_id=#{memberTeamId},member_create_time=#{memberCreateTime}," +
-            "member_account=#{memberAccount},member_gender=#{memberGender}," +
+            "member_gender=#{memberGender}," +
             "member_icon=#{memberIcon} where member_id=#{memberId}")
     void updateMemberById(Member member);
+
+    /**
+     * 修改成员的账号密码
+     * @param member 成员信息
+     */
+    @Update("update member set member_password=#{memberPassword},member_salt=#{memberSalt} where member_phone=#{memberPhone}")
+    void updateMemberPasswordByPhone(Member member);
 
     /**
      * 通过成员id删除信息
@@ -38,6 +45,15 @@ public interface MemberMapper {
      */
     @Delete("delete from member where member_id=#{id}")
     int deleteMemberById(Integer id);
+
+
+    /**
+     * 通过用户手机号查找用户信息
+     * @return 查找的用户信息
+     */
+    @Select("select * from member where member_phone=#{phone}")
+    @ResultMap("member_team")
+    Member queryMemberByPhone(String phone);
 
     /**
      * 通过用户id查找用户信息

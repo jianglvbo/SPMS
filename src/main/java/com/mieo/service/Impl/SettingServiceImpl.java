@@ -25,4 +25,12 @@ public class SettingServiceImpl implements SettingService {
     public List<Setting> querySettingAll() {
         return settingMapper.querySettingAll();
     }
+
+    /**
+     * 修改配置信息
+     */
+    @Override
+    public void updateSetting(Setting setting) {
+        settingMapper.updateSetting(setting);
+    }
 }

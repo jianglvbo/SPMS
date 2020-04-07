@@ -100,6 +100,16 @@ public class MemberServiceImpl implements MemberService {
         dynamicStateService.addDynamicState(dynamicState);
     }
 
+    /**
+     * 修改成员的账号密码
+     *
+     * @param member 成员信息
+     */
+    @Override
+    public void updateMemberPasswordByPhone(Member member) {
+        memberMapper.updateMemberPasswordByPhone(member);
+    }
+
 
     /**
      * 查询所有的成员信息

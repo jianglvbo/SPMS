@@ -39,6 +39,11 @@ public class CommonController {
 
 
 
+    @RequestMapping("toAlterPassword")
+    public String toAlterPassword() {
+        log.debug("跳转到修改密码页面");
+        return "alter_password";
+    }
 
 
 

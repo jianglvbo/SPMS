@@ -41,6 +41,12 @@ public interface MemberService {
     void updateMemberById(Member member);
 
     /**
+     * 修改成员的账号密码
+     * @param member 成员信息
+     */
+    void updateMemberPasswordByPhone(Member member);
+
+    /**
      * 查询所有的成员信息
      *
      * @return 成员信息

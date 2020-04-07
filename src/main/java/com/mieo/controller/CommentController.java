@@ -46,12 +46,4 @@ public class CommentController {
         return msg;
     };
 
-    @RequestMapping("message")
-    @ResponseBody
-    public Map<String,String> message(){
-        messageUtil.messageSend();
-        Map<String ,String> msg=new HashMap<>();
-        msg.put("msg", "评论成功");
-        return msg;
-    };
 }

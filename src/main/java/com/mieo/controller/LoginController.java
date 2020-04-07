@@ -1,5 +1,6 @@
 package com.mieo.controller;
 
+import com.mieo.common.util.MessageUtil;
 import com.mieo.model.Member;
 import com.mieo.service.MemberService;
 import com.taobao.api.ApiException;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Controller
 @Slf4j
@@ -31,6 +33,8 @@ public class LoginController {
     MemberService memberService;
     @Autowired
     Member member;
+    @Autowired
+    MessageUtil messageUtil;
 
     @RequestMapping("test")
     public String test(String username, String password) {
@@ -114,5 +118,22 @@ public class LoginController {
         return "login";
     }
 
+    @RequestMapping("toLoginPhone")
+    public String toLoginPhone() {
+        log.debug("跳转到短信验证登录页面");
+        return "login_phone";
+    }
+
+
+    @RequestMapping("getVerifyCode")
+    @ResponseBody
+    public Map<String,String> getVerifyCode(String phoneNumber,String type){
+        Map<String,String> map=new HashMap<>();
+        String verifyCode = String.format("%04d", new Random().nextInt(9999));
+        String msg = messageUtil.messageSend(verifyCode, phoneNumber, type);
+        map.put("verifyCode",verifyCode);
+        map.put("msg", msg);
+        return map;
+    }
 
 }

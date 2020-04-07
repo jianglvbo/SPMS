@@ -64,22 +64,10 @@
           <input id="verifyCode"  placeholder="请输入验证码" class="form-control"/>
           <span class="mdi mdi-lock-open form-control-feedback" aria-hidden="true"></span>
         </div>
-      <div id="password_div" class="form-group has-feedback feedback-left hidden">
-        <input id="password"  placeholder="请输入修改后的密码" class="form-control"/>
-        <span class="mdi mdi-lock-open form-control-feedback" aria-hidden="true"></span>
-      </div>
-      <div id="password_confirm_div" class="form-group has-feedback feedback-left hidden">
-      <input id="confirmPassword"  placeholder="请输入再次确认密码" class="form-control"/>
-      <span class="mdi mdi-lock-open form-control-feedback" aria-hidden="true"></span>
-    </div>
         <div id="verify_div" class="form-group">
-          <button id="verify_btn" onclick="verify()" class="btn btn-round btn-block btn-primary m-t-10" type="button" >验证</button>
-          <button onclick="back()" class="btn btn-round btn-block btn-warning m-t-10" type="button" >返 回</button>
+          <button id="verify_btn" onclick="verify()" class="btn btn-round btn-block btn-primary m-t-10" type="button" >登录</button>
+          <button  onclick="back()" class="btn btn-round btn-block btn-warning m-t-10" type="button" >返回</button>
         </div>
-      <div id="alter_div" class="form-group  hidden">
-        <button onclick="save()" class="btn btn-round btn-block btn-primary m-t-10" type="button" >保 存</button>
-        <button onclick="back()" class="btn btn-round btn-block btn-warning m-t-10" type="button" >返 回</button>
-      </div>
       <hr>
     </div>
   </div>
@@ -93,7 +81,7 @@
 
           function getVerifyCode() {
             $.ajax({
-              url: "/login/getVerifyCode?phoneNumber="+$("#phone").val()+"&type=alter",
+              url: "/login/getVerifyCode?phoneNumber="+$("#phone").val()+"&type=login",
               contentType: "application/json;charset=UTF-8",
               type: "get",
               dataType: "json",
@@ -116,15 +104,13 @@
 
           function verify() {
             if($("#verifyCode").val()==verifyCode){
-              lightyear.loading("hide");
-              $("#verify_code_div").addClass("hidden");
-              $("#verify_div").addClass("hidden");
-              $("#password_div").removeClass("hidden");
-              $("#password_confirm_div").removeClass("hidden");
-              $("#alter_div").removeClass("hidden");
+              setTimeout(function() {
+                lightyear.notify("登录成功",'success', 100);
+              }, 100);
+              setTimeout(toIndex,500);
             }else {
               setTimeout(function() {
-                lightyear.notify("验证码错误,请重新输入。剩余次数: "+verifyCount,'danger', 400);
+                lightyear.notify("验证码错误,请重新输入 剩余次数: "+verifyCount,'danger', 400);
               }, 100);
               verifyCount--;
               if(verifyCount===0){
@@ -133,44 +119,12 @@
             }
           }
 
-          function save() {
-            lightyear.loading("show");
-            var p1=$("#password").val();
-            var p2=$("#confirmPassword").val();
-            if(p1!==p2){
-              lightyear.loading("hide");
-              setTimeout(function() {
-                lightyear.notify("两次密码不一致",'danger', 100);
-              }, 100);
-              $("#password_confirm_div").addClass("has-error");
-              return 0;
-            } else {
-              $.ajax({
-                url: "/member/updateMemberPasswordByPhone?password="+p1+"&phone="+$("#phone").val(),
-                contentType: "application/json;charset=UTF-8",
-                type: "post",
-                dataType: "json",
-                success: function (res) {
-                  setTimeout(function() {
-                    lightyear.notify("密码重置成功,正在前往登录页面......",'success', 100);
-                  }, 200);
-                  setTimeout(toLogin,2000);
-                },
-                error:function () {
-                  setTimeout(function() {
-                    lightyear.loading("hide");
-                    lightyear.notify("密码重置失败,请稍后再试",'danger', 100);
-                  }, 100);
-                }
-              });
-            }
-          }
 
-          //跳转到首页
-          function toLogin() {
-            url='/login/toLogin';
-            window.location.href=encodeURI(url);
-          }
+  //跳转到首页
+  function toIndex() {
+    url='/common/toIndex';
+    window.location.href=encodeURI(url);
+  }
 
   //倒计时
   function getRandomCode() {

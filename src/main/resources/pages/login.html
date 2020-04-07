@@ -2,7 +2,6 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>登录页面 - 后台管理系统</title>
   <div th:include="~{/common/header::header}"></div>
 <style>
@@ -64,10 +63,12 @@
           <span class="mdi mdi-lock form-control-feedback" aria-hidden="true"></span>
         </div>
           <input type="checkbox"/><strong>记住我</strong>
-        <a href="index.html" class="pull-right">忘记密码</a>
+        <a th:href="@{/login/toLoginPhone}" class="pull-right">短信验证登录</a>
         <div class="form-group">
-          <button class="btn btn-block btn-primary" id="login" type="button" >立即登录</button>
-          <button th:type="submit">测试</button>
+          <button class="btn btn-block btn-primary btn-round" id="login" type="button" >立即登录</button>
+          <div class="col-md-12">
+            <a th:href="@{/common/toAlterPassword}" class="col-md-offset-3">已有账号,忘记密码?</a>
+          </div>
         </div>
       </form>
       <hr>
@@ -76,7 +77,7 @@
 </div>
 <div th:include="~{/common/footer::footer}"></div>
 <script th:inline="javascript">
-          // 消息提示示例
+          //登录事件
           $('#login').on('click', function(){
             lightyear.loading('show');
             // 假设ajax提交操作
@@ -92,14 +93,14 @@
                 if (res.temp === '1') {
                   setTimeout(function() {
                     lightyear.notify( res.msg, 'success', 2000);
-                  }, 1e3);
-                  setTimeout(toIndex,2000);
+                  }, 100);
+                  setTimeout(toIndex,800);
                 }
                 if(res.temp==="0"){
                   setTimeout(function() {
                     lightyear.loading('hide');
                     lightyear.notify(res.msg, 'danger', 100);
-                  }, 1e3);
+                  }, 100);
                 }
 
               }});
@@ -110,6 +111,7 @@
             url='/common/toIndex';
             window.location.href=encodeURI(url);
           }
+
 </script>
 </body>
 </html>
