@@ -43,7 +43,10 @@ public interface DynamicStateMapper {
      * @return 用户的动态
      */
     @Select("SELECT dynamic_state.* FROM member LEFT JOIN dynamic_state ON member_id=dynamic_state_create_id WHERE member_id=#{id}")
+    @ResultMap("dynamic_state_creator")
     List<DynamicState> queryDynamicStateByMemberId(int id);
+
+
 
     /**
      * 查询所有的动态信息
@@ -51,6 +54,7 @@ public interface DynamicStateMapper {
      * @return 所有动态信息
      */
     @Select("select * from dynamic_state")
+    @ResultMap("dynamic_state_creator")
     List<DynamicState> queryDynamicStateAll();
 
     /**

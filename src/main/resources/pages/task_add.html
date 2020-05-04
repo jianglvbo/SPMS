@@ -24,7 +24,7 @@
                                 <input class="form-control input-lg" id="task_add_task_name" th:placeholder="请输入项目名称">
                             </div>
                         </div>
-                        <div class="pull-right"><button class="btn btn-success btn-round" id="task_add_save">保存</button></div>
+                        <div class="pull-right"><button class="btn btn-success btn-round" shiro:hasPermission="task:add" id="task_add_save">保存</button></div>
                     </div>
                     <div class="card-body container-fluid">
                         <form id="task_add_form" class="form-horizontal" th:action="@{/task/editTask}">
@@ -89,12 +89,19 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="task_add_test">测试人:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" data-live-search="true"  id="task_add_test">
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </form>
                             <div class="col-md-12">
                                 <div class=" m-b-10">
                                     <label class="control-label m-b-5" th:for="task_add_content">任务描述:</label>
-                                    <textarea class="form-control" id="task_add_content" rows="5" name="taskContent" placeholder="内容..."></textarea>
+                                    <textarea class="form-control" id="task_add_content" rows="5"  maxlength="400" name="taskContent" placeholder="内容...最多400字"></textarea>
                                 </div>
                             </div>
                     </div>
@@ -147,7 +154,9 @@
                     });
                     str+="</optgroup>";
                     $("#task_add_executor").append(str);
+                    $("#task_add_test").append(str);
                     $("#task_add_executor").selectpicker("refresh");
+                    $("#task_add_test").selectpicker("refresh");
                 })
             }
         });
@@ -177,14 +186,14 @@
                 $("#task_add_task_name_div").addClass("has-error");
                 setTimeout(function() {
                     lightyear.notify('请输入项目名称', 'danger', 100);
-                }, 1e3);
+                }, 200);
                 return;
             }
             if($("#task_add_start_time").val()==""||$("#task_add_end_time").val()==""){
                 $("#task_add_time_div").addClass("has-error");
                 setTimeout(function() {
                     lightyear.notify('请输入项目时间', 'danger', 100);
-                }, 1e3);
+                }, 200);
                 return;
             }
             var str={
@@ -192,6 +201,7 @@
             'taskPriority':$("#task_add_priority").val(),
                 'taskCreateId':[[${session.user.memberId}]],
                 'taskExecuteId':$("#task_add_executor").val(),
+                'taskTestId':$("#task_add_test").val(),
                 'taskRelateProjectId':$("#task_add_relate_project").val(),
                 'taskType':$("#task_add_type").val(),
                 'taskStartTime':$("#task_add_start_time").val(),
@@ -209,7 +219,7 @@
                 success: function (result) {
                     setTimeout(function() {
                         lightyear.notify(result.msg, 'success', 2000);
-                    }, 1e3);
+                    }, 200);
                 }
             });
         })

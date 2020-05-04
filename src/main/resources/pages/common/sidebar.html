@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <nav th:fragment="sidebar">
     <body data-theme="default" data-logobg="color_8" data-headerbg="color_8" data-sidebarbg="color_8">
 <!--左侧导航-->
 <aside class="lyear-layout-sidebar">
     <!-- logo -->
-    <div id="logo" class="sidebar-header">
-        <a th:href="@{/common/toIndex}"><img th:src="@{/images/logo-sidebar.png}" title="LightYear" alt="LightYear" /></a>
+    <div id="logo" class="sidebar-header " style="height: 65px;">
+        <a th:href="@{/common/toIndex}"><h3 style="margin-top: 20px;color: #FFFFFF">软件开发流程管理</h3></a>
     </div>
     <div class="lyear-layout-sidebar-scroll">
         <nav class="sidebar-main">
@@ -27,7 +27,10 @@
                     <a  th:href="@{/team/toTeam}"  th:onclick="sidebarJump(4)"><i class="mdi mdi-account-multiple"></i>团队</a>
                 </li>
                 <li class="nav-item">
-                    <a th:href="@{/setting/toSetting}"  th:onclick="sidebarJump(5)"><i class="mdi mdi-menu"></i> 设置</a>
+                    <a th:href="@{/common/toArchive}"  th:onclick="sidebarJump(5)"><i class="mdi mdi-archive"></i>归档</a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/setting/toSetting}"  th:onclick="sidebarJump(6)" shiro:hasPermission="setting"><i class="mdi mdi-menu"></i>设置</a>
                 </li>
             </ul>
         </nav>

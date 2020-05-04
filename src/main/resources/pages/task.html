@@ -17,6 +17,7 @@
                             <div id="task_toolbar">
                                     <a id="task_add" class="btn btn-primary m-r-5 btn-round" onclick="add()" shiro:hasPermission="task:add"><i class="mdi mdi-plus"></i> 新增</a>
                                     <a id="task_remove" class="btn btn-danger btn-round" onclick="removeByIds()" shiro:hasPermission="task:delete"><i class="mdi mdi-window-close"></i> 删除</a>
+                                    <a id="task_archive" class="btn btn-success btn-round" onclick="archiveByIds()" shiro:hasPermission="task:archive"><i class="mdi mdi-window-close"></i> 归档</a>
                             </div>
                         </div>
                         <div class="card-body">
@@ -34,20 +35,14 @@
     <div th:include="~{/common/footer::footer}"></div>
 </footer>
 <script th:inline="javascript">
-        $(document).ready(function () {
             //初始化table
-            var oTable = new tableInit();
-            oTable.init();
-        });
-
-    //项目表的初始化
-    var tableInit=function (){
-        var oTableInit=new Object();
-        oTableInit.init=function () {
+            taskTableInit();
+    //任务表的初始化
+       function taskTableInit () {
             //销毁上一个bootstrapTbale对象
             $('#task_table').bootstrapTable('destroy');
             $('#task_table').bootstrapTable({
-                    url: "/task/queryTaskByMemberId?memberId="+[[${session.user.memberId}]],  //请求地址
+                    url: "/task/queryTaskByMemberIdAndRole?memberId="+[[${session.user.memberId}]]+"&role="+[[${session.user.memberRole}]],  //请求地址
                     striped: true, //是否显示行间隔色
                     pageNumber: 1, //初始化加载第一页
                     pagination: true,//是否分页
@@ -65,7 +60,7 @@
                     columns: [{
                         checkbox: true//显示复选框
                     }, {
-                        title: '#',
+                        title: '编号',
                         field: 'taskId',
                         align: "center",
                         sortable: true,
@@ -77,16 +72,20 @@
                         sortable: true,
                         switchable:false,
                         formatter:function (value, row, index) {
-                           return  '<a href="#" onclick="toTaskDetail('+row.taskId+')">'+
+                          var str= '<a href="#" onclick="toTaskDetail('+row.taskId+')">'+
                             value +
                             '</a>';
+                           if(row.taskPostpone==true){
+                               str+="<label class='label label-danger'  style='margin-left: 10px'>逾 期</label>";
+                           }
+                           return str;
                         }
                     }, {
                         title: '优先级',
                         field: 'taskPriority',
                         align: "center",
                         sortable: true,
-                        switchable:false,
+                        switchable:true,
                         formatter:function (value, row, index) {
                             var str="";
                             if(value=='1'){
@@ -107,7 +106,7 @@
                         field: 'taskStatus',
                         align: "center",
                         sortable: true,
-                        switchable:false,
+                        switchable:true,
                         formatter:function (value,row,index) {
                                 if(value=='1'){
                                     return "<span class='label label-secondary'>待办的</span>";
@@ -124,7 +123,7 @@
                         field: 'taskType',
                         align: "center",
                         sortable: true,
-                        switchable:false,
+                        switchable:true,
                         formatter:function (value, row, index) {
                             var str="";
                             if(value=='1'){
@@ -150,30 +149,39 @@
                         field: 'taskExecutor',
                         align: "center",
                         sortable: true,
-                        switchable:false,
+                        switchable:true,
                         formatter:function (value,row,index) {
                             return    '<a href="#" onclick="toMemberDetail('+value.memberId+')">'+
                                 value.memberName +
                                 '</a>';
                         }
                     }, {
-                        title: '开始时间',
+                        title: '关联项目',
+                        field: 'taskRelateProject',
+                        align: "center",
+                        sortable: true,
+                        switchable:true,
+                        formatter:function (value, row, index) {
+                            return value.projectName;
+                        }
+                    }, {
+                        title: '创建时间',
                         field: 'taskStartTime',
                         align: "center",
                         sortable: true,
-                        switchable:false
+                        switchable:true
                     }, {
-                        title: '结束时间',
+                        title: '截止时间',
                         field: 'taskEndTime',
                         align: "center",
                         sortable: true,
-                        switchable: false
+                        switchable: true
                     }, {
                         title: '任务进度',
                         field: 'taskSchedule',
                         align: "center",
                         sortable: true,
-                        switchable: false,
+                        switchable: true,
                         formatter:function (value,row,index) {
                            return '<div class="progress">' +
                                '<div class="progress-bar progress-bar-info active progress-bar-striped" role="progressbar" style="width: '+value+'%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">' +
@@ -182,14 +190,9 @@
                                '</div>';
                         }
                     }
-                    ],
-                    onLoadSuccess: function (result) {
-                        console.info("项目数据加载完成");
-                    }
+                    ]
                 }
             );
-        };
-        return oTableInit;
     };
 
         //跳转到添加页面
@@ -198,6 +201,7 @@
             window.location.href=encodeURI(url);
         }
 
+        //删除任务信息
         function removeByIds() {
             var tasks=$("#task_table").bootstrapTable("getSelections");
             if(tasks.length<1){
@@ -216,12 +220,59 @@
                         type: "post",
                         data: JSON.stringify(taskIds),
                         dataType: "json",
-                        success: function (status) {
-                            $("#task_table").bootstrapTable('refresh');
+                        success: function (result) {
+                            if (result.temp == 'success') {
+                                setTimeout(function () {
+                                    lightyear.notify(result.msg, 'success', 2000);
+                                }, 100);
+                                $("#task_table").bootstrapTable('refresh');
+                            }
+                            if (result.temp == 'danger') {
+                                setTimeout(function () {
+                                    lightyear.notify(result.msg, 'danger', 2000);
+                                }, 100);
+                            }
                         }
                     });
                 }
             }
         }
+
+        //归档任务
+            function archiveByIds() {
+                var tasks=$("#task_table").bootstrapTable("getSelections");
+                if(tasks.length<1){
+                    alert("请至少选择一个要删除的任务");
+                }else{
+                    var r = confirm("归档后无法恢复，是否要归档?");
+                    if(r){
+                        var taskIds=new Array();
+                        tasks.forEach(function (value,index) {
+                            taskIds.push(value.taskId);
+                        });
+                        //通过“，”分割插入字符串
+                        $.ajax({
+                            url: "/task/archiveTaskByTaskIds",
+                            contentType: "application/json;charset=UTF-8",
+                            type: "post",
+                            data: JSON.stringify(taskIds),
+                            dataType: "json",
+                            success: function (result) {
+                                if (result.temp == 'success') {
+                                    setTimeout(function () {
+                                        lightyear.notify(result.msg, 'success', 2000);
+                                    }, 100);
+                                    $("#task_table").bootstrapTable('refresh');
+                                }
+                                if (result.temp == 'danger') {
+                                    setTimeout(function () {
+                                        lightyear.notify(result.msg, 'danger', 2000);
+                                    }, 100);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
 </script>
 </html>

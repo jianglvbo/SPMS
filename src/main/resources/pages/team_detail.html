@@ -249,14 +249,14 @@
                 $("#team_detail_team_name_div").addClass("has-error");
                 setTimeout(function() {
                     lightyear.notify('请输入团队名称', 'danger', 100);
-                }, 1e3);
+                }, 200);
                 return;
             }
             if($("#team_detail_create_time").val()==""){
                 $("#team_detail_create_time_div").addClass("has-error");
                 setTimeout(function() {
                     lightyear.notify('创建时间不能为空', 'danger', 100);
-                }, 1e3);
+                }, 200);
                 return;
             }
             var str={
@@ -274,7 +274,7 @@
                 success: function (result) {
                     setTimeout(function() {
                         lightyear.notify(result.msg, 'success', 2000);
-                    }, 1e3);
+                    }, 200);
                 }
             });
         });

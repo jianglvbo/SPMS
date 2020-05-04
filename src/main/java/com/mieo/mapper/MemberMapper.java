@@ -24,7 +24,7 @@ public interface MemberMapper {
      * 修改对应id的成员信息
      * @param member 成员信息
      */
-    @Update("update member set member_role=#{memberRole},member_name=#{memberName}," +
+    @Update("update member set member_role=#{memberRole},member_name=#{memberName},member_account=#{memberAccount}," +
             "member_phone=#{memberPhone},member_team_id=#{memberTeamId},member_create_time=#{memberCreateTime}," +
             "member_gender=#{memberGender}," +
             "member_icon=#{memberIcon} where member_id=#{memberId}")
@@ -64,26 +64,28 @@ public interface MemberMapper {
     @ResultMap("member_team")
     Member queryMemberById(Integer id);
 
-    @Select("SELECT" +
-            " *" +
-            " FROM" +
-            " ( SELECT * FROM project_member_rel pr WHERE project_id = #{id} AND role = 1 ) a " +
-            " LEFT JOIN member m ON a.member_id = m.member_id")
-    List<Member> queryProjectPrincipals(Integer id);
+    /**
+     * 通过用户id查询用户名称
+     * @param id
+     * @return
+     */
+    @Select("SELECT member_name FROM member WHERE member_id=#{id}")
+    String queryMemberNameByMemberId(Integer id);
 
-    @Select("SELECT" +
-            " *" +
-            " FROM"+
-            " ( SELECT * FROM project_member_rel pr WHERE project_id = #{id} AND role = 2 ) a" +
-            " LEFT JOIN member m ON a.member_id = m.member_id")
-    List<Member> queryProjectEngineers(Integer id);
+    /**
+     * 查询团队下的成员是否为空
+     * @param teamId
+     * @return
+     */
+    @Select("SELECT count(*) FROM  member where member_team_id=#{teamId}")
+    int queryMemberCountByTeamId(int teamId);
 
-    @Select("SELECT" +
-            " *" +
-            " FROM"+
-            " ( SELECT * FROM project_member_rel pr WHERE project_id = #{id} AND role = 3 ) a" +
-            " LEFT JOIN member m ON a.member_id = m.member_id")
-    List<Member> queryProjectTesters(Integer id);
+    /**
+     * 查询所有的成员数量
+     * @return
+     */
+    @Select("Select count(*) from member")
+    int queryMemberCountAll();
 
     /**
      * 查询用户密码

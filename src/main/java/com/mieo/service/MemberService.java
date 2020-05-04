@@ -1,6 +1,7 @@
 package com.mieo.service;
 
 import com.mieo.model.Member;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public interface MemberService {
      * @param ids 成员id链表
      * @return 状态码
      */
-    void deleteMemberByIds(List<Integer> ids);
+    Map<String,String> deleteMemberByIds(List<Integer> ids);
 
 
     /**
@@ -75,6 +76,26 @@ public interface MemberService {
      * @return 用户信息
      */
     Member queryMemberById(Integer id);
+
+    /**
+     * 通过用户id查询用户名称
+     * @return
+     */
+     String queryMemberNameByMemberId(Integer id);
+
+    /**
+     * 查询团队下的成员是否为空
+     * @param teamId
+     * @return
+     */
+    @Select("SELECT count(*) FROM  member where member_team_id=#{teamId}")
+    int queryMemberCountByTeamId(int teamId);
+
+    /**
+     * 查询所有的成员数量
+     * @return
+     */
+    int queryMemberCountAll();
 
     /**
      * 查询一个团队下的所有成员

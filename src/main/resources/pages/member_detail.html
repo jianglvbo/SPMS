@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>成员详情 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="pull-right" shiro:hasPermission="member:edit">
+                <button class="btn btn-round btn-secondary" id="member_detail_edit">
+                    <i class="mdi mdi-account-edit"  data-toggle="tooltip" data-placement="left" title="" data-original-title="修改用户信息"></i>
+                </button>
+            </div>
+                <div class="row col-md-12" style="padding: 2%" >
+                    <div class="col-md-offset-6">
+                        <img class="img-avatar m-r-10" th:src="${member.memberIcon}" th:alt="${member.memberName}" />
+                    </div>
+                </div>
+                <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs">
+                                <li id="member_detail_dynamic_state"  class="active">
+                                    <a href="#" >
+                                        <i class=" mdi mdi-calendar-range"></i>
+                                        活动日志
+                                    </a>
+                                </li>
+                                <li id="member_detail_project">
+                                    <a href="#" >
+                                        <i class="mdi mdi-hexagon-multiple"></i>
+                                        参与的项目
+                                    </a>
+                                </li>
+                                <li id="member_detail_task">
+                                    <a href="#" >
+                                        <i class="mdi mdi-calendar-multiple-check"></i>
+                                        任务
+                                    </a>
+                                </li>
+                            </ul>
+                            <table id="member_detail_dynamic_state_table" class="table table-striped"></table>
+                            <table id="member_detail_project_table" class="table table-striped" style="table-layout:fixed"></table>
+                            <table id="member_detail_task_table" class="table table-striped" style="table-layout:fixed"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+        //初始化table
+        memberDetailDynamicStateTable();
+        memberEdit();
+
+    $("#member_detail_dynamic_state").on("click",function () {
+        $("#member_detail_project_table").bootstrapTable("destroy");
+        $("#member_detail_task_table").bootstrapTable("destroy");
+        $("#member_detail_task").removeClass("active");
+        $("#member_detail_project").removeClass("active");
+        $("#member_detail_dynamic_state").addClass("active");
+        memberDetailDynamicStateTable();
+    });
+    $("#member_detail_project").on("click",function () {
+        $("#member_detail_dynamic_state_table").bootstrapTable("destroy");
+        $("#member_detail_task_table").bootstrapTable("destroy");
+        $("#member_detail_dynamic_state").removeClass("active");
+        $("#member_detail_task").removeClass("active");
+        $("#member_detail_project").addClass("active");
+        memberDetailProjectTable();
+    });
+    $("#member_detail_task").on("click",function () {
+        $("#member_detail_dynamic_state_table").bootstrapTable("destroy");
+        $("#member_detail_project_table").bootstrapTable("destroy");
+        $("#member_detail_dynamic_state").removeClass("active");
+        $("#member_detail_project").removeClass("active");
+        $("#member_detail_task").addClass("active");
+        memberDetailTaskTable();
+    });
+
+    //动态表的初始化
+    function memberDetailDynamicStateTable(){
+            //销毁上一个bootstrapTbale对象
+            $('#member_detail_dynamic_state_table').bootstrapTable('destroy');
+            $('#member_detail_dynamic_state_table').bootstrapTable({
+                    url: "/dynamicState/queryDynamicStateByMemberId?memberId="+[[${member.memberId}]],  //请求地址
+                    striped: true, //是否显示行间隔色
+                    pageNumber: 1, //初始化加载第一页
+                    pagination: true,//是否分页
+                    sidePagination: 'client',//server:服务器端分页|client：前端分页
+                    pageSize: 10,//单页记录数
+                    pageList: [10, 15, 20],//可选择单页记录数
+                    method: 'post',//请求方式
+                    trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                    search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    classes:"table table-no-bordered table-hover", //设置表格样式
+                    //设置排序列
+                    sortName: 'dynamicStateCreateTime',
+                    //设置排序方式
+                    sortOrder: 'desc',
+                columns: [{
+                    field: 'dynamicStateCreator',
+                    align: "left",
+                    sortable: true,
+                    switchable:false,
+                    formatter: function (value, row, index) {
+                        var str = ' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="' + value.memberIcon + '" alt="' + value.memberName + '"/>'
+                        str += '<a href="#" onclick="toMemberDetail(' + value.memberId + ')" style="padding-right: 5px">' +
+                            value.memberName +
+                            '</a>';
+                        if(row.dynamicStateAction.substring(0,2)=="添加"){
+                            str += "<span class='label label-primary'>";
+                        }if(row.dynamicStateAction.substring(0,2)=="修改"){
+                            str += "<span class='label label-warning'>";
+                        }if(row.dynamicStateAction.substring(0,2)=="删除"){
+                            str += "<span class='label label-danger'>";
+                        }if(row.dynamicStateAction.substring(0,2)=="归档"){
+                            str += "<span class='label label-secondary'>";
+                        }
+                        str +=  row.dynamicStateAction + "</span>" +
+                            "<strong style='padding-left: 5px'>" + row.dynamicStateContent + "</strong>";
+                        return str;
+                    }
+                },{
+                    field: 'dynamicStateCreateTime',
+                    align: "right",
+                    sortable: true,
+                    switchable:false
+                }],
+                    onLoadSuccess: function (result) {
+                        console.info("动态数据加载完成");
+                    }
+                });
+    };
+
+    //项目表的初始化
+    function memberDetailProjectTable(){
+        var oTableInit=new Object();
+            //销毁上一个bootstrapTbale对象
+            $('#member_detail_project_table').bootstrapTable('destroy');
+            $('#member_detail_project_table').bootstrapTable({
+                    url: "/project/queryProjectByMemberId?memberId="+[[${member.memberId}]],  //请求地址
+                    striped: true, //是否显示行间隔色
+                    pageNumber: 1, //初始化加载第一页
+                    pagination: true,//是否分页
+                    sidePagination: 'client',//server:服务器端分页|client：前端分页
+                    pageSize: 10,//单页记录数
+                    pageList: [10, 15, 20],//可选择单页记录数
+                    method: 'post',//请求方式
+                    trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                    search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    classes:"table table-no-bordered table-hover", //设置表格样式
+                    columns: [ {
+                        field: 'projectName',
+                        align: "left",
+                        sortable: true,
+                        formatter:function (value,row,index) {
+                            var str='';
+                            str+= '<a href="#" onclick="toProjectDetail('+row.projectId+')">'+
+                                value +
+                                '</a>';
+                            if(row.projectPostPhone==true){
+                                str+="<label class='label label-danger'>逾 期</label>";
+                            }
+                            return str;
+                        }
+                    }, {
+                        field: 'projectContent',
+                        align: "left",
+                        sortable: true,
+                        formatter:function (value) {
+                            return "<p class='table_td'>"+value+"</p>";
+                        }
+                    }, {
+                        field: 'projectEndTime',
+                        align: "right",
+                        sortable: true,
+                        formatter:function (value,row,index) {
+                            return row.projectStartTime+" <strong> 至 </strong> "+value;
+                        }}],
+                    onLoadSuccess: function (result) {
+                        console.info("项目数据加载完成");
+                    }
+                }
+            );
+    };
+
+    //任务表的初始化
+   function memberDetailTaskTable(){
+            //销毁上一个bootstrapTbale对象
+            $('#member_detail_task_table').bootstrapTable('destroy');
+            $('#member_detail_task_table').bootstrapTable({
+                    url: "/task/queryTaskByMemberId?memberId="+[[${member.memberId}]],  //请求地址
+                    striped: true, //是否显示行间隔色
+                    pageNumber: 1, //初始化加载第一页
+                    pagination: true,//是否分页
+                    sidePagination: 'client',//server:服务器端分页|client：前端分页
+                    pageSize: 10,//单页记录数
+                    pageList: [10, 15, 20],//可选择单页记录数
+                    method: 'post',//请求方式
+                    trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                    search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                    classes:"table table-no-bordered table-hover", //设置表格样式
+                    //设置排序列
+                    sortName: 'taskEndTime',
+                    //设置排序方式
+                    sortOrder: 'desc',
+                    columns: [ {
+                        field: 'taskName',
+                        align: "left",
+                        sortable: true,
+                        formatter:function (value,row,index) {
+                            var str= '<a href="#" onclick="toTaskDetail('+row.taskId+')">'+
+                                value +
+                                '</a>';
+                            if(row.taskPostPone){
+                                str+="<label class='label label-danger'  style='margin-left: 10px'>逾 期</label>";
+                            }
+                            return str;
+                        }
+                    },{
+                        field: 'taskContent',
+                        align: "left",
+                        sortable: true,
+                        formatter:function (value) {
+                            return "<p class='table_td'>"+value+"</p>";
+                        }
+                    },   {
+                        field: 'taskStartTime',
+                        align: "right",
+                        sortable: true,
+                        formatter:function (value,row,index) {
+                            return value+"<strong> 至 </strong>"+row.taskEndTime;
+                        }
+                    }],
+                    onLoadSuccess: function (result) {
+                        console.info("动态数据加载完成");
+                    }
+                }
+            );
+    };
+
+   function memberEdit(){
+       if([[${member.memberId}]]!=[[${session.user.memberId}]]){
+           if([[${session.user.memberRole}]]==1){
+               return;
+           }
+           $("#member_detail_edit").addClass("hidden");
+       }
+   }
+   //成员详情编辑按钮
+        $("#member_detail_edit").on('click',function () {
+            //跳转到修改资料页面
+            url='/member/toEditMember?memberId='+[[${member.memberId}]];
+            window.location.href=encodeURI(url);
+        })
+
+</script>
+</html>

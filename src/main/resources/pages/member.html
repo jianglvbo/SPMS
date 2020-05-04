@@ -67,24 +67,36 @@
                 columns: [{
                         checkbox: true//显示复选框
                     }, {
-                        title: '#',
+                        title: '编号',
                         field: 'memberId',
                         align: "center",
                         sortable: true,
                         switchable:false
                     },{
-                        title: '性别',
-                        field: 'memberGender',
-                        sortable: true,
-                        align:"center",
-                        formatter:function (value) {
-                            if(value==="1"){
-                                return "<span class='label label-info'>男</span>"
-                            }else if (value==="2"){
-                                return "<span class='label-pink label'>女</span>"
-                            }
+                    title: '姓名',
+                    field: 'memberName',
+                    sortable: true,
+                    switchable:false,
+                    valign:"center",
+                    align:"center",
+                    formatter:function (value,row,index) {
+                        var str='<div class="col-md-4">' +
+                            '<img class=" img-circle img-responsive" style="height: 30px;width: 30px" src="'+row.memberIcon+'">' +
+                            '</div>' +
+                            '<div class="col-md-5"><label>' +
+                            '<a href="#" onclick="toMemberDetail('+row.memberId+')">' +
+                            row.memberName +
+                            '</a>';
+                        if(row.memberGender==="1"){
+                            str+="<span class='label label-info' style='margin-left: 10px'>男</span>"
+                        }else if (row.memberGender==="2"){
+                            str+="<span class='label-pink label' style='margin-left: 10px'>女</span>"
                         }
-                    },{
+                            str+='</label></div>';
+                     return str;
+
+                    }
+                }, {
                         title: '职位',
                         field: 'memberRole',
                         sortable: true,
@@ -104,24 +116,6 @@
                             }
                         }
                     },{
-                        title: '姓名',
-                        field: 'memberName',
-                        sortable: true,
-                        switchable:false,
-                        valign:"center",
-                        align:"center",
-                        formatter:function (value,row,index) {
-                            return '' +
-                                '<div class="col-md-4">' +
-                                '<img class=" img-circle img-responsive" style="height: 30px;width: 30px" src="'+row.memberIcon+'">' +
-                                '</div>' +
-                                '<div class="col-md-5"><label>' +
-                                '<a href="#" onclick="toMemberDetail('+row.memberId+')">' +
-                                row.memberName +
-                                '</a>' +
-                                '</label></div>';
-                        }
-                    }, {
                         title: '电话',
                         field: 'memberPhone',
                         sortable: true,
@@ -147,26 +141,6 @@
         return oTableInit;
     };
 
-    //单个删除
-    function deleteById(memberId){
-        var r = confirm("是否要删除改成员?");
-                    if (r) {
-                        var str = {
-                            "id": memberId
-                        };
-                        $.ajax({
-                            url: "/member/deleteMemberById",
-                            contentType: "application/json;charset=UTF-8",
-                            type: "post",
-                            data: JSON.stringify(str),
-                            dataType: "json",
-                            success: function (status) {
-                                $("#member_table").bootstrapTable('refresh');
-                            }
-                        });
-                    }
-    }
-
     //批量删除
     function removeById() {
         var members=$("#member_table").bootstrapTable("getSelections");
@@ -187,17 +161,22 @@
                     data: JSON.stringify(memberIds),
                     dataType: "json",
                     success: function (result) {
-                        $("#member_table").bootstrapTable('refresh');
+                        if(result.temp=='1'){
+                            setTimeout(function() {
+                                lightyear.notify(result.msg,'success', 2000);
+                            }, 100);
+                            $("#member_table").bootstrapTable('refresh');
+                        }if(result.temp=='0'){
+                            setTimeout(function() {
+                                lightyear.notify(result.msg,'danger', 2000);
+                            }, 100);
+                        }
                     }
                 });
             }
         }
     }
 
-    //添加成员表单提交事件
-    function memberSubmit() {
-        $("#member_add_form").submit();
-    }
 
     //编辑信息
     function memberEdit(id) {
@@ -248,46 +227,7 @@
         window.location.href=encodeURI(url);
     }
 
-    //清除模态框数据
-    function clearModal() {
-        //头像
-        $("#member_icon_thumbnail").attr("src",null);
-        //名字
-        $("#member_add_name").val(null);
-        //职位
-        $("#member_add_role").val(null);
-        //团队
-        $("#member_add_team").val(null);
-        //加入时间
-        $("#member_add_createTime").val(null);
-        //性别
-        $("#member_add_gender_radio1").removeAttr("checked");
-        $("#member_add_gender_radio2").removeAttr("checked");
-        //成员电话
-        $("#member_add_phone").val(null);
-        //成员账号
-        $("#member_add_account").val(null);
-        //成员密码
-        $("#member_add_password").val(null);
-    }
 
-    //上传图片
-    $("#member_icon_submit").on("click",function iconSubmit() {
-        $.ajax({
-            url: "/icon/uploadIcon",
-            type: "post",
-            data: new FormData($("#member_add_icon_form")[0]),
-            async: false,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function (status) {
-                var fileName="/localImages/member/"+status.fileName;
-                $("#member_icon_thumbnail").attr("src",fileName);
-                $("#member_icon_input").val(fileName);
-            }
-        });
-    });
 
 </script>
 </html>

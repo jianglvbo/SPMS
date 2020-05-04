@@ -14,9 +14,9 @@ public class LocalTime {
         public static boolean  isPostpone(String time){
             Date t=new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");//设置日期格式
-            Date endTime=null;
+            Date endTime=new Date();
             try {
-                endTime= df.parse(time);
+                endTime= df.parse(time.toString());
             } catch (ParseException e) {
                 log.debug("LocalTime 解析时间错误");
                 e.printStackTrace();

@@ -43,6 +43,12 @@ public class DynamicStateController {
         return dynamicStateService.queryDynamicStateByMemberId(memberId);
     }
 
+    @RequestMapping("queryDynamicStateAll")
+    @ResponseBody
+    public List<DynamicState> queryDynamicStateAll(){
+        return dynamicStateService.queryDynamicStateAll();
+    }
+
     @RequestMapping("queryDynamicStateByTypeAndTypeId")
     @ResponseBody
     public List<DynamicState> queryDynamicStateByTypeId(@RequestBody Map<String, Integer> map) {
@@ -50,4 +56,6 @@ public class DynamicStateController {
         Integer typeId = MapUtils.getInteger(map, "typeId");
         return dynamicStateService.queryDynamicStateByTypeAndTypeId(type, typeId);
     }
+
+
 }

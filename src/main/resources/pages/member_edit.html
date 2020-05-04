@@ -30,10 +30,16 @@
                                         <input class="form-control" id="member_add_member_name">
                                     </div>
                                 </div>
+                                <div class="col-md-12 m-b-10" id="member_add_account_div">
+                                    <label class="control-label col-md-3" for="member_add_account">用户账户:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="member_add_account">
+                                    </div>
+                                </div>
                                 <div class="col-md-12 m-b-10">
                                     <label class="control-label col-md-3" for="member_add_gender">用户性别:</label>
                                     <div class="col-md-9">
-                                       <select class="form-control selectpicker" id="member_add_gender">
+                                       <select class="form-control selectpicker" id="member_add_gender"  >
                                            <option data-content="<span class='label label-info'>男</span>" th:value="1"></option>
                                            <option data-content="<span class='label label-pink'>女</span>" th:value="2"></option>
                                       </select>
@@ -66,13 +72,13 @@
                                 <div class="col-md-12 m-b-10" id="member_add_create_time_div">
                                     <label class="control-label col-md-3"  for="member_add_create_time">加入时间:</label>
                                     <div class="col-md-9">
-                                        <input th:name="memberCreateTime" data-date-format="YYYY-MM-DD HH:mm:ss" class="form-control js-datetimepicker" id="member_add_create_time">
+                                        <input th:name="memberCreateTime" data-date-format="YYYY-MM-DD HH:mm" class="form-control js-datetimepicker" id="member_add_create_time">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-md-12">
-                                <div class="pull-right" shiro:hasPermission="1">
+                                <div class="pull-right" shiro:hasPermission="member:edit">
                                     <button id="member_add_save" class="btn btn-round btn-success">
                                         保存
                                     </button>
@@ -140,21 +146,21 @@
                 $("#member_add_member_name_div").addClass("has-error");
                 setTimeout(function() {
                     lightyear.notify('请输入成员名称', 'danger', 100);
-                }, 1e3);
+                }, 200);
                 return;
             }
             if($("#member_add_create_time").val()==""){
                 $("#member_add_create_time_div").addClass("has-error");
                 setTimeout(function() {
                     lightyear.notify('请输入时间', 'danger', 100);
-                }, 1e3);
+                }, 200);
                 return;
             }
             if($("#member_add_account").val()==""){
                 $("#member_add_account_div").addClass("has-error");
                 setTimeout(function() {
                     lightyear.notify('请输入账号', 'danger', 100);
-                }, 1e3);
+                }, 200);
                 return;
             }
         var str={
@@ -164,6 +170,7 @@
             'memberPhone':$("#member_add_phone").val(),
             'memberTeamId':$("#member_add_team").val(),
             'memberCreateTime':$("#member_add_create_time").val(),
+            'memberAccount':$("#member_add_account").val(),
             'memberGender':$("#member_add_gender").val(),
             'memberIcon':$("#member_add_icon_input").val()
         };
@@ -176,7 +183,7 @@
             success: function (result) {
                 setTimeout(function() {
                     lightyear.notify('修改成功','success', 2000);
-                }, 1e3);
+                }, 200);
             }
         });
     });
@@ -192,6 +199,11 @@
         $("#member_add_create_time").val([[${member.memberCreateTime}]]);
         $("#member_add_account").val([[${member.memberAccount}]]);
         $("#member_add_gender").val([[${member.memberGender}]]);
+        if([[${session.user.memberRole}]]!=1){
+            $("#member_add_role").attr("disabled","true");
+            $("#member_add_team").attr("disabled","true");
+            $("#member_add_create_time").attr("disabled","true");
+        }
     }
 </script>
 </html>

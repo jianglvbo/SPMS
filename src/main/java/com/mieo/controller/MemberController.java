@@ -89,13 +89,12 @@ public class MemberController {
     @RequestMapping("removeMemberByIds")
     @ResponseBody
     public Map<String, String> removeMemberByIds(@RequestBody List<Integer> ids) {
-        memberService.deleteMemberByIds(ids);
-        Map<String, String> msg = new HashMap<>();
-        msg.put("msg", "删除成功");
-        return msg;
+       return memberService.deleteMemberByIds(ids);
     }
 
     /**
+     * \]]]]]]]\
+     *
      * 跳转到修改成员信息页面
      *
      * @param memberId 编辑的成员
@@ -157,48 +156,27 @@ public class MemberController {
         return memberService.queryMemberByTeamId(teamId);
     }
 
-    /**
-     * 跳到成员详情任务页面
-     *
-     * @param memberId
-     * @return
-     */
-    @RequestMapping("toMemberDetailProject")
-    public ModelAndView toMemberDetailProject(int memberId) {
-        log.debug("跳转到用户详情项目页面");
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("member", memberService.queryMemberById(memberId));
-        modelAndView.setViewName("member_detail_project");
-        return modelAndView;
+    @RequestMapping("queryMemberCountAll")
+    @ResponseBody
+    public Map<String,Integer> queryMemberCountAll(){
+        Map<String,Integer> map=new HashMap<>();
+        int i = memberService.queryMemberCountAll();
+        map.put("memberCount", i);
+        return map;
     }
 
     /**
-     * 跳转到成员详情动态页面
+     * 跳转到成员详情页面
      *
      * @param memberId
      * @return
      */
-    @RequestMapping("toMemberDetailDynamicState")
-    public ModelAndView toMemberDetailDynamicState(int memberId) {
+    @RequestMapping("toMemberDetail")
+    public ModelAndView toMemberDetail(int memberId) {
         log.debug("跳转到用户详情页面");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("member", memberService.queryMemberById(memberId));
-        modelAndView.setViewName("member_detail_dynamic_state");
-        return modelAndView;
-    }
-
-    /**
-     * 跳转到成员详情任务页面
-     *
-     * @param memberId
-     * @return
-     */
-    @RequestMapping("toMemberDetailTask")
-    public ModelAndView toMemberDetailTask(int memberId) {
-        log.debug("跳转到用户详情页面");
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("member", memberService.queryMemberById(memberId));
-        modelAndView.setViewName("member_detail_task");
+        modelAndView.setViewName("member_detail");
         return modelAndView;
     }
 

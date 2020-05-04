@@ -30,6 +30,8 @@ public interface TeamService {
      */
     void updateTeamByTeamId(Team team);
 
+
+
     /**
      * 查询所有的团队信息
      *
@@ -45,6 +47,12 @@ public interface TeamService {
      */
     Team queryTeamByTeamId(int id);
 
+    /**
+     * 通过团队id查询团队名称
+     * @param id
+     * @return
+     */
+    String queryTeamNameByTeamId(Integer id);
 
     /**
      * 查询所有团队信息及其成员

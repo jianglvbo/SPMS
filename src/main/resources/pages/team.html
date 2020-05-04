@@ -6,13 +6,6 @@
     <div th:include="~{/common/header::header}"></div>
     <div th:include="~{/common/sidebar::sidebar}"></div>
 </head>
-<style type="text/css">
-    .table_td {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-</style>
 <body>
 <div class="lyear-layout-container">
     <main class="lyear-layout-content">
@@ -99,7 +92,7 @@
                     columns: [{
                         checkbox: true//显示复选框
                     }, {
-                        title: '#',
+                        title: '编号',
                         field: 'teamId',
                         align: "center",
                         sortable: true,
@@ -141,32 +134,6 @@
         $("#team_modal").modal("show");
     });
 
-    //新增按钮点击事件
-    $("#team_delete").on('click',function () {
-      var teams=$("#team_table").bootstrapTable("getSelections");
-        if(teams.length<1){
-            alert("请至少选择一个要删除的团队");
-        }else{
-            var r = confirm("是否要删除该团队?");
-            if(r){
-                var teamIds=new Array();
-                teams.forEach(function (value,index) {
-                    teamIds.push(value.teamId);
-                });
-                //通过“，”分割插入字符串
-                $.ajax({
-                    url: "/team/deleteTeamByTeamIds",
-                    contentType: "application/json;charset=UTF-8",
-                    type: "post",
-                    data: JSON.stringify(teamIds),
-                    dataType: "json",
-                    success: function (status) {
-                        $("#team_table").bootstrapTable('refresh');
-                    }
-                });
-            }
-        }
-    });
 
     //添加团队保存事件
     $("#team_modal_save").on('click',function () {
@@ -181,7 +148,7 @@
             success: function (result) {
                 setTimeout(function() {
                     lightyear.notify(result.msg, 'success', 2000);
-                }, 1e3);
+                }, 200);
                 $("#team_modal_team_name").val('');
                 $("#team_modal_team_description").val('');
                 $("#team_modal").modal("hide");
@@ -189,6 +156,41 @@
             }
         });
     });
+
+    $("#team_delete").on("click",function () {
+        var teams=$("#team_table").bootstrapTable("getSelections");
+        if(teams.length<1){
+            alert("请至少选择一个要删除的团队");
+        }else{
+            var r = confirm("删除无法恢复，请确定");
+            if(r){
+                var teamIds=new Array();
+                teams.forEach(function (value,index) {
+                    teamIds.push(value.teamId);
+                });
+                //通过“，”分割插入字符串
+                $.ajax({
+                    url: "/team/removeTeamByTeamIds",
+                    contentType: "application/json;charset=UTF-8",
+                    type: "post",
+                    data: JSON.stringify(teamIds),
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.temp=='success'){
+                            setTimeout(function() {
+                                lightyear.notify(result.msg,'success', 2000);
+                            }, 100);
+                            $("#team_table").bootstrapTable('refresh');
+                        }if(result.temp=='danger'){
+                            setTimeout(function() {
+                                lightyear.notify(result.msg,'danger', 2000);
+                            }, 100);
+                        }
+                    }
+                });
+            }
+        }
+    })
 
 </script>
 </html>

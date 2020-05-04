@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>统计 - 项目管理系统</title>
+    <div th:include="~{/common/header::header}"></div>
+    <div th:include="~{/common/sidebar::sidebar}"></div>
+</head>
+<body>
+<div class="lyear-layout-container">
+    <main class="lyear-layout-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs">
+                                <li id="archive_project"  class="active">
+                                    <a href="#" >
+                                        <i class=" mdi mdi-file-document"></i>
+                                        已完成项目
+                                    </a>
+                                </li>
+                                <li id="archive_task">
+                                    <a href="#" >
+                                        <i class="mdi mdi-file-document-box"></i>
+                                        已完成任务
+                                    </a>
+                                </li>
+                            </ul>
+                            <div id="project_toolbar" class="form-group pull-left">
+                                <a id="archive_project_remove" class="btn btn-danger btn-round" onclick="projectRemoveByIds()" shiro:hasPermission="member:delete"><i class="mdi mdi-window-close"></i> 删除</a>
+                            </div>
+                            <div id="task_toolbar" class="form-group pull-left hidden">
+                                <a id="archive_task_remove" class="btn btn-danger btn-round" onclick="taskRemoveByIds()" shiro:hasPermission="member:delete"><i class="mdi mdi-window-close"></i> 删除</a>
+                            </div>
+                            <!--项目模态框-->
+                            <div tabindex="-1" class="modal fade" id="project_modal" role="dialog" style="display: none;" >
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content ">
+                                        <div class="modal-header">
+                                            <button class="close" aria-label="Close" type="button" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+                                            <h4 class="modal-title" id="archive_modal_project_name"></h4>
+                                        </div>
+                                        <div class="modal-body container-fluid">
+                                            <div class="col-md-12 m-b-10">
+                                                <label class="control-label col-md-3">项目负责人:</label>
+                                                <div class="col-md-7">
+                                                    <strong id="archive_modal_project_principal_name"></strong>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 m-b-10">
+                                                <label class="control-label col-md-3" >项目负责团队:</label>
+                                                <div class="col-md-7">
+                                                    <strong id="archive_modal_project_principal_team_name"></strong>
+                                                </div>
+                                            </div>
+                                            <div id="archive_project_detail_time_div" class="col-md-12 m-b-10">
+                                                <label class="control-label col-md-2" >项目时间:</label>
+                                                <div class="col-md-7">
+                                                    <strong id="archive_modal_project_start_time"></strong>
+                                                    <strong>至</strong>
+                                                    <strong id="archive_modal_project_end_time"></strong>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class=" m-b-10">
+                                                    <label class="control-label m-b-5">项目描述:</label>
+                                                    <textarea class="form-control" disabled id="archive_modal_project_detail_content" rows="5" placeholder="内容..."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-default btn-round" type="button" data-dismiss="modal">关闭</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--任务模态框-->
+                            <div tabindex="-1" class="modal fade" id="task_modal" role="dialog" style="display: none;" >
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content ">
+                                        <div class="modal-header">
+                                            <button class="close" aria-label="Close" type="button" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+                                            <h4 class="modal-title" id="archive_modal_task_name"></h4>
+                                        </div>
+                                        <div class="modal-body container-fluid">
+                                            <div class="col-md-12 m-b-10">
+                                                <label class="control-label col-md-3" th:for="archive_project_detail_principal">任务关联项目:</label>
+                                                <div class="col-md-7">
+                                                    <strong id="archive_modal_task_relate_project_name" ></strong>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 m-b-10">
+                                                <label class="control-label col-md-3" th:for="archive_project_detail_principal">任务创建人:</label>
+                                                <div class="col-md-7">
+                                                    <strong id="archive_modal_task_create_name"></strong>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 m-b-10">
+                                                <label class="control-label col-md-3" >项目执行人:</label>
+                                                <div class="col-md-7">
+                                                    <strong id="archive_modal_task_execute_name"></strong>
+                                                </div>
+                                            </div>
+                                            <div  class="col-md-12 m-b-10">
+                                                <label class="control-label col-md-3" >项目测试人:</label>
+                                                <div class="col-md-7">
+                                                    <strong id="archive_modal_task_test_name" ></strong>
+                                                </div>
+                                            </div>
+                                            <div  class="col-md-12 m-b-10">
+                                                <label class="control-label col-md-3" >项目时间:</label>
+                                                <div class="col-md-7">
+                                                    <strong id="archive_modal_task_start_time"></strong>
+                                                    <strong>至</strong>
+                                                    <strong id="archive_modal_task_end_time"></strong>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class=" m-b-10">
+                                                    <label class="control-label m-b-5" th:for="archive_modal_task_content">任务描述:</label>
+                                                    <textarea class="form-control" disabled id="archive_modal_task_content" rows="5" placeholder="内容..." ></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-default btn-round" type="button" data-dismiss="modal">关闭</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <table id="archive_project_table" class="table table-striped"></table>
+                            <table id="archive_task_table" class="table table-striped"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+</body>
+<footer>
+    <div th:include="~{/common/footer::footer}"></div>
+</footer>
+<script th:inline="javascript">
+    //初始化table
+    projectArchiveTableInit();
+
+    //项目表的初始化
+    function projectArchiveTableInit() {
+        //销毁上一个bootstrapTbale对象
+        $('#archive_project_table').bootstrapTable('destroy');
+        $('#archive_project_table').bootstrapTable({
+                url: "/project/queryProjectArchiveAll",  //请求地址
+                striped: true, //是否显示行间隔色
+                pageNumber: 1, //初始化加载第一页
+                pagination: true,//是否分页
+                sidePagination: 'client',//server:服务器端分页|client：前端分页
+                pageSize: 10,//单页记录数
+                pageList: [10, 15, 20],//可选择单页记录数
+                method: 'post',//请求方式
+                toolbar:"#project_toolbar",//指定工具栏
+                checkboxHeader: true,//显示表头的复选框
+                trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                showColumns: true,                  //是否显示所有的列
+                clickToSelect: true,                //是否启用点击选中行
+                classes:"table table-hover", //设置表格样式
+                columns: [{
+                    checkbox: true//显示复选框
+                }, {
+                    title: '编号',
+                    field: 'projectId',
+                    align: "center",
+                    sortable: true,
+                    switchable:false
+                }, {
+                    title: '项目名称',
+                    field: 'projectName',
+                    align: "center",
+                    sortable: true,
+                    switchable:false,
+                    formatter:function (value,row,index) {
+                      var  str= '<a href="#" onclick="projectModal('+row.projectId+')">'+
+                            value +
+                            '</a>';
+                      return str;
+                    }
+                }, {
+                    title: '项目负责人',
+                    field: 'projectPrincipalName',
+                    align: "center",
+                    sortable: true,
+                    switchable:false
+                },  {
+                    title: '项目负责团队',
+                    field: 'projectPrincipalTeamName',
+                    align: "center",
+                    sortable: true,
+                    switchable:false
+                }, {
+                    title: '项目创建时间',
+                    field: 'projectStartTime',
+                    align: "center",
+                    sortable: true,
+                    switchable:true
+                }, {
+                    title: '项目截止时间',
+                    field: 'projectEndTime',
+                    align: "center",
+                    sortable: true,
+                    switchable:true
+                }]
+            }
+        );
+    };
+
+    //任务表的初始化
+    function taskArchiveTableInit () {
+        //销毁上一个bootstrapTbale对象
+        $('#archive_task_table').bootstrapTable('destroy');
+        $('#archive_task_table').bootstrapTable({
+                url: "/task/queryTaskArchiveAll",  //请求地址
+                striped: true, //是否显示行间隔色
+                pageNumber: 1, //初始化加载第一页
+                pagination: true,//是否分页
+                sidePagination: 'client',//server:服务器端分页|client：前端分页
+                pageSize: 10,//单页记录数
+                pageList: [10, 15, 20],//可选择单页记录数
+                method: 'post',//请求方式
+                toolbar:"#task_toolbar",//指定工具栏
+                checkboxHeader: true,//显示表头的复选框
+                trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                showColumns: true,                  //是否显示所有的列
+                clickToSelect: true,                //是否启用点击选中行
+                classes:"table table-no-bordered table-hover", //设置表格样式
+                columns: [{
+                    checkbox: true//显示复选框
+                }, {
+                    title: '编号',
+                    field: 'taskId',
+                    align: "center",
+                    sortable: true,
+                    switchable:false
+                }, {
+                    title: '任务名称',
+                    field: 'taskName',
+                    align: "center",
+                    sortable: true,
+                    switchable:false,
+                    formatter:function (value, row, index) {
+                        var  str= '<a href="#" onclick="taskModal('+row.taskId+')">'+
+                            value +
+                            '</a>';
+                        return str;
+                    }
+                }, {
+                    title: '优先级',
+                    field: 'taskPriority',
+                    align: "center",
+                    sortable: true,
+                    switchable:true,
+                    formatter:function (value, row, index) {
+                        var str="";
+                        if(value=='1'){
+                            return "<span class='label label-secondary'>不重要</span>"
+                        }
+                        if(value=='2'){
+                            return"<span class='label label-primary'>次 要</span>"
+                        }
+                        if(value=='3'){
+                            return"<span class='label label-warning'>主 要</span>"
+                        }
+                        if(value=='4'){
+                            return"<span class='label label-danger'>严 重</span>"
+                        }
+                    }
+                }, {
+                    title: '任务状态',
+                    field: 'taskStatus',
+                    align: "center",
+                    sortable: true,
+                    switchable:true,
+                    formatter:function (value,row,index) {
+                        if(value=='1'){
+                            return "<span class='label label-secondary'>待办的</span>";
+                        }
+                        if(value=='2'){
+                            return "<span class='label label-warning'>进行中</span>"
+                        }
+                        if(value=='3'){
+                            return "<span class='label label-success'>已完成</span>"
+                        }
+                    }
+                },{
+                    title: '任务类型',
+                    field: 'taskType',
+                    align: "center",
+                    sortable: true,
+                    switchable:true,
+                    formatter:function (value, row, index) {
+                        var str="";
+                        if(value=='1'){
+                            return"<span class='label label-success'>需 求</span>"
+                        }
+                        if(value=='2'){
+                            return"<span class='label label-warning'>BUG</span>"
+                        }
+                    }
+                }, {
+                    title: '创建人',
+                    field: 'taskCreateName',
+                    align: "center",
+                    sortable: true,
+                    switchable:false
+                }, {
+                    title: '执行人',
+                    field: 'taskExecuteName',
+                    align: "center",
+                    sortable: true,
+                    switchable:true
+                }, {
+                    title: '关联项目',
+                    field: 'taskRelateProjectName',
+                    align: "center",
+                    sortable: true,
+                    switchable:true
+                }, {
+                    title: '创建时间',
+                    field: 'taskStartTime',
+                    align: "center",
+                    sortable: true,
+                    switchable:true
+                }, {
+                    title: '截止时间',
+                    field: 'taskEndTime',
+                    align: "center",
+                    sortable: true,
+                    switchable: true
+                }]
+            }
+        );
+    };
+
+    function toProjectArchiveDetail(projectId) {
+        url = '/project/toArchiveProjectDetail?projectId=' + projectId;
+        window.location.href = encodeURI(url);
+    }
+
+    function toTaskArchiveDetail(taskId) {
+        url = '/task/toTaskArchiveDetail?taskId=' + taskId;
+        window.location.href = encodeURI(url);
+    }
+
+    $("#archive_project").on("click",function () {
+        $("#archive_task").removeClass("active");
+        $('#archive_task_table').bootstrapTable('destroy');
+        $("#task_toolbar").addClass("hidden");
+        $("#project_toolbar").removeClass("hidden");
+        $("#archive_project").addClass("active");
+        projectArchiveTableInit();
+    });
+
+    $("#archive_task").on("click",function () {
+        $("#archive_project").removeClass("active");
+        $('#archive_project_table').bootstrapTable('destroy');
+        $("#project_toolbar").addClass("hidden");
+        $("#task_toolbar").removeClass("hidden");
+        $("#archive_task").addClass("active");
+        taskArchiveTableInit();
+    });
+
+    //批量删除项目
+    function projectRemoveByIds() {
+        var projects = $("#archive_project_table").bootstrapTable("getSelections");
+        if (projects.length < 1) {
+            alert("请至少选择一个要删除的项目");
+        } else {
+            var r = confirm("删除该项目会删除项目下的所有任务");
+            if (r) {
+                var projectIds = new Array();
+                projects.forEach(function (value, index) {
+                    projectIds.push(value.projectId);
+                });
+                $.ajax({
+                    url: "/project/removeProjectByProjectIds",
+                    contentType: "application/json;charset=UTF-8",
+                    type: "post",
+                    data: JSON.stringify(projectIds),
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.temp == 'success') {
+                            setTimeout(function () {
+                                lightyear.notify(result.msg, 'success', 2000);
+                            }, 100);
+                            $("#archive_project_table").bootstrapTable('refresh');
+                        }
+                        if (result.temp == 'danger') {
+                            setTimeout(function () {
+                                lightyear.notify(result.msg, 'danger', 2000);
+                            }, 100);
+                        }
+                    }
+                });
+            }
+        }
+    }
+    
+    //批量删除任务
+    function taskRemoveByIds() {
+        var tasks=$("#archive_task_table").bootstrapTable("getSelections");
+        if(tasks.length<1){
+            alert("请至少选择一个要删除的任务");
+        }else{
+            var r = confirm("是否要删除任务?");
+            if(r){
+                var taskIds=new Array();
+                tasks.forEach(function (value,index) {
+                    taskIds.push(value.taskId);
+                });
+                //通过“，”分割插入字符串
+                $.ajax({
+                    url: "/task/removeTaskByTaskIds",
+                    contentType: "application/json;charset=UTF-8",
+                    type: "post",
+                    data: JSON.stringify(taskIds),
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.temp == 'success') {
+                            setTimeout(function () {
+                                lightyear.notify(result.msg, 'success', 2000);
+                            }, 100);
+                            $("#archive_task_table").bootstrapTable('refresh');
+                        }
+                        if (result.temp == 'danger') {
+                            setTimeout(function () {
+                                lightyear.notify(result.msg, 'danger', 2000);
+                            }, 100);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    function projectModal(projectId) {
+        $("#project_modal").modal("show");
+        $.ajax({
+            url: "/project/queryArchiveProjectDetail?projectId="+projectId,
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                $("#archive_modal_project_name").text(result.projectName);
+                $("#archive_modal_project_principal_name").text(result.projectPrincipalName);
+                $("#archive_modal_project_principal_team_name").text(result.projectPrincipalTeamName);
+                $("#archive_modal_project_start_time").text(result.projectStartTime);
+                $("#archive_modal_project_end_time").text(result.projectEndTime);
+                $("#archive_modal_project_detail_content").text(result.projectContent);
+            }
+        });
+    }
+
+    function taskModal(taskId) {
+        $("#task_modal").modal("show");
+        $.ajax({
+            url: "/task/queryTaskArchiveDetail?taskId="+taskId,
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                $("#archive_modal_task_name").text(result.taskName);
+                $("#archive_modal_task_execute_name").text(result.taskExecuteName);
+                $("#archive_modal_task_create_name").text(result.taskCreateName);
+                $("#archive_modal_task_start_time").text(result.taskStartTime);
+                $("#archive_modal_task_end_time").text(result.taskEndTime);
+                $("#archive_modal_task_content").text(result.taskContent);
+                $("#archive_modal_task_relate_project_name").text(result.taskRelateProjectName);
+                $("#archive_modal_task_test_name").text(result.taskTestName);
+            }
+        });
+    }
+</script>
+</html>

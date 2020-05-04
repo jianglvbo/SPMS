@@ -27,7 +27,8 @@
     <!--选择下拉框插件-->
     <script type="text/javascript" th:src="@{/js/bootstrap-select/js/bootstrap-select.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap-select/js/i18n/defaults-zh_CN.min.js}"></script>
-
+    <!--选择下拉框插件-->
+    <script type="text/javascript" th:src="@{/js/echarts.js}"></script>
     <script type="text/javascript" th:src="@{/js/main.min.js}"></script>
     <script th:inline="javascript">
         $(function () {
@@ -49,7 +50,7 @@
 
         //跳转到用户详情
         function toMemberDetail(memberId) {
-            url = '/member/toMemberDetailDynamicState?memberId=' + memberId;
+            url = '/member/toMemberDetail?memberId=' + memberId;
             window.location.href = encodeURI(url);
         }
 
@@ -72,7 +73,7 @@
         }
 
         function toDynamicTypeDetail(type, typeId) {
-            if (type === "0") {
+            if (type == "0"||typeId=="0") {
                 return;
             } else if (type == "1") {
                 toProjectDetail(typeId);

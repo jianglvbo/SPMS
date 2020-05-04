@@ -23,5 +23,4 @@ public class Member implements Serializable {
     private String memberGender;
     private String memberIcon;
     private String memberSalt;
-
 }

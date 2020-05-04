@@ -12,88 +12,425 @@
         <!--页面主要内容-->
         <main class="lyear-layout-content">
             <div class="container-fluid">
-                <div class="row">
                     <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-body container-fluid">
-                            <div class="col-md-6">
-                                <div class="col-md-2">
-                                    <img class=" img-circle img-responsive" style="height: 65px;width: 65px" th:src="${session.user.memberIcon}">
+                        <div class="card">
+                            <div class="card-body container-fluid">
+                                <div class="col-md-6">
+                                    <div class="col-md-2">
+                                        <img class=" img-circle img-responsive" style="height: 65px;width: 65px"
+                                             th:src="${session.user.memberIcon}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="col-md-12">
+                                            <h5><p id="index_user_role"></p></h5>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <h4><strong><p th:text="${session.user.memberName}+',欢迎你'"></p></strong>
+                                            </h4>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="col-md-12">
-                                        <h5><p id="index_user_role"></p></h5>
+                                    <div class="col-md-4">
+                                        <div class="col-md-12">
+                                            <h4><strong>项目数:</strong></h4>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <h5><strong id="index_project_count">14</strong></h5>
+                                        </div>
                                     </div>
-                                    <div class="col-md-12">
-                                        <h4><strong><p th:text="${session.user.memberName}+',欢迎你'"></p></strong></h4>
+                                    <div class="col-md-4">
+                                        <div class="col-md-12">
+                                            <h4><strong>未完成任务数:</strong></h4>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <h5><strong id="index_task_count">14</strong></h5>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="col-md-4">
-                                    <div class="col-md-12">
-                                        <h4 ><strong>项目数:</strong></h4>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <h5><strong>14</strong></h5>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="col-md-12">
-                                        <h4 ><strong>未完成任务数:</strong></h4>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <h5><strong>14</strong></h5>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="col-md-12">
-                                        <h4 ><strong>成员数:</strong></h4>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <h5><strong>14</strong></h5>
+                                    <div class="col-md-4">
+                                        <div class="col-md-12">
+                                            <h4><strong>成员数:</strong></h4>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <h5><strong id="index_member_count">14</strong></h5>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        </div>
-                    </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="card">
-                            <div class="card-header"></div>
-                            <div class="card-body"></div>
+            <div class="col-md-12">
+                        <div class="col-lg-7">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div id="project_burn_down" style="width: 620px;height:400px"></div>
+                                </div>
+                            </div>
                         </div>
+                        <div class="col-lg-5">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="col-md-1">
+                                                <div id="task_finish_rate_pie" style="width: 200px;height: 200px"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div id="task_overdue_rate_pie" style="width: 200px;height: 200px"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="col-md-1">
+                                                <div id="task_status_rate_pie" style="width: 200px;height: 200px"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div id="task_priority_rate_pie" style="width: 200px;height: 200px"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            </div>
+            <div class="col-md-12">
+                <div class="card container-fluid">
+                    <div class="card-header">
+                        近期活动日志
                     </div>
-                    <div class="col-lg-6">
-                        <div class="card">
-                            <div class="card-header"></div>
-                            <div class="card-body"></div>
-                        </div>
+                    <div class="card-body">
+                        <table id="index_dynamic_state_table"></table>
                     </div>
                 </div>
             </div>
-        </main>
-        <!--End 页面主要内容-->
     </div>
+    </main>
+    <!--End 页面主要内容-->
+</div>
 </div>
 </body>
 <footer>
     <div th:include="~{/common/footer::footer}"></div>
     <script th:inline="javascript">
-        $(document).ready(function () {
-            var role=[[${session.user.memberRole}]];
-            if(role==[[${session.MEMBER_ROLE_ADMINISTRATOR}]]){
-                $("#index_user_role").text("管理员");
-            }
-            if(role==[[${session.MEMBER_ROLE_PM}]]){
-                $("#index_user_role").text("项目经理");
+        var projectBurnDown = echarts.init(document.getElementById("project_burn_down"));
+        var taskFinishRate = echarts.init(document.getElementById("task_finish_rate_pie"));
+        var taskOverdueRate = echarts.init(document.getElementById("task_overdue_rate_pie"));
+        var taskStatusRate = echarts.init(document.getElementById("task_status_rate_pie"));
+        var taskPriorityRate = echarts.init(document.getElementById("task_priority_rate_pie"));
+        function finishOption(data) {
+            var option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                title: {
+                    text: "任务完成率",
+                    left: 'center'
+                },
+                series: [
+                    {
+                        name: '任务完成率',
+                        type: 'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: '20',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: [{value:data.finish,name:"完成"},
+                            {value:data.notFinish,name:"未完成"}
+                        ]
+                    }
+                ]
+            };
+            return option;
+        }
+        function overdueOption(data) {
+            var option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                title: {
+                    text: "任务逾期率",
+                    left: 'center'
+                },
+                series: [
+                    {
+                        name: '任务完成率',
+                        type: 'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: '20',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: [{value:data.notPostpone,name:"未逾期"},
+                            {value:data.postpone,name:"逾期"}
+                        ]
+                    }
+                ]
+            };
+            return option;
+        }
+        function statusOption(data) {
+            var option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                title: {
+                    text: "任务状态",
+                    left: 'center'
+                },
+                series: [
+                    {
+                        name: '任务状态',
+                        type: 'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: '20',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: [{value:data.acting,name:"代办的"},
+                            {value:data.underway,name:"进行中"},
+                            {value:data.finish,name:"已完成"}
+                        ]
+                    }
+                ]
+            };
+            return option;
+        }
+        function priorityOption(data) {
+            var option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                title: {
+                    text: "任务紧急程度",
+                    left: 'center'
+                },
+                series: [
+                    {
+                        name: '任务状态',
+                        type: 'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: '20',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: [{value:data.noImportant,name:"不重要"},
+                            {value:data.secondary,name:"次要"},
+                            {value:data.main,name:"主要"},
+                            {value:data.seriousness,name:"严重"}
+                        ]
+                    }
+                ]
+            };
+            return option;
+        }
+        function burnDownOption(data){
+            var finish=new Array();
+            var all=new Array();
+            $.each(data.finish, function(index, item) {
+                var t=new Array();
+                t.push(item.date);
+                t.push(item.taskCount);
+                finish.push(t);
+            });
+            $.each(data.all, function(index, item) {
+                var t=new Array();
+                t.push(item.date);
+                t.push(item.taskCount);
+                all.push(t);
+            });
+            var option = {
+                title: {
+                    text: '燃尽图'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },  legend: {
+                    data: ['计划完成', '已完成']
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: '计划完成',
+                        type: 'line',
+                        stack: '总量',
+                        data: all
+                    },
+                    {
+                        name: '已完成',
+                        type: 'line',
+                        stack: '总量',
+                        data:finish
+                    }
+                ]
+            };
+            return option;
+        }
+        function IndexDetailDynamicStateTable() {
+            //销毁上一个bootstrapTbale对象
+            $('#index_dynamic_state_table').bootstrapTable('destroy');
+            $('#index_dynamic_state_table').bootstrapTable({
+                url: "/dynamicState/queryDynamicStateAll",  //请求地址
+                striped: true, //是否显示行间隔色
+                pageNumber: 1, //初始化加载第一页
+                pageSize: 50,//单页记录数
+                method: 'post',//请求方式
+                trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                classes: "table table-no-bordered table-hover", //设置表格样式
+                //设置排序列
+                sortName: 'dynamicStateCreateTime',
+                //设置排序方式
+                sortOrder: 'desc',
+                columns: [{
+                    field: 'dynamicStateCreator',
+                    align: "left",
+                    formatter: function (value, row, index) {
+                        var str = ' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="' + value.memberIcon + '" alt="' + value.memberName + '"/>'
+                        str += '<a href="#" onclick="toMemberDetail(' + value.memberId + ')" style="padding-right: 5px">' +
+                            value.memberName +
+                            '</a>';
+                        if(row.dynamicStateAction.substring(0,2)=="添加"){
+                            str += "<span class='label label-primary'>";
+                        }if(row.dynamicStateAction.substring(0,2)=="修改"){
+                            str += "<span class='label label-warning'>";
+                        }if(row.dynamicStateAction.substring(0,2)=="删除"){
+                            str += "<span class='label label-danger'>";
+                        }if(row.dynamicStateAction.substring(0,2)=="归档"){
+                            str += "<span class='label label-secondary'>";
+                        }
+                        str +=  row.dynamicStateAction + "</span>" +
+                            "<strong style='padding-left: 5px'>" + row.dynamicStateContent + "</strong>";
+                        return str;
+                    }
+                }, {
+                    field: 'dynamicStateCreateTime',
+                    align: "right"
+                }]
+            });
+        };
+        function indexPie() {
+            $.ajax({
+                url: "/task/queryTaskPieCountByMemberIdAndRole?memberId=" + [[${session.user.memberId}]]+"&role="+[[${session.user.memberRole}]],
+                contentType: "application/json;charset=UTF-8",
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    taskFinishRate.setOption(finishOption(data));
+                    taskOverdueRate.setOption(overdueOption(data));
+                    taskStatusRate.setOption(statusOption(data));
+                    taskPriorityRate.setOption(priorityOption(data));
+                }
+            });
+        }
+        function indexCount() {
+            $.ajax({
+                url: "/common/queryIndexCount?memberId=" + [[${session.user.memberId}]]+"&role="+[[${session.user.memberRole}]],
+                contentType: "application/json;charset=UTF-8",
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    $("#index_project_count").text(data.projectCount);
+                    $("#index_task_count").text(data.taskCount);
+                }
+            });
+        }
+        function indexMemberCount() {
+            $.ajax({
+                url: "/member/queryMemberCountAll",
+                contentType: "application/json;charset=UTF-8",
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    $("#index_member_count").text(data.memberCount);
+                }
+            });
+        }
+        function indexBurnDown(){
+            $.ajax({
+                url: "/task/queryTaskBurnDownByProjectId?projectId="+1,
+                contentType: "application/json;charset=UTF-8",
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    projectBurnDown.setOption(burnDownOption(data));
+                }
+            });
+        }
+        indexPie();
+        indexCount();
+        indexMemberCount();
+        indexBurnDown();
+        IndexDetailDynamicStateTable();
+        setInterval(indexPie,3000000);
+        setInterval(indexCount,3000000);
+        setInterval(indexMemberCount,3000000);
+        setInterval(indexBurnDown,3000000);
+        setInterval(IndexDetailDynamicStateTable,30000);
 
-            }
 
-        });
     </script>
 </footer>
 </html>

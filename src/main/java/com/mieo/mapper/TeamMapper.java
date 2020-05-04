@@ -58,6 +58,13 @@ public interface TeamMapper {
     })
     List<Team> queryTeamAll();
 
+    /**
+     * 通过团队id查询团队名称
+     * @param id
+     * @return
+     */
+    @Select("select team_name from team where team_id=#{id}")
+    String queryTeamNameByTeamId(Integer id);
 
     /**
      * 查询为空的团队id

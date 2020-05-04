@@ -10,90 +10,120 @@
 <div class="lyear-layout-container">
     <main class="lyear-layout-content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="col-10">
-                                <div class="col-md-1">
-                                    <button class="btn btn-default btn-lg btn-round" id="project_detail_back">
-                                        <i class="mdi mdi-keyboard-backspace" data-toggle="tooltip" data-placement="top"
-                                           title="" data-original-title="返回上一级"></i>
-                                    </button>
-                                </div>
-                                <div id="project_detail_project_name_div" class="col-md-11">
-                                    <input class="form-control input-lg" id="project_detail_project_name">
-                                </div>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="col-10">
+                            <div class="col-md-1">
+                                <button class="btn btn-default btn-lg btn-round" id="project_detail_back">
+                                    <i class="mdi mdi-keyboard-backspace" data-toggle="tooltip" data-placement="top"
+                                       title="" data-original-title="返回上一级"></i>
+                                </button>
                             </div>
-                            <div class="pull-right">
-                                <button class="btn btn-success btn-round m-b-10" id="project_detail_save">保存</button>
-                                <button class="btn btn-danger btn-round m-b-10" id="project_detail_cancel">撤销</button>
+                            <div id="project_detail_project_name_div" class="col-md-11">
+                                <input class="form-control input-lg" id="project_detail_project_name">
                             </div>
                         </div>
-                        <div class="card-body container-fluid">
-                            <div class="col-md-6">
-                                <div class="col-md-12 m-b-10">
-                                    <label class="control-label col-md-3" th:for="project_detail_principal">项目负责人:</label>
-                                    <div class="col-md-7">
-                                        <select class="form-control selectpicker" data-live-search="true" id="project_detail_principal">
-                                        </select>
-                                    </div>
-                                </div>
-                                <div id="project_detail_time_div" class="col-md-12 m-b-10">
-                                    <label class="control-label col-md-3" for="project_detail_start_time">项目时间:</label>
-                                    <div class="input-group" style="padding-left:15px">
-                                        <input class="form-control js-datetimepicker"  data-date-format="YYYY-MM-DD HH:mm" data-locale="zh-cn" type="text" id="project_detail_start_time" placeholder="从">
-                                        <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
-                                        <input class="form-control js-datetimepicker" data-date-format="YYYY-MM-DD HH:mm" data-locale="zh-cn" type="text" id="project_detail_end_time" placeholder="至" >
-                                    </div>
-                                </div>
-                                <div class="col-md-12 m-b-10">
-                                    <label class="control-label col-md-3" for="project_detail_schedule">项目进度:</label>
-                                    <div class="col-md-9">
-                                        <input id="project_detail_schedule" name="projectSchedule" th:value="${project.projectSchedule}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="col-md-12 m-b-10">
-                                    <label class="control-label col-md-3" th:for="project_detail_principal_team">项目负责团队:</label>
-                                    <div class="col-md-7">
-                                        <select class="form-control selectpicker" data-live-search="true" id="project_detail_principal_team">
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class=" m-b-10">
-                                    <label class="control-label m-b-5" th:for="project_detail_content">项目描述:</label>
-                                    <textarea class="form-control" id="project_detail_content" rows="5" placeholder="内容..."></textarea>
-                                </div>
-                            </div>
+                        <div class="pull-right">
+                            <button class="btn btn-success btn-round m-b-10" shiro:hasPermission="project:update"
+                                    id="project_detail_save">保存
+                            </button>
+                            <button class="btn btn-danger btn-round m-b-10" shiro:hasPermission="project:update"
+                                    id="project_detail_cancel">撤销
+                            </button>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-body container-fluid">
-                            <label class="control-label m-b-5" th:for="project_detail_comment">评论:</label>
-                            <textarea class="form-control" id="project_detail_comment" rows="5" placeholder="请输入......按回车结束"></textarea>
-                            <table id="project_detail_comment_table" class="table"></table>
+                    <div class="card-body container-fluid">
+                        <div class="col-md-6">
+                            <div class="col-md-12 m-b-10">
+                                <label class="control-label col-md-3" th:for="project_detail_principal">项目负责人:</label>
+                                <div class="col-md-7">
+                                    <select class="form-control selectpicker" data-live-search="true"
+                                            id="project_detail_principal">
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="project_detail_time_div" class="col-md-12 m-b-10">
+                                <label class="control-label col-md-3" for="project_detail_start_time">项目时间:</label>
+                                <div class="input-group" style="padding-left:15px">
+                                    <input class="form-control js-datetimepicker" data-date-format="YYYY-MM-DD HH:mm"
+                                           data-locale="zh-cn" type="text" id="project_detail_start_time"
+                                           placeholder="从">
+                                    <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
+                                    <input class="form-control js-datetimepicker" data-date-format="YYYY-MM-DD HH:mm"
+                                           data-locale="zh-cn" type="text" id="project_detail_end_time" placeholder="至">
+                                </div>
+                            </div>
+                            <div class="col-md-12 m-b-10">
+                                <label class="control-label col-md-3" for="project_detail_schedule">项目进度:</label>
+                                <div class="col-md-9">
+                                    <input id="project_detail_schedule" name="projectSchedule"
+                                           th:value="${project.projectSchedule}">
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-body container-fluid">
-                            <div class="col-md-12">
-                                <label class="control-label m-b-5" for="project_detail_dynamic_state_table">日志:</label>
-                                <table id="project_detail_dynamic_state_table" class="table"></table>
+                        <div class="col-md-6">
+                            <div class="col-md-12 m-b-10">
+                                <label class="control-label col-md-3"
+                                       th:for="project_detail_principal_team">项目负责团队:</label>
+                                <div class="col-md-7">
+                                    <select class="form-control selectpicker" data-live-search="true"
+                                            id="project_detail_principal_team">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class=" m-b-10">
+                                <label class="control-label m-b-5" th:for="project_detail_content">项目描述:</label>
+                                <textarea class="form-control" id="project_detail_content" rows="5"  maxlength="400"
+                                          placeholder="内容...最多400字"></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body container-fluid">
+                        <div class="col-md-3">
+                            <div id="task_finish_rate_pie" style="width: 200px;height: 200px"></div>
+                        </div>
+                        <div class="col-md-3">
+                            <div id="task_overdue_rate_pie" style="width: 200px;height: 200px"></div>
+                        </div>
+                        <div class="col-md-3">
+                            <div id="task_status_rate_pie" style="width: 200px;height: 200px"></div>
+                        </div>
+                        <div class="col-md-3">
+                            <div id="task_priority_rate_pie" style="width: 200px;height: 200px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body container-fluid">
+                        <label class="control-label" th:for="project_detail_comment">评论:</label>
+                        <textarea class="form-control m-b-10" id="project_detail_comment" rows="5"  maxlength="100"
+                                  placeholder="请输入......最多100字"></textarea>
+                        <table id="project_detail_comment_table" class="table"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body container-fluid">
+                        <div class="col-md-12">
+                            <label class="control-label m-b-5" for="project_detail_dynamic_state_table">日志:</label>
+                            <table id="project_detail_dynamic_state_table" class="table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </main>
+</div>
+</main>
 </div>
 </div>
 </body>
@@ -101,24 +131,202 @@
     <div th:include="~{/common/footer::footer}"></div>
 </footer>
 <script th:inline="javascript">
-
-    $(document).ready(function () {
-        //进度条初始化
-        $("#project_detail_schedule").ionRangeSlider({
-            min:0,
-            max:100
-        });
-        //表格初始化
-        commentTableInit();
-        dynamicStateTableInit();
-        //下拉框初始化
-        projectPrincipalSelect();
-        projectTeamSelect();
-        //页面赋值
-        projectDetailInit();
-        //监听事件
-        commentEventListener();
+    //进度条初始化
+    $("#project_detail_schedule").ionRangeSlider({
+        min: 0,
+        max: 100
     });
+    //表格初始化
+    commentTableInit();
+    dynamicStateTableInit();
+    //下拉框初始化
+    projectPrincipalSelect();
+    projectTeamSelect();
+    //页面赋值
+    projectDetailInit();
+    //监听事件
+    commentEventListener();
+    //饼图
+    var taskFinishRate = echarts.init(document.getElementById("task_finish_rate_pie"));
+    var taskOverdueRate = echarts.init(document.getElementById("task_overdue_rate_pie"));
+    var taskStatusRate = echarts.init(document.getElementById("task_status_rate_pie"));
+    var taskPriorityRate = echarts.init(document.getElementById("task_priority_rate_pie"));
+    projectPie();
+
+
+    function finishOption(data) {
+        var option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            title: {
+                text: "任务完成率",
+                left: 'center'
+            },
+            series: [
+                {
+                    name: '任务完成率',
+                    type: 'pie',
+                    radius: ['50%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '20',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [{value: data.finish, name: "完成"},
+                        {value: data.notFinish, name: "未完成"}
+                    ]
+                }
+            ]
+        };
+        return option;
+    }
+
+    function overdueOption(data) {
+        var option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            title: {
+                text: "任务逾期率",
+                left: 'center'
+            },
+            series: [
+                {
+                    name: '任务完成率',
+                    type: 'pie',
+                    radius: ['50%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '20',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [{value: data.notPostpone, name: "未逾期"},
+                        {value: data.postpone, name: "逾期"}
+                    ]
+                }
+            ]
+        };
+        return option;
+    }
+
+    function statusOption(data) {
+        var option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            title: {
+                text: "任务状态",
+                left: 'center'
+            },
+            series: [
+                {
+                    name: '任务状态',
+                    type: 'pie',
+                    radius: ['50%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '20',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [{value: data.acting, name: "代办的"},
+                        {value: data.underway, name: "进行中"},
+                        {value: data.finish, name: "已完成"}
+                    ]
+                }
+            ]
+        };
+        return option;
+    }
+
+    function priorityOption(data) {
+        var option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            title: {
+                text: "任务紧急程度",
+                left: 'center'
+            },
+            series: [
+                {
+                    name: '任务状态',
+                    type: 'pie',
+                    radius: ['50%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '20',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [{value: data.noImportant, name: "不重要"},
+                        {value: data.secondary, name: "次要"},
+                        {value: data.main, name: "主要"},
+                        {value: data.seriousness, name: "严重"}
+                    ]
+                }
+            ]
+        };
+        return option;
+    }
+
+    function projectPie() {
+        $.ajax({
+            url: "/task/queryTaskPieCountByProjectId?projectId=" + [[${project.projectId}]],
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                taskFinishRate.setOption(finishOption(data));
+                taskOverdueRate.setOption(overdueOption(data));
+                taskStatusRate.setOption(statusOption(data));
+                taskPriorityRate.setOption(priorityOption(data));
+            }
+        });
+    }
 
     //动态表的初始化
     function dynamicStateTableInit() {
@@ -145,12 +353,24 @@
                     sortable: true,
                     switchable: false,
                     formatter: function (value, row, index) {
-                        str = ' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="' + value.memberIcon + '" alt="' + value.memberName + '"/>'
+                        var str = ' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="' + value.memberIcon + '" alt="' + value.memberName + '"/>'
                         str += '<a href="#" onclick="toMemberDetail(' + value.memberId + ')" style="padding-right: 5px">' +
                             value.memberName +
                             '</a>';
-                        str += "<span class='label label-success' style='padding-left: 5px'>" + row.dynamicStateAction + "</span>" +
-                            "<strong  style='padding-left: 5px'>" + row.dynamicStateContent + "</strong>";
+                        if (row.dynamicStateAction.substring(0, 2) == "添加") {
+                            str += "<span class='label label-primary'>";
+                        }
+                        if (row.dynamicStateAction.substring(0, 2) == "修改") {
+                            str += "<span class='label label-warning'>";
+                        }
+                        if (row.dynamicStateAction.substring(0, 2) == "删除") {
+                            str += "<span class='label label-danger'>";
+                        }
+                        if (row.dynamicStateAction.substring(0, 2) == "归档") {
+                            str += "<span class='label label-secondary'>";
+                        }
+                        str += row.dynamicStateAction + "</span>" +
+                            "<strong style='padding-left: 5px'>" + row.dynamicStateContent + "</strong>";
                         return str;
                     }
                 }, {
@@ -222,15 +442,15 @@
             dataType: "json",
             success: function (result) {
                 result.forEach(function (value1, index1) {
-                    str='';
-                    str+="<optgroup label="+value1.teamName+">";
+                    str = '';
+                    str += "<optgroup label=" + value1.teamName + ">";
                     value1.teamMembers.forEach(function (value2, index2) {
-                        str+="<option value="+value2.memberId+">"+value2.memberName+"</option>";
+                        str += "<option value=" + value2.memberId + ">" + value2.memberName + "</option>";
                     });
-                    str+="</optgroup>";
+                    str += "</optgroup>";
                     $("#project_detail_principal").append(str);
                     //动态加载数据的selectpicker赋值
-                    $("#project_detail_principal").selectpicker('val',[[${project.projectPrincipal.memberId}]]);
+                    $("#project_detail_principal").selectpicker('val', [[${project.projectPrincipal.memberId}]]);
                     $("#project_detail_principal").selectpicker("refresh");
                 })
             }
@@ -246,9 +466,10 @@
             dataType: "json",
             success: function (result) {
                 result.forEach(function (value1, index1) {
-                    str='';
-                    str='<option value='+value1.teamId+'>'+value1.teamName+'</option>';
+                    str = '';
+                    str = '<option value=' + value1.teamId + '>' + value1.teamName + '</option>';
                     $("#project_detail_principal_team").append(str);
+                    $("#project_detail_principal_team").selectpicker('val', [[${project. projectPrincipalTeamId}]]);
                     $("#project_detail_principal_team").selectpicker("refresh");
                 })
             }
@@ -256,7 +477,7 @@
     }
 
     //页面赋值
-    function projectDetailInit(){
+    function projectDetailInit() {
         $("#project_detail_project_name").val([[${project.projectName}]]);
         $("#project_detail_principal").val([[${project.projectPrincipal.memberId}]]);
         $("#project_detail_start_time").val([[${project.projectStartTime}]]);
@@ -264,49 +485,49 @@
         $("#project_detail_principal_team").val([[${project.projectPrincipalTeam}]]);
         $("#project_detail_content").val([[${project.projectContent}]])
     }
-    
+
     //项目详情保存按钮
-    $("#project_detail_save").on('click',function () {
+    $("#project_detail_save").on('click', function () {
         //任务添加保存
-        if($("#project_detail_project_name").val()==""){
+        if ($("#project_detail_project_name").val() == "") {
             $("#project_detail_project_name_div").addClass("has-error");
-            setTimeout(function() {
+            setTimeout(function () {
                 lightyear.notify('请输入项目名称', 'danger', 100);
-            }, 1e3);
+            }, 200);
             return;
         }
-        if($("#project_detail_start_time").val()==""||$("#project_detail_end_time").val()==""){
+        if ($("#project_detail_start_time").val() == "" || $("#project_detail_end_time").val() == "") {
             $("#project_detail_time_div").addClass("has-error");
-            setTimeout(function() {
+            setTimeout(function () {
                 lightyear.notify('请输入项目时间', 'danger', 100);
-            }, 1e3);
+            }, 200);
             return;
         }
-        var str={
-            'projectId':[[${project.projectId}]],
-            'projectName':$("#project_detail_project_name").val(),
-            'projectStartTime':$("#project_detail_start_time").val(),
-            'projectEndTime':$("#project_detail_end_time").val(),
-            'projectSchedule':$("#project_detail_schedule").val(),
-            'projectPrincipalId':$("#project_detail_principal").val(),
-            'projectPrincipalTeamId':$("#project_detail_principal_team").val(),
-            'projectContent':$("#project_detail_content").val()
+        var str = {
+            'projectId': [[${project.projectId}]],
+            'projectName': $("#project_detail_project_name").val(),
+            'projectStartTime': $("#project_detail_start_time").val(),
+            'projectEndTime': $("#project_detail_end_time").val(),
+            'projectSchedule': $("#project_detail_schedule").val(),
+            'projectPrincipalId': $("#project_detail_principal").val(),
+            'projectPrincipalTeamId': $("#project_detail_principal_team").val(),
+            'projectContent': $("#project_detail_content").val()
         };
         $.ajax({
             url: "/project/updateProjectByProjectId",
             contentType: "application/json;charset=UTF-8",
             type: "post",
-            data:JSON.stringify(str),
+            data: JSON.stringify(str),
             dataType: "json",
             success: function (result) {
-                setTimeout(function() {
+                setTimeout(function () {
                     lightyear.notify(result.msg, 'success', 2000);
-                }, 1e3);
+                }, 200);
                 $("#project_detail_dynamic_state_table").bootstrapTable("refresh");
             }
         });
     })
-    
+
     //返回上一级
     $("#project_detail_back").on('click', function () {
         window.history.back();
@@ -315,10 +536,11 @@
     //监听评论组件的回车事件
     function commentEventListener() {
         $("#project_detail_comment").keydown(function (e) {
-            if (e.keyCode === 13){
-                str={'commentType':'项目',
-                    'commentTypeId':[[${project.projectId}]],
-                    'commentContent':$("#project_detail_comment").val()
+            if (e.keyCode === 13) {
+                str = {
+                    'commentType': '项目',
+                    'commentTypeId': [[${project.projectId}]],
+                    'commentContent': $("#project_detail_comment").val()
                 };
                 $.ajax({
                     url: "/comment/addComment",
@@ -327,9 +549,9 @@
                     data: JSON.stringify(str),
                     dataType: "json",
                     success: function (result) {
-                        setTimeout(function() {
+                        setTimeout(function () {
                             lightyear.notify(result.msg, 'success', 2000);
-                        }, 1e3);
+                        }, 200);
                         $("#project_detail_comment_table").bootstrapTable('refresh');
                         $("#project_detail_comment").val(null);
                         console.log('评论成功');
@@ -338,6 +560,11 @@
             }
         })
     }
-    
+
+    $("#project_detail_cancel").on('click', function () {
+        window.location.reload();
+    });
+
+
 </script>
 </html>

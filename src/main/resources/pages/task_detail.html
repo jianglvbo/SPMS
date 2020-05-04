@@ -25,8 +25,8 @@
                             </div>
                         </div>
                         <div class="pull-right" shiro:hasPermission="task:edit">
-                            <button class="btn btn-success btn-round m-b-10" id="task_detail_save">保存</button>
-                            <button class="btn btn-danger btn-round m-b-10" id="task_detail_cancel">撤销</button>
+                            <button class="btn btn-success btn-round m-b-10" shiro:hasPermission="task:update" id="task_detail_save">保存</button>
+                            <button class="btn btn-danger btn-round m-b-10" shiro:hasPermission="task:update" id="task_detail_cancel">撤销</button>
                         </div>
                     </div>
                     <div class="card-body container-fluid">
@@ -95,7 +95,7 @@
                             <div class="col-md-12">
                                 <div class=" m-b-10">
                                     <label class="control-label m-b-5" th:for="task_detail_content">任务描述:</label>
-                                    <textarea class="form-control" id="task_detail_content" rows="5" placeholder="内容..."></textarea>
+                                    <textarea class="form-control" id="task_detail_content" rows="5" maxlength="400" placeholder="内容...最多400字"></textarea>
                                 </div>
                             </div>
                     </div>
@@ -104,8 +104,8 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body container-fluid">
-                            <label class="control-label m-b-5" th:for="task_detail_comment">评论:</label>
-                            <textarea class="form-control" id="task_detail_comment" rows="5" placeholder="请输入......按回车结束"></textarea>
+                            <label class="control-label " th:for="task_detail_comment">评论:</label>
+                            <textarea class="form-control m-b-10" id="task_detail_comment"  maxlength="100" rows="5" placeholder="请输入......最多100字"></textarea>
                             <table id="task_detail_comment_table" class="table"></table>
                         </div>
                     </div>
@@ -172,13 +172,22 @@
                         align: "left",
                         sortable: true,
                         switchable:false,
-                        formatter:function (value, row, index) {
-                            str=' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="'+value.memberIcon+'" alt="'+value.memberName+'"/>'
-                            str+='<a href="#" onclick="toMemberDetail('+value.memberId+')" style="padding-right: 5px">' +
+                        formatter: function (value, row, index) {
+                            var str = ' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="' + value.memberIcon + '" alt="' + value.memberName + '"/>'
+                            str += '<a href="#" onclick="toMemberDetail(' + value.memberId + ')" style="padding-right: 5px">' +
                                 value.memberName +
                                 '</a>';
-                            str+="<span class='label label-success' style='padding-left: 5px'>"+row.dynamicStateAction+"</span>" +
-                                "<strong  style='padding-left: 5px'>"+row.dynamicStateContent+"</strong>";
+                            if(row.dynamicStateAction.substring(0,2)=="添加"){
+                                str += "<span class='label label-primary'>";
+                            }if(row.dynamicStateAction.substring(0,2)=="修改"){
+                                str += "<span class='label label-warning'>";
+                            }if(row.dynamicStateAction.substring(0,2)=="删除"){
+                                str += "<span class='label label-danger'>";
+                            }if(row.dynamicStateAction.substring(0,2)=="归档"){
+                                str += "<span class='label label-secondary'>";
+                            }
+                            str +=  row.dynamicStateAction + "</span>" +
+                                "<strong style='padding-left: 5px'>" + row.dynamicStateContent + "</strong>";
                             return str;
                         }
                     },{
@@ -209,7 +218,9 @@
                 classes:"table table-no-bordered table-hover", //设置表格样式
                 sortName:"commentCreateTime",//排序字段
                 sortOrder:"desc",//排序方式
-                queryParams:{
+            trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+            search: true,
+            queryParams:{
                     'type':2,
                     'typeId':[[${task.taskId}]]
                 },//查询参数
@@ -260,7 +271,7 @@
                     success: function (result) {
                         setTimeout(function() {
                             lightyear.notify(result.msg, 'success', 2000);
-                        }, 1e3);
+                        }, 200);
                         $("#task_detail_comment_table").bootstrapTable('refresh');
                         $("#task_detail_comment").val(null);
                         console.log('评论成功');
@@ -337,14 +348,14 @@
                 $("#task_detail_task_name_div").addClass("has-error");
                 setTimeout(function() {
                     lightyear.notify('请输入项目名称', 'danger', 100);
-                }, 1e3);
+                }, 200);
                 return;
             }
             if($("#task_detail_start_time").val()==""||$("#task_detail_end_time").val()==""){
                 $("#task_detail_time_div").addClass("has-error");
                 setTimeout(function() {
                     lightyear.notify('请输入项目时间', 'danger', 100);
-                }, 1e3);
+                }, 200);
                 return;
             }
             var str={
@@ -370,7 +381,7 @@
                 success: function (result) {
                     setTimeout(function() {
                         lightyear.notify(result.msg, 'success', 2000);
-                    }, 1e3);
+                    }, 200);
                 }
             });
     })

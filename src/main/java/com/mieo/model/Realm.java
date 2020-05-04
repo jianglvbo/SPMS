@@ -37,18 +37,44 @@ public class Realm extends AuthorizingRealm implements Serializable {
         //获取当前登录用户
         Member member = (Member) subject.getPrincipal();
         //添加资源认证
+        //管理员
         if (member.getMemberRole().equals("1")) {
-            info.addStringPermission("member:add");
-            info.addStringPermission("member:delete");
+            info.addStringPermission("project:add");
+            info.addStringPermission("project:delete");
+            info.addStringPermission("project:archive");
+            info.addStringPermission("project:update");
             info.addStringPermission("task:add");
             info.addStringPermission("task:delete");
             info.addStringPermission("task:edit");
+            info.addStringPermission("task:archive");
+            info.addStringPermission("task:update");
+            info.addStringPermission("member:add");
+            info.addStringPermission("member:delete");
             info.addStringPermission("team:add");
             info.addStringPermission("team:delete");
+            info.addStringPermission("member:edit");
+            info.addStringPermission("setting");
+            info.addStringPermission("setting:edit");
+        }else if(member.getMemberRole().equals("2")){
+            //项目经理
             info.addStringPermission("project:add");
             info.addStringPermission("project:delete");
+            info.addStringPermission("project:archive");
+            info.addStringPermission("project:update");
+            info.addStringPermission("task:add");
+            info.addStringPermission("task:delete");
+            info.addStringPermission("task:edit");
+            info.addStringPermission("task:archive");
+            info.addStringPermission("task:update");
             info.addStringPermission("member:edit");
-            info.addStringPermission("setting:edit");
+
+        }else{
+            //其他人员
+            info.addStringPermission("task:add");
+            info.addStringPermission("task:delete");
+            info.addStringPermission("task:edit");
+            info.addStringPermission("task:archive");
+            info.addStringPermission("member:edit");
         }
         info.addStringPermission(member.getMemberRole());
         //页面信息的初始化

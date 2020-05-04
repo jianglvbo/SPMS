@@ -5,6 +5,7 @@ import com.mieo.mapper.TeamMapper;
 import com.mieo.model.DynamicState;
 import com.mieo.model.Team;
 import com.mieo.service.DynamicStateService;
+import com.mieo.service.MemberService;
 import com.mieo.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,6 +23,8 @@ public class TeamServiceImpl implements TeamService {
     DingTalkUtil dingTalkUtil;
     @Autowired
     DynamicStateService dynamicStateService;
+    @Autowired
+    MemberService memberService;
 
     /**
      * 添加团队信息
@@ -73,6 +76,8 @@ public class TeamServiceImpl implements TeamService {
         teamMapper.updateTeamByTeamId(team);
     }
 
+
+
     /**
      * 查询所有的团队信息
      *
@@ -92,6 +97,17 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Team queryTeamByTeamId(int id) {
         return teamMapper.queryTeamByTeamId(id);
+    }
+
+    /**
+     * 通过团队id查询团队名称
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public String queryTeamNameByTeamId(Integer id) {
+        return teamMapper.queryTeamNameByTeamId(id);
     }
 
     /**
