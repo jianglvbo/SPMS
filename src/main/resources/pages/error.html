@@ -3,7 +3,6 @@
 <head>
   <title>错误页面</title>
   <div th:include="~{/common/header::header}"></div>
-  <div th:include="~{/common/sidebar::sidebar}"></div>
   <style>
     body{
       background-color: #fff;
@@ -36,7 +35,7 @@
     <div class="error-body text-center">
       <h1>404</h1>
       <h4>很抱歉，但是那个页面看起来已经不存在了。</h4>
-      <a th:href="@{/common/toIndex}" class="btn btn-primary ">返回首页</a>
+      <a href="#" onclick="back()" class="btn btn-primary ">返回</a>
     </div>
   </div>
 </section>

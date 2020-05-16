@@ -2,7 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 
 <head>
-    <title>任务 - 项目管理系统</title>
+    <title>任务</title>
     <div th:include="~{/common/header::header}"></div>
     <div th:include="~{/common/sidebar::sidebar}"></div>
 </head>
@@ -115,6 +115,9 @@
                                     return "<span class='label label-warning'>进行中</span>"
                                 }
                                 if(value=='3'){
+                                    return "<span class='label label-primary'>测试中</span>"
+                                }
+                                if(value=='4'){
                                     return "<span class='label label-success'>已完成</span>"
                                 }
                         }
@@ -202,41 +205,41 @@
         }
 
         //删除任务信息
-        function removeByIds() {
-            var tasks=$("#task_table").bootstrapTable("getSelections");
-            if(tasks.length<1){
-                alert("请至少选择一个要删除的任务");
-            }else{
-                var r = confirm("是否要删除任务?");
-                if(r){
-                    var taskIds=new Array();
-                    tasks.forEach(function (value,index) {
-                        taskIds.push(value.taskId);
-                    });
-                    //通过“，”分割插入字符串
-                    $.ajax({
-                        url: "/task/removeTaskByTaskIds",
-                        contentType: "application/json;charset=UTF-8",
-                        type: "post",
-                        data: JSON.stringify(taskIds),
-                        dataType: "json",
-                        success: function (result) {
-                            if (result.temp == 'success') {
-                                setTimeout(function () {
-                                    lightyear.notify(result.msg, 'success', 2000);
-                                }, 100);
-                                $("#task_table").bootstrapTable('refresh');
+            function removeByIds() {
+                var tasks=$("#task_table").bootstrapTable("getSelections");
+                if(tasks.length<1){
+                    alert("请至少选择一个要删除的任务");
+                }else{
+                    var r = confirm("是否要删除任务?");
+                    if(r){
+                        var taskIds=new Array();
+                        tasks.forEach(function (value,index) {
+                            taskIds.push(value.taskId);
+                        });
+                        //通过“，”分割插入字符串
+                        $.ajax({
+                            url: "/task/removeTaskByTaskIds",
+                            contentType: "application/json;charset=UTF-8",
+                            type: "post",
+                            data: JSON.stringify(taskIds),
+                            dataType: "json",
+                            success: function (result) {
+                                if (result.temp == 'success') {
+                                    setTimeout(function () {
+                                        lightyear.notify(result.msg, 'success', 2000);
+                                    }, 100);
+                                    $("#task_table").bootstrapTable('refresh');
+                                }
+                                if (result.temp == 'danger') {
+                                    setTimeout(function () {
+                                        lightyear.notify(result.msg, 'danger', 2000);
+                                    }, 100);
+                                }
                             }
-                            if (result.temp == 'danger') {
-                                setTimeout(function () {
-                                    lightyear.notify(result.msg, 'danger', 2000);
-                                }, 100);
-                            }
-                        }
-                    });
+                        });
+                    }
                 }
             }
-        }
 
         //归档任务
             function archiveByIds() {

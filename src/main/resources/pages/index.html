@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>首页 - 项目管理</title>
+    <title>首页</title>
     <div th:include="~{/common/header::header}"></div>
     <div th:include="~{/common/sidebar::sidebar}"></div>
 </head>
@@ -419,10 +419,44 @@
                 }
             });
         }
+        //公告显示
+        function announcementInit() {
+            $.ajax({
+                url: "/setting/querySettingAnnouncement",
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                success: function (data) {
+                    if(data.value==""||data.value==null){
+                        return;
+                    }
+                    var str="";
+                    str+="   <div class=\"alert ";
+                            if(data.head=="普通公告"){
+                            str+="alert-success";
+                            }if(data.head=="通知"){
+                                str+="alert-info";
+
+                    }if(data.head=="警告"){
+                                str+="alert-warning";
+
+                    }if(data.head=="紧急"){
+                                str+="alert-danger";
+                    }
+                   str+=" alert-dismissible\" role=\"alert\" >\n" +
+                        "                        <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n";
+                    str+="<strong>"+data.head+": </strong> ";
+                    str+=data.value;
+                    str+="</div>";
+                    $("#announcement").append(str);
+                }
+            });
+        }
+
         indexPie();
         indexCount();
         indexMemberCount();
         indexBurnDown();
+        announcementInit();
         IndexDetailDynamicStateTable();
         setInterval(indexPie,3000000);
         setInterval(indexCount,3000000);

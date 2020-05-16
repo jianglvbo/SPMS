@@ -2,7 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="utf-8">
-<title>登录页面 - 后台管理系统</title>
+<title>登录页面</title>
   <div th:include="~{/common/header::header}"></div>
 <style>
   body{
@@ -51,7 +51,7 @@
   <div class="lyear-login">
     <div class="login-center">
       <div class="login-header text-center">
-      <h3 style="margin-top: 20px;color: #1D6FA3">软件开发流程管理</h3>
+      <h3 style="margin-top: 20px;color: #1D6FA3">软件开发流程管理系统</h3>
       </div>
       <form th:action="@{/login/test}">
         <div class="form-group has-feedback feedback-left">
@@ -92,7 +92,7 @@
               success: function (res) {
                 if (res.temp === '1') {
                   setTimeout(function() {
-                    lightyear.notify( res.msg, 'success', 2000);
+                    lightyear.notify( res.msg, 'success', 1000);
                   }, 100);
                   setTimeout(toIndex,800);
                 }

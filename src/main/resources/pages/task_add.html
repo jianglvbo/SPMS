@@ -2,7 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 
 <head>
-    <title>新增任务 - 项目管理系统</title>
+    <title>新增任务</title>
     <div th:include="~{/common/header::header}"></div>
     <div th:include="~{/common/sidebar::sidebar}"></div>
 </head>
@@ -51,7 +51,8 @@
                                         <select class="form-control selectpicker" name="taskStatus" id="task_add_status">
                                             <option data-content="<span class='label label-secondary'>待办的</span>"  th:value="1"></option>
                                             <option data-content="<span class='label label-warning'>进行中</span>" th:value="2"></option>
-                                            <option data-content="<span class='label label-success'>已完成</span>" th:value="3"></option>
+                                            <option data-content="<span class='label label-primary'>测试中</n>" th:value="3"></option>
+                                            <option data-content="<span class='label label-success'>已完成</span>" th:value="4"></option>
                                         </select>
                                     </div>
                                 </div>

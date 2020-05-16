@@ -2,7 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 
 <head>
-    <title>任务详情 - 项目管理系统</title>
+    <title>任务详情</title>
     <div th:include="~{/common/header::header}"></div>
     <div th:include="~{/common/sidebar::sidebar}"></div>
 </head>
@@ -53,7 +53,8 @@
                                         <select class="form-control selectpicker"  id="task_detail_status">
                                             <option data-content="<span class='label label-secondary'>待办的</span>"  th:value="1"></option>
                                             <option data-content="<span class='label label-warning'>进行中</span>" th:value="2"></option>
-                                            <option data-content="<span class='label label-success'>已完成</span>" th:value="3"></option>
+                                            <option data-content="<span class='label label-primary'>测试中</span>" th:value="3"></option>
+                                            <option data-content="<span class='label label-success'>已完成</span>" th:value="4"></option>
                                         </select>
                                     </div>
                                 </div>
@@ -88,6 +89,13 @@
                                     <label class="control-label col-md-3" th:for="task_detail_executor">指派人:</label>
                                     <div class="col-md-7">
                                         <select class="form-control selectpicker" data-live-search="true"  id="task_detail_executor">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 m-b-10">
+                                    <label class="control-label col-md-3" th:for="task_detail_tester">测试人:</label>
+                                    <div class="col-md-7">
+                                        <select class="form-control selectpicker" data-live-search="true"  id="task_detail_tester">
                                         </select>
                                     </div>
                                 </div>
@@ -297,8 +305,11 @@
                     });
                     str+="</optgroup>";
                     $("#task_detail_executor").append(str);
+                    $("#task_detail_tester").append(str);
                     //动态加载数据的selectpicker赋值
                     $("#task_detail_executor").selectpicker('val',[[${task.taskExecutor.memberId}]]);
+                    $("#task_detail_tester").selectpicker('val',[[${task.taskTester.memberId}]]);
+                    $("#task_detail_tester").selectpicker("refresh");
                     $("#task_detail_executor").selectpicker("refresh");
                 })
             }
@@ -364,6 +375,7 @@
                 'taskPriority':$("#task_detail_priority").val(),
                 'taskCreateId':[[${session.user.memberId}]],
                 'taskExecuteId':$("#task_detail_executor").val(),
+                'taskTestId':$("#task_detail_tester").val(),
                 'taskRelateProjectId':$("#task_detail_relate_project").val(),
                 'taskType':$("#task_detail_type").val(),
                 'taskStartTime':$("#task_detail_start_time").val(),

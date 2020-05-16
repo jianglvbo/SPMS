@@ -31,9 +31,8 @@
     <script type="text/javascript" th:src="@{/js/echarts.js}"></script>
     <script type="text/javascript" th:src="@{/js/main.min.js}"></script>
     <script th:inline="javascript">
-        $(function () {
+        //初始化
             sidebarSelect();
-        });
 
         //侧边栏选中状态
         function sidebarSelect() {
@@ -112,6 +111,7 @@
 
             return now;
         }
+
     </script>
 </footer>
 </html>

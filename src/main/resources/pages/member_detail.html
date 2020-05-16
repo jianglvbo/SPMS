@@ -2,7 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 
 <head>
-    <title>成员详情 - 项目管理系统</title>
+    <title>成员详情</title>
     <div th:include="~{/common/header::header}"></div>
     <div th:include="~{/common/sidebar::sidebar}"></div>
 </head>
@@ -167,10 +167,14 @@
                         sortable: true,
                         formatter:function (value,row,index) {
                             var str='';
-                            str+= '<a href="#" onclick="toProjectDetail('+row.projectId+')">'+
-                                value +
-                                '</a>';
-                            if(row.projectPostPhone==true){
+                            if([[${session.user.memberId}]] != [[${member.memberId}]]){
+                                str+= '<strong>'+value+'</strong>'
+                            }else{
+                                str+= '<a href="#" onclick="toProjectDetail('+row.projectId+')">'+
+                                    value +
+                                    '</a>';
+                            }
+                            if(row.projectPostpone == true){
                                 str+="<label class='label label-danger'>逾 期</label>";
                             }
                             return str;
@@ -224,7 +228,7 @@
                             var str= '<a href="#" onclick="toTaskDetail('+row.taskId+')">'+
                                 value +
                                 '</a>';
-                            if(row.taskPostPone){
+                            if(row.taskPostpone == true){
                                 str+="<label class='label label-danger'  style='margin-left: 10px'>逾 期</label>";
                             }
                             return str;

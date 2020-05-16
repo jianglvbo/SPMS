@@ -2,7 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 
 <head>
-    <title>设置 - 项目管理系统</title>
+    <title>设置</title>
     <div th:include="~{/common/header::header}"></div>
     <div th:include="~{/common/sidebar::sidebar}"></div>
 </head>
@@ -66,7 +66,28 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card container-fluid">
+                        <div class="card-header">
+                            <label class="control-label m-b-5" for="setting_announcement_content">发布公告:</label>
+                            <div class="col-md-4 pull-right">
+                                <select class="form-control selectpicker " id="setting_announcement_priority">
+                                    <option data-content="<span class='label label-success'>普通公告</span>" th:value="普通公告"></option>
+                                    <option data-content="<span class='label label-info'>通   知</span>" th:value="通知"></option>
+                                    <option data-content="<span class='label label-warning'>警   告</span>" th:value="警告"></option>
+                                    <option data-content="<span class='label label-danger'>紧   急</span>" th:value="紧急"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <textarea class="form-control" rows="6" id="setting_announcement_content" maxlength="50" placeholder="请输入...最多50字"></textarea>
+                            <div class="pull-right" style="margin-top: 5%" shiro:hasPermission="setting:announcement">
+                                <button class="btn btn-danger btn-round m-b-10" onclick="settingCancel()">撤销</button>
+                                <button class="btn btn-success btn-round m-b-10" id="setting_announcement_save">发布</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card container-fluid" hidden>
                         <div class="card-header">
                             <div class="pull-right" shiro:hasPermission="setting:edit">
                                 <button class="btn btn-success btn-round m-b-10" id="setting_role_save">保存</button>
@@ -277,7 +298,7 @@
         $("#messageSign").val([[${setting.messageSign}]])
     }
 
-    //设置第一个保存按钮
+    //设置保存
     $("#setting_save").on('click', function () {
         var str = {
             'iconLocation': $("#iconLocation").val(),
@@ -291,6 +312,25 @@
         };
         $.ajax({
             url: "/setting/updateSetting",
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            data: JSON.stringify(str),
+            dataType: "json",
+            success: function (result) {
+                setTimeout(function () {
+                    lightyear.notify(result.msg, 'success', 2000);
+                }, 1e3);
+            }
+        });
+    })
+    //公告保存
+    $("#setting_announcement_save").on('click', function () {
+        var str = {
+            'announcement_content': $("#setting_announcement_content").val(),
+            'announcement_priority': $("#setting_announcement_priority").val()
+        };
+        $.ajax({
+            url: "/setting/updateSettingAnnouncement",
             contentType: "application/json;charset=UTF-8",
             type: "post",
             data: JSON.stringify(str),
