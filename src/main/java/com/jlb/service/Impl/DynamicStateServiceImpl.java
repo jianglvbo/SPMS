@@ -31,7 +31,7 @@ public class DynamicStateServiceImpl implements DynamicStateService {
      */
     @Override
     public void deleteDynamicStateByTypeAndTypeId(int type, int typeId) {
-        dynamicStateMapper.deleteDynamicStateByTypeAndTypeId(type,typeId);
+        dynamicStateMapper.deleteDynamicStateByTypeAndTypeId(type, typeId);
     }
 
     /**
@@ -42,6 +42,16 @@ public class DynamicStateServiceImpl implements DynamicStateService {
     @Override
     public void deleteDynamicStateByDynamicState(DynamicState dynamicState) {
         dynamicStateMapper.deleteDynamicStateByDynamicState(dynamicState);
+    }
+
+    /**
+     * 删除成员下的所有动态信息
+     *
+     * @param memberId
+     */
+    @Override
+    public void deleteDynamicStateByMemberId(int memberId) {
+        dynamicStateMapper.deleteDynamicStateByMemberId(memberId);
     }
 
     /**
@@ -57,12 +67,22 @@ public class DynamicStateServiceImpl implements DynamicStateService {
 
     /**
      * 查询所有的动态信息
+     *
      * @return 所有动态信息
      */
     @Override
     public List<DynamicState> queryDynamicStateAll() {
         return dynamicStateMapper.queryDynamicStateAll();
     }
+
+    /**
+     * 查询最新的200条动态信息
+     */
+    @Override
+    public List<DynamicState> queryDynamicStateLimit() {
+        return dynamicStateMapper.queryDynamicStateLimit();
+    }
+
 
     /**
      * 通过类型id查找对应类型的所有动态信息

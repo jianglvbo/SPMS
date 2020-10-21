@@ -1,6 +1,7 @@
 package com.jlb.common.configuration;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import com.jlb.model.util.MyHashedCredentialsMatcher;
 import com.jlb.model.util.MyType;
 import com.jlb.model.Realm;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -27,8 +28,8 @@ public class ShiroConfiguration {
      * 处理认证匹配处理器：如果自定义需要实现继承HashedCredentialsMatcher
      */
     @Bean("hashedCredentialsMatcher")
-    public HashedCredentialsMatcher hashedCredentialsMatcher() {
-        HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher();
+    public MyHashedCredentialsMatcher hashedCredentialsMatcher() {
+        MyHashedCredentialsMatcher credentialsMatcher = new MyHashedCredentialsMatcher();
         //指定加密方式为MD5
         credentialsMatcher.setHashAlgorithmName("MD5");
         credentialsMatcher.setHashAlgorithmName("sha-256");
@@ -78,7 +79,7 @@ public class ShiroConfiguration {
         filterMap.put("/common/toNoPermission", "anon");
 //        filterMap.put("/common/toMember", "perms[1]");
         //页面未登录用户拦截
-        filterMap.put("/**", "authc");
+//        filterMap.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
         //设置跳转的首页url
         shiroFilterFactoryBean.setLoginUrl("/login/toLogin");
@@ -98,7 +99,7 @@ public class ShiroConfiguration {
     }
 
     @Bean(name = "realm")
-    public Realm realm(@Qualifier("hashedCredentialsMatcher") HashedCredentialsMatcher hashedCredentialsMatcher) {
+    public Realm realm(@Qualifier("hashedCredentialsMatcher") MyHashedCredentialsMatcher hashedCredentialsMatcher) {
         Realm realm = new Realm();
         realm.setAuthorizationCachingEnabled(false);
         realm.setCredentialsMatcher(hashedCredentialsMatcher);

@@ -80,10 +80,10 @@
                     valign:"center",
                     align:"center",
                     formatter:function (value,row,index) {
-                        var str='<div class="col-md-4">' +
+                        var str='<div class="col-md-3">' +
                             '<img class=" img-circle img-responsive" style="height: 30px;width: 30px" src="'+row.memberIcon+'">' +
                             '</div>' +
-                            '<div class="col-md-5"><label>' +
+                            '<div class="col-md-7"><label>' +
                             '<a href="#" onclick="toMemberDetail('+row.memberId+')">' +
                             row.memberName +
                             '</a>';
@@ -97,7 +97,7 @@
 
                     }
                 }, {
-                        title: '职位',
+                        title: '角色',
                         field: 'memberRole',
                         sortable: true,
                         align:"center",
@@ -147,7 +147,7 @@
         if(members.length<1){
             alert("请至少选择一个要删除的成员");
         }else{
-            var r = confirm("是否要删除改成员?");
+            var r = confirm("是否确定要删除?");
             if(r){
                 var memberIds=new Array();
                 members.forEach(function (value,index) {
@@ -194,7 +194,7 @@
                 $("#member_icon_thumbnail").attr("src",member.memberIcon);
                 //名字
                 $("#member_add_name").val(member.memberName);
-                //职位
+                //角色
                 $("#member_add_role").val(member.memberRole);
                 //团队
                 $("#member_add_team").val(member.memberTeam);

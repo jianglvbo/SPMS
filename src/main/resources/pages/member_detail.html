@@ -225,9 +225,14 @@
                         align: "left",
                         sortable: true,
                         formatter:function (value,row,index) {
-                            var str= '<a href="#" onclick="toTaskDetail('+row.taskId+')">'+
-                                value +
-                                '</a>';
+                            var str="";
+                            if([[${session.user.memberId}]] != [[${member.memberId}]]){
+                                str+= '<strong>'+value+'</strong>'
+                            }else{
+                                str= '<a href="#" onclick="toTaskDetail('+row.taskId+')">'+
+                                    value +
+                                    '</a>';
+                            }
                             if(row.taskPostpone == true){
                                 str+="<label class='label label-danger'  style='margin-left: 10px'>逾 期</label>";
                             }

@@ -3,15 +3,15 @@ package com.jlb.model;
 import com.jlb.common.util.LocalTime;
 import com.jlb.service.MemberService;
 import com.jlb.service.TeamService;
-import lombok.Data;
+import lombok.*;
 import org.apache.ibatis.type.Alias;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-@Component
 @Data
+@Component
 @Alias("project")
 public class Project implements Serializable {
     @Autowired
@@ -35,8 +35,11 @@ public class Project implements Serializable {
     private Integer projectSchedule;//项目进度
     private String projectContent;//项目内容
 
-    public void setProjectEndTime(String projectEndTime) {
-        this.projectEndTime = projectEndTime;
-        this.projectPostpone = localTime.isPostpone(projectEndTime);
+    public Project() {
     }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof Project;
+    }
+
 }

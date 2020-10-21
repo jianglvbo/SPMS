@@ -53,7 +53,7 @@ public class TeamServiceImpl implements TeamService {
         //钉钉
         dingTalkUtil.dingTalkTextAtOne("删除团队:   " + team.getTeamName());
         //删除动态
-        DynamicState dynamicState = new DynamicState("删除了项目", team.getTeamName(), "普通类型", 0);
+        DynamicState dynamicState = new DynamicState("删除了团队", team.getTeamName(), "普通类型", 0);
         DynamicState dynamicState1=new DynamicState("","","团队",teamId);
         dynamicStateService.deleteDynamicStateByDynamicState(dynamicState1);
         dynamicStateService.addDynamicState(dynamicState);
@@ -70,7 +70,7 @@ public class TeamServiceImpl implements TeamService {
         //钉钉
         dingTalkUtil.dingTalkLinkAtOne("修改团队:  "+team.getTeamName(), team.getTeamDescription(), "http://localhost/team/toTeamDetail?teamId="+team.getTeamId());
         //动态
-        DynamicState dynamicState = new DynamicState("修改了项目", team.getTeamName(), "项目", team.getTeamId());
+        DynamicState dynamicState = new DynamicState("修改了团队", team.getTeamName(), "团队", team.getTeamId());
         dynamicStateService.addDynamicState(dynamicState);
         teamMapper.updateTeamByTeamId(team);
     }

@@ -21,7 +21,7 @@
                                 </button>
                             </div>
                             <div id="project_detail_project_name_div" class="col-md-11">
-                                <input class="form-control input-lg" id="project_detail_project_name">
+                                <input class="form-control input-lg" id="project_detail_project_name" th:maxlength="20" th:placeholder="请输入任务名称">
                             </div>
                         </div>
                         <div class="pull-right">
@@ -153,7 +153,6 @@
     var taskPriorityRate = echarts.init(document.getElementById("task_priority_rate_pie"));
     projectPie();
 
-
     function finishOption(data) {
         var option = {
             tooltip: {
@@ -166,7 +165,7 @@
             },
             series: [
                 {
-                    name: '任务完成率',
+                    name: '任务是否完成',
                     type: 'pie',
                     radius: ['50%', '70%'],
                     avoidLabelOverlap: false,
@@ -184,15 +183,14 @@
                     labelLine: {
                         show: false
                     },
-                    data: [{value: data.finish, name: "完成"},
-                        {value: data.notFinish, name: "未完成"}
+                    data: [{value:data.finish,name:"完成"},
+                        {value:data.notFinish,name:"未完成"}
                     ]
                 }
             ]
         };
         return option;
     }
-
     function overdueOption(data) {
         var option = {
             tooltip: {
@@ -205,7 +203,7 @@
             },
             series: [
                 {
-                    name: '任务完成率',
+                    name: '任务是否逾期',
                     type: 'pie',
                     radius: ['50%', '70%'],
                     avoidLabelOverlap: false,
@@ -223,15 +221,14 @@
                     labelLine: {
                         show: false
                     },
-                    data: [{value: data.notPostpone, name: "未逾期"},
-                        {value: data.postpone, name: "逾期"}
+                    data: [{value:data.notPostpone,name:"未逾期"},
+                        {value:data.postpone,name:"逾期"}
                     ]
                 }
             ]
         };
         return option;
     }
-
     function statusOption(data) {
         var option = {
             tooltip: {
@@ -262,16 +259,16 @@
                     labelLine: {
                         show: false
                     },
-                    data: [{value: data.acting, name: "代办的"},
-                        {value: data.underway, name: "进行中"},
-                        {value: data.finish, name: "已完成"}
+                    data: [{value:data.acting,name:"待办的"},
+                        {value:data.underway,name:"进行中"},
+                        {value:data.finish,name:"已完成"},
+                        {value:data.test,name:"测试中"}
                     ]
                 }
             ]
         };
         return option;
     }
-
     function priorityOption(data) {
         var option = {
             tooltip: {
@@ -284,7 +281,7 @@
             },
             series: [
                 {
-                    name: '任务状态',
+                    name: '任务紧急程度',
                     type: 'pie',
                     radius: ['50%', '70%'],
                     avoidLabelOverlap: false,
@@ -302,10 +299,10 @@
                     labelLine: {
                         show: false
                     },
-                    data: [{value: data.noImportant, name: "不重要"},
-                        {value: data.secondary, name: "次要"},
-                        {value: data.main, name: "主要"},
-                        {value: data.seriousness, name: "严重"}
+                    data: [{value:data.noImportant,name:"不重要"},
+                        {value:data.secondary,name:"次要"},
+                        {value:data.main,name:"主要"},
+                        {value:data.seriousness,name:"严重"}
                     ]
                 }
             ]
@@ -338,11 +335,14 @@
                 pagination: true,//是否分页
                 sidePagination: 'client',//server:服务器端分页|client：前端分页
                 pageSize: 5,//单页记录数
-                pageList: [10, 15, 20],//可选择单页记录数
+                pageList: [5, 10, 20],//可选择单页记录数
                 method: 'post',//请求方式
                 classes: "table table-no-bordered table-hover", //设置表格样式
                 trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
                 search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            sortName: 'dynamicStateCreateTime',
+            //设置排序方式
+            sortOrder: 'desc',
                 queryParams: {
                     'type': 1,
                     'typeId': [[${project.projectId}]]
@@ -396,7 +396,7 @@
                 pagination: true,//是否分页
                 sidePagination: 'client',//server:服务器端分页|client：前端分页
                 pageSize: 5,//单页记录数
-                pageList: [10, 15, 20],//可选择单页记录数
+                pageList: [5, 10, 20],//可选择单页记录数
                 method: 'post',//请求方式
                 classes: "table table-no-bordered table-hover", //设置表格样式
                 sortName: "commentCreateTime",//排序字段

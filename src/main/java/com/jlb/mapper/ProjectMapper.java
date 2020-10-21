@@ -89,13 +89,34 @@ public interface ProjectMapper {
     @ResultMap("project_all_info")
     List<Project> queryProjectAllNotArchive();
 
+
+    /**
+     * 通过成员id查询所有的未归档项目
+     * @param memberId
+     * @return
+     */
+    @Select("SELECT * from project where project_isArchive='0' and project_principal_id=#{memberId}")
+    List<Project> queryProjectAllNotArchiveByMemberId(int memberId);
+
     /**
      * 查询已归档的所有项目
-     *
      * @return
      */
     @Select("select * from project where project_isArchive='1'")
     List<Project> queryProjectAllArchive();
+
+    /**
+     * 通过成员id查询所有的已归档项目
+     * @param memberId
+     * @return
+     */
+    @Select("SELECT" +
+            " * " +
+            "FROM" +
+            " project " +
+            "WHERE project_isArchive='1' " +
+            "And (project_principal_team_id = ( SELECT member_team_id FROM member WHERE member_id =  #{id} ) OR project_principal_id= #{id})")
+    List<Project> queryProjectAllArchiveByMemberId(int memberId);
 
     /**
      * 通过项目id查询已归档项目信息
@@ -124,13 +145,13 @@ public interface ProjectMapper {
             " * " +
             "FROM" +
             " project " +
-            "WHERE project_isArchive='0'" +
-            "And project_principal_team_id = ( SELECT member_team_id FROM member WHERE member_id =  #{id} ) OR project_principal_id= #{id}")
+            "WHERE project_isArchive='0' " +
+            "And (project_principal_team_id = ( SELECT member_team_id FROM member WHERE member_id =  #{id} ) OR project_principal_id= #{id})")
     @ResultMap("project_all_info")
     List<Project> queryProjectByMemberId(Integer id);
 
     /**
-     * 查询用户负责的项目数
+     * 查询用户负责或有关的的项目数
      *
      * @param memberId
      * @return
@@ -139,9 +160,22 @@ public interface ProjectMapper {
             " count(*) " +
             "FROM" +
             " project " +
-            "WHERE project_isArchive='0' and " +
-            " project_principal_team_id = ( SELECT member_team_id FROM member WHERE member_id =  #{id} ) OR project_principal_id= #{id}")
+            "WHERE project_isArchive='0' " +
+            "And (project_principal_team_id = ( SELECT member_team_id FROM member WHERE member_id =  #{id} ) OR project_principal_id= #{id})")
     int queryProjectCountByMemberId(int memberId);
+
+    /**
+     * 查询用户负责的项目数
+     * @param memberId
+     * @return
+     */
+    @Select("SELECT" +
+            " count(*) " +
+            "FROM" +
+            " project " +
+            "WHERE project_isArchive='0' and " +
+            "  project_principal_id= #{id}")
+    int queryPrincipalProjectCountByMemberId(int memberId);
 
     /**
      * 通过团队id查询团队负责的项目数

@@ -27,7 +27,7 @@
                                 <div class="col-md-12 m-b-10" id="member_add_member_name_div">
                                     <label class="control-label col-md-3" for="member_add_member_name">用户名称:</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="member_add_member_name">
+                                        <input class="form-control" id="member_add_member_name" maxlength="20">
                                     </div>
                                 </div>
                                 <div class="col-md-12 m-b-10">
@@ -57,10 +57,10 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-12 m-b-10">
+                                <div class="col-md-12 m-b-10" id="member_add_phone_div">
                                     <label class="control-label col-md-3" for="member_add_phone">手机号码:</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="member_add_phone">
+                                        <input class="form-control" id="member_add_phone" maxlength="11">
                                     </div>
                                 </div>
                                 <div class="col-md-12 m-b-10" id="member_add_create_time_div">
@@ -72,11 +72,11 @@
                                 <div class="col-md-12 m-b-10" id="member_add_account_div">
                                     <label class="control-label col-md-3" for="member_add_account">账号:</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="member_add_account">
+                                        <input class="form-control" id="member_add_account" maxlength="20">
                                     </div>
                                 </div>
                                 <div class="col-md-12 m-b-10" id="member_add_password_div">
-                                    <label class="control-label col-md-3" for="member_add_password">密码:</label>
+                                    <label class="control-label col-md-3" for="member_add_password" maxlength="20">密码:</label>
                                     <div class="col-md-9">
                                         <input class="form-control" id="member_add_password">
                                     </div>
@@ -142,7 +142,21 @@
             }
         });
     });
+    $("#member_add_account").on('blur',function () {
+        $.ajax({
+            url: "/member/memberAccountIsExist?memberAccount="+$("#member_add_account").val(),
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+               if(result.temp=="danger"){
+                   $("#member_add_account_div").addClass("has-errot");
+               }if(result.temp==""){
 
+                }
+            }
+        });
+    });
     //成员添加保存
     $("#member_add_save").on("click",function () {
             if($("#member_add_member_name").val()==""){
@@ -152,6 +166,17 @@
                 }, 200);
                 return;
             }
+            if($("#member_add_phone").val()==""){
+                $("#member_add_phone_div").addClass("has-error");
+                setTimeout(function() {
+                    lightyear.notify('请输入成员号码', 'danger', 100);
+                }, 200);
+                return;
+            }
+            if(phoneIsExit($("#member_add_phone").val())==true){
+             $("#member_add_phone_div").addClass("has-error");
+                return;
+           }
             if($("#member_add_create_time").val()==""){
                 $("#member_add_create_time_div").addClass("has-error");
                 setTimeout(function() {
@@ -166,6 +191,10 @@
                 }, 200);
                 return;
             }
+            if(accountIsExit($("#member_add_account").val())==true){
+              $("#member_add_account_div").addClass("has-error");
+              return;
+             }
             if($("#member_add_password").val()==""){
                 $("#member_add_password_div").addClass("has-error");
                 setTimeout(function() {
@@ -197,6 +226,50 @@
                 }, 200);
             }
         });
-    })
+    });
+
+    //成员账号是否存在
+    function accountIsExit(memberAccount) {
+        var res;
+        $.ajax({
+            url: "/member/memberAccountIsExist?memberAccount="+memberAccount,
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                if(result.temp=="danger"){
+                    setTimeout(function() {
+                        lightyear.notify(result.msg, 'danger', 100);
+                    }, 200);
+                    res=true;
+                }else{
+                    res=false;
+                }
+            }
+        });
+        return res;
+    }
+
+    //成员号码是否存在
+    function phoneIsExit(memberPhone) {
+        var res;
+        $.ajax({
+            url: "/member/memberPhoneIsExist?memberPhone="+memberPhone,
+            contentType: "application/json;charset=UTF-8",
+            type: "post",
+            dataType: "json",
+            success: function (result) {
+                if(result.temp=="danger"){
+                    setTimeout(function() {
+                        lightyear.notify(result.msg, 'danger', 100);
+                    }, 200);
+                    res=true;
+                }else{
+                   res= false;
+                }
+            }
+        });
+        return res;
+    }
 </script>
 </html>

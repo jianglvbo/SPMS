@@ -153,7 +153,7 @@
         if (projects.length < 1) {
             alert("请至少选择一个要删除的项目");
         } else {
-            var r = confirm("删除该项目会删除项目下的所有任务");
+            var r = confirm("确定要删除项目吗");
             if (r) {
                 var projectIds = new Array();
                 projects.forEach(function (value, index) {
@@ -189,7 +189,7 @@
         if (projects.length < 1) {
             alert("请至少选择一个要归档的项目");
         } else {
-            var r = confirm("确认要归档吗");
+            var r = confirm("确定要归档吗");
             if (r) {
                 var projectIds = new Array();
                 projects.forEach(function (value, index) {

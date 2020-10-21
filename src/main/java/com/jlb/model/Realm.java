@@ -37,6 +37,7 @@ public class Realm extends AuthorizingRealm implements Serializable {
         //添加资源认证
         //管理员
         if (member.getMemberRole().equals("1")) {
+            info.addStringPermission("manager");
             info.addStringPermission("project:add");
             info.addStringPermission("project:delete");
             info.addStringPermission("project:archive");
@@ -50,12 +51,14 @@ public class Realm extends AuthorizingRealm implements Serializable {
             info.addStringPermission("member:delete");
             info.addStringPermission("team:add");
             info.addStringPermission("team:delete");
+            info.addStringPermission("team:edit");
             info.addStringPermission("member:edit");
             info.addStringPermission("setting");
             info.addStringPermission("setting:edit");
             info.addStringPermission("setting:announcement");
         }else if(member.getMemberRole().equals("2")){
             //项目经理
+            info.addStringPermission("user");
             info.addStringPermission("project:add");
             info.addStringPermission("project:delete");
             info.addStringPermission("project:archive");
@@ -69,6 +72,7 @@ public class Realm extends AuthorizingRealm implements Serializable {
 
         }else{
             //其他人员
+            info.addStringPermission("user");
             info.addStringPermission("task:add");
             info.addStringPermission("task:delete");
             info.addStringPermission("task:edit");

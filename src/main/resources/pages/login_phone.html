@@ -80,26 +80,43 @@
   var time=60;
 
           function getVerifyCode() {
+            str={"phone":$("#phone").val()};
             $.ajax({
-              url: "/login/getVerifyCode?phoneNumber="+$("#phone").val()+"&type=login",
+              url: "/login/phoneLogin",
               contentType: "application/json;charset=UTF-8",
-              type: "get",
+              type: "post",
               dataType: "json",
+              data: JSON.stringify(str),
               success: function (res) {
-                if(res.msg=="OK"){
-                  $("#login_get_verify_code_div").addClass("hidden");
-                  $("#count_down").removeClass("hidden");
-                  getRandomCode();
+                if(res.temp=="success"){
+                  $.ajax({
+                    url: "/login/getVerifyCode?phoneNumber="+$("#phone").val()+"&type=login",
+                    contentType: "application/json;charset=UTF-8",
+                    type: "get",
+                    dataType: "json",
+                    success: function (res) {
+                      if(res.msg=="OK"){
+                        $("#login_get_verify_code_div").addClass("hidden");
+                        $("#count_down").removeClass("hidden");
+                        getRandomCode();
+                        setTimeout(function() {
+                          lightyear.notify("验证码发送成功",'success', 100);
+                        }, 100);
+                        verifyCode=res.verifyCode;
+                      }else {
+                        setTimeout(function() {
+                          lightyear.notify(res.msg,'danger', 100);
+                        }, 100);
+                      }
+                    }});
+                }else{
                   setTimeout(function() {
-                    lightyear.notify("验证码发送成功",'success', 100);
-                  }, 100);
-                  verifyCode=res.verifyCode;
-                }else {
-                  setTimeout(function() {
-                    lightyear.notify(res.msg,'danger', 100);
+                    lightyear.notify(res.msg,res.temp, 100);
                   }, 100);
                 }
-              }});
+              }
+              });
+
           }
 
           function verify() {
@@ -107,7 +124,7 @@
               setTimeout(function() {
                 lightyear.notify("登录成功",'success', 100);
               }, 100);
-              setTimeout(toIndex,500);
+              setTimeout(toIndex($("#phone").val()),500);
             }else {
               setTimeout(function() {
                 lightyear.notify("验证码错误,请重新输入 剩余次数: "+verifyCount,'danger', 400);
@@ -121,8 +138,8 @@
 
 
   //跳转到首页
-  function toIndex() {
-    url='/common/toIndex';
+  function toIndex(phone) {
+    url='/login/toPhoneIndex?phone='+phone;
     window.location.href=encodeURI(url);
   }
 

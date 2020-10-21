@@ -48,6 +48,13 @@ public class DynamicStateController {
         return dynamicStateService.queryDynamicStateAll();
     }
 
+    @RequestMapping("queryDynamicStateLimit")
+    @ResponseBody
+    public List<DynamicState> queryDynamicStateLimit(){
+        return dynamicStateService.queryDynamicStateLimit();
+    }
+
+
     @RequestMapping("queryDynamicStateByTypeAndTypeId")
     @ResponseBody
     public List<DynamicState> queryDynamicStateByTypeId(@RequestBody Map<String, Integer> map) {

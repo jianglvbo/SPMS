@@ -22,7 +22,7 @@
                                         <h4 class="modal-title">添加团队</h4>
                                     </div>
                                     <div class="modal-body">
-                                        <div class="form-group">
+                                        <div class="form-group" id="team_modal_team_name_div">
                                             <label for="team_modal_team_name">团队名称</label>
                                             <input class="form-control" id="team_modal_team_name">
                                         </div>
@@ -137,6 +137,13 @@
 
     //添加团队保存事件
     $("#team_modal_save").on('click',function () {
+        if ($("#team_modal_team_name").val() == '') {
+            $("#team_modal_team_name_div").addClass("has-error");
+            setTimeout(function() {
+                lightyear.notify('请输入团队名称', 'danger', 100);
+            }, 1e3);
+            return;
+        }
         var str={'teamName':$("#team_modal_team_name").val(),
         "teamDescription":$("#team_modal_team_description").val()};
         $.ajax({

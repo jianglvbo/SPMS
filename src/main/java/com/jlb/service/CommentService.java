@@ -23,6 +23,12 @@ public interface CommentService {
     void deleteCommentByComment(Comment comment);
 
     /**
+     * 通过成员id删除评论信息
+     * @param memberId
+     */
+    void deleteCommentByMemberId(int memberId);
+
+    /**
      * 通过类型和类型id查询对应的评论信息
      *
      * @param type   类型

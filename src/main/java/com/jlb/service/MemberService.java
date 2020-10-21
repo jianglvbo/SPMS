@@ -47,6 +47,13 @@ public interface MemberService {
     void updateMemberPasswordByPhone(Member member);
 
     /**
+     * 通过电话号码查询成员信息
+     * @param phone
+     * @return
+     */
+    Member queryMemberByPhone(String phone);
+
+    /**
      * 查询所有的成员信息
      *
      * @return 成员信息
@@ -95,6 +102,18 @@ public interface MemberService {
      * @return
      */
     int queryMemberCountAll();
+
+    /**
+     * 查询所有的成员手机号
+     * @return
+     */
+    List<String> queryAllMemberPhone();
+
+    /**
+     * 查询所有的成员账号
+     * @return
+     */
+    List<String> queryAllMemberAccount();
 
     /**
      * 查询一个团队下的所有成员

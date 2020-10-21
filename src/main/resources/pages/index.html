@@ -11,8 +11,7 @@
         <!--End 头部信息-->
         <!--页面主要内容-->
         <main class="lyear-layout-content">
-            <div class="container-fluid">
-                    <div class="col-md-12">
+                    <div class="col-md-12" style="margin-top: 2%">
                         <div class="card">
                             <div class="card-body container-fluid">
                                 <div class="col-md-6">
@@ -31,70 +30,46 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="col-md-4">
-                                        <div class="col-md-12">
-                                            <h4><strong>项目数:</strong></h4>
+                                        <div class="col-md-4">
                                         </div>
-                                        <div class="col-md-12">
-                                            <h5><strong id="index_project_count">14</strong></h5>
+                                        <div class="col-md-4">
+                                            <div class="col-md-12">
+                                                <h3><strong>项目数:</strong></h3>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <h4><strong id="index_project_count">14</strong></h4>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="col-md-12">
-                                            <h4><strong>未完成任务数:</strong></h4>
+                                        <div class="col-md-4">
+                                            <div class="col-md-12">
+                                                <h3><strong>任务数:</strong></h3>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <h4><strong id="index_task_count">14</strong></h4>
+                                            </div>
                                         </div>
-                                        <div class="col-md-12">
-                                            <h5><strong id="index_task_count">14</strong></h5>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="col-md-12">
-                                            <h4><strong>成员数:</strong></h4>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <h5><strong id="index_member_count">14</strong></h5>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body container-fluid">
+                            <div class="col-md-3">
+                                <div id="task_finish_rate_pie" style="width: 200px;height: 200px"></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div id="task_overdue_rate_pie" style="width: 200px;height: 200px"></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div id="task_status_rate_pie" style="width: 200px;height: 200px"></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div id="task_priority_rate_pie" style="width: 200px;height: 200px"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            <div class="col-md-12">
-                        <div class="col-lg-7">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div id="project_burn_down" style="width: 620px;height:400px"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="col-md-1">
-                                                <div id="task_finish_rate_pie" style="width: 200px;height: 200px"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div id="task_overdue_rate_pie" style="width: 200px;height: 200px"></div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="col-md-1">
-                                                <div id="task_status_rate_pie" style="width: 200px;height: 200px"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div id="task_priority_rate_pie" style="width: 200px;height: 200px"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-            </div>
             <div class="col-md-12">
                 <div class="card container-fluid">
                     <div class="card-header">
@@ -114,7 +89,7 @@
 <footer>
     <div th:include="~{/common/footer::footer}"></div>
     <script th:inline="javascript">
-        var projectBurnDown = echarts.init(document.getElementById("project_burn_down"));
+        // var projectBurnDown = echarts.init(document.getElementById("project_burn_down"));
         var taskFinishRate = echarts.init(document.getElementById("task_finish_rate_pie"));
         var taskOverdueRate = echarts.init(document.getElementById("task_overdue_rate_pie"));
         var taskStatusRate = echarts.init(document.getElementById("task_status_rate_pie"));
@@ -131,7 +106,7 @@
                 },
                 series: [
                     {
-                        name: '任务完成率',
+                        name: '任务是否完成',
                         type: 'pie',
                         radius: ['50%', '70%'],
                         avoidLabelOverlap: false,
@@ -169,7 +144,7 @@
                 },
                 series: [
                     {
-                        name: '任务完成率',
+                        name: '任务是否逾期',
                         type: 'pie',
                         radius: ['50%', '70%'],
                         avoidLabelOverlap: false,
@@ -225,9 +200,10 @@
                         labelLine: {
                             show: false
                         },
-                        data: [{value:data.acting,name:"代办的"},
+                        data: [{value:data.acting,name:"待办的"},
                             {value:data.underway,name:"进行中"},
-                            {value:data.finish,name:"已完成"}
+                            {value:data.finish,name:"已完成"},
+                            {value:data.test,name:"测试中"}
                         ]
                     }
                 ]
@@ -246,7 +222,7 @@
                 },
                 series: [
                     {
-                        name: '任务状态',
+                        name: '任务紧急程度',
                         type: 'pie',
                         radius: ['50%', '70%'],
                         avoidLabelOverlap: false,
@@ -332,11 +308,14 @@
             //销毁上一个bootstrapTbale对象
             $('#index_dynamic_state_table').bootstrapTable('destroy');
             $('#index_dynamic_state_table').bootstrapTable({
-                url: "/dynamicState/queryDynamicStateAll",  //请求地址
+                url: "/dynamicState/queryDynamicStateLimit",  //请求地址
                 striped: true, //是否显示行间隔色
                 pageNumber: 1, //初始化加载第一页
-                pageSize: 50,//单页记录数
                 method: 'post',//请求方式
+                sidePagination: 'client',//server:服务器端分页|client：前端分页
+                pageSize: 10,//单页记录数
+                pageList: [10, 15, 20],//可选择单页记录数
+                pagination: true,//是否分页
                 trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
                 search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
                 classes: "table table-no-bordered table-hover", //设置表格样式
@@ -397,28 +376,6 @@
                 }
             });
         }
-        function indexMemberCount() {
-            $.ajax({
-                url: "/member/queryMemberCountAll",
-                contentType: "application/json;charset=UTF-8",
-                type: "post",
-                dataType: "json",
-                success: function (data) {
-                    $("#index_member_count").text(data.memberCount);
-                }
-            });
-        }
-        function indexBurnDown(){
-            $.ajax({
-                url: "/task/queryTaskBurnDownByProjectId?projectId="+1,
-                contentType: "application/json;charset=UTF-8",
-                type: "post",
-                dataType: "json",
-                success: function (data) {
-                    projectBurnDown.setOption(burnDownOption(data));
-                }
-            });
-        }
         //公告显示
         function announcementInit() {
             $.ajax({
@@ -454,15 +411,11 @@
 
         indexPie();
         indexCount();
-        indexMemberCount();
-        indexBurnDown();
         announcementInit();
         IndexDetailDynamicStateTable();
         setInterval(indexPie,3000000);
         setInterval(indexCount,3000000);
-        setInterval(indexMemberCount,3000000);
-        setInterval(indexBurnDown,3000000);
-        setInterval(IndexDetailDynamicStateTable,30000);
+        setInterval(IndexDetailDynamicStateTable,3000000);
 
 
     </script>

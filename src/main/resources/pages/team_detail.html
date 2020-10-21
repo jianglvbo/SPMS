@@ -24,7 +24,7 @@
                                 <input class="form-control input-lg" id="team_detail_team_name">
                             </div>
                         </div>
-                        <div class="pull-right">
+                        <div class="pull-right" shiro:hasPermission="team:edit">
                             <button class="btn btn-success btn-round m-b-10" id="team_detail_save">保存</button>
                             <button class="btn btn-danger btn-round m-b-10" id="team_detail_cancel">撤销</button>
                         </div>
@@ -134,7 +134,7 @@
                             }
                         }
                     },{
-                        title: '职位',
+                        title: '角色',
                         field: 'memberRole',
                         sortable: true,
                         align:"center",
@@ -202,6 +202,12 @@
                     pageList: [10, 15, 20],//可选择单页记录数
                     method: 'post',//请求方式
                     classes:"table table-no-bordered table-hover", //设置表格样式
+                trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                search: true,
+                //设置排序列
+                sortName: 'dynamicStateCreateTime',
+                //设置排序方式
+                sortOrder: 'desc',
                     queryParams:{
                         'type':4,
                         'typeId':[[${team.teamId}]]
@@ -209,15 +215,22 @@
                     columns: [{
                         field: 'dynamicStateCreator',
                         align: "left",
-                        sortable: true,
-                        switchable:false,
-                        formatter:function (value, row, index) {
-                            str=' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="'+value.memberIcon+'" alt="'+value.memberName+'"/>'
-                            str+='<a href="#" onclick="toMemberDetail('+value.memberId+')" style="padding-right: 5px">' +
+                        formatter: function (value, row, index) {
+                            var str = ' <img class="img-avatar m-r-10" style="height: 30px;width: 30px" src="' + value.memberIcon + '" alt="' + value.memberName + '"/>'
+                            str += '<a href="#" onclick="toMemberDetail(' + value.memberId + ')" style="padding-right: 5px">' +
                                 value.memberName +
                                 '</a>';
-                            str+="<span class='label label-success' style='padding-left: 5px'>"+row.dynamicStateAction+"</span>" +
-                                "<strong  style='padding-left: 5px'>"+row.dynamicStateContent+"</strong>";
+                            if(row.dynamicStateAction.substring(0,2)=="添加"){
+                                str += "<span class='label label-primary'>";
+                            }if(row.dynamicStateAction.substring(0,2)=="修改"){
+                                str += "<span class='label label-warning'>";
+                            }if(row.dynamicStateAction.substring(0,2)=="删除"){
+                                str += "<span class='label label-danger'>";
+                            }if(row.dynamicStateAction.substring(0,2)=="归档"){
+                                str += "<span class='label label-secondary'>";
+                            }
+                            str +=  row.dynamicStateAction + "</span>" +
+                                "<strong style='padding-left: 5px'>" + row.dynamicStateContent + "</strong>";
                             return str;
                         }
                     },{

@@ -5,10 +5,7 @@ import com.jlb.mapper.MemberMapper;
 import com.jlb.model.DynamicState;
 import com.jlb.model.Member;
 import com.jlb.model.Team;
-import com.jlb.service.DynamicStateService;
-import com.jlb.service.MemberService;
-import com.jlb.service.ProjectService;
-import com.jlb.service.TeamService;
+import com.jlb.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +27,8 @@ public class MemberServiceImpl implements MemberService {
     ProjectService projectService;
     @Autowired
     TaskServiceImpl taskService;
+    @Autowired
+    CommentService commentService;
     /**
      * 添加成员信息
      *
@@ -41,9 +40,9 @@ public class MemberServiceImpl implements MemberService {
         memberMapper.addMember(member);
         Team team = teamService.queryTeamByTeamId(member.getMemberTeamId());
         //钉钉
-        dingTalkUtil.dingTalkLinkAtOne("添加成员:  " + member.getMemberName(), member.getMemberRole() + "  " + team.getTeamName(), "http://localhost/member/toMemberDetailDynamicState?memberId=" + member.getMemberId());
+        dingTalkUtil.dingTalkLinkAtOne("添加了成员:  " + member.getMemberName(),  team.getTeamName(), "http://localhost/member/toMemberDetail?memberId=" + member.getMemberId());
         //删除动态
-        DynamicState dynamicState = new DynamicState("添加成员", member.getMemberName(), "成员",member.getMemberId());
+        DynamicState dynamicState = new DynamicState("添加了成员", member.getMemberName(), "成员",member.getMemberId());
         dynamicStateService.addDynamicState(dynamicState);
     }
 
@@ -78,9 +77,10 @@ public class MemberServiceImpl implements MemberService {
         msg.put("temp", "1");
         msg.put("msg", "删除成功");
         for (Integer id : ids) {
-            //给定成员职位2
-            int p=projectService.queryProjectCountByMemberIdAndRole(id,2);
-            int t=taskService.queryTaskCountByMemberId(id,2);
+            //给定成员项目经理
+            //查询成员负责的项目数和任务数
+            int p=projectService.queryPrincipalProjectCountByMemberId(id);
+            int t=taskService.queryTaskCountByMemberIdAndRole(id,2);
             if(p>0||t>0){
                 msg.put("temp", "0");
                 msg.put("msg","该成员下有未完成的项目或任务,无法删除!!!");
@@ -91,11 +91,17 @@ public class MemberServiceImpl implements MemberService {
             Member member = memberMapper.queryMemberById(id);
             //钉钉
             dingTalkUtil.dingTalkTextAtOne("删除成员:  " + member.getMemberName());
-            //删除动态
+            //删除的日志
             DynamicState dynamicState = new DynamicState("删除了成员", member.getMemberName(), "成员",0);
             DynamicState dynamicState1=new DynamicState("","","成员",member.getMemberId());
+            //删除成员相关日志
             dynamicStateService.deleteDynamicStateByDynamicState(dynamicState1);
+            //删除成员下的所有操作记录
+            dynamicStateService.deleteDynamicStateByMemberId(member.getMemberId());
             dynamicStateService.addDynamicState(dynamicState);
+            //删除成员相关的所有评论
+            commentService.deleteCommentByMemberId(member.getMemberId());
+            //删除成员
             memberMapper.deleteMemberById(id);
         }
         return msg;
@@ -111,7 +117,7 @@ public class MemberServiceImpl implements MemberService {
         memberMapper.updateMemberById(member);
         Team team = teamService.queryTeamByTeamId(member.getMemberTeamId());
         //钉钉
-        dingTalkUtil.dingTalkLinkAtOne("修改成员:  " + member.getMemberName(), member.getMemberRole() + "  " + team.getTeamName(), "http://localhost/member/toMemberDetailDynamicState?memberId=" + member.getMemberId());
+        dingTalkUtil.dingTalkLinkAtOne("修改成员:  " + member.getMemberName(), team.getTeamName(), "http://localhost/member/toMemberDetail?memberId=" + member.getMemberId());
         //删除动态
         DynamicState dynamicState = new DynamicState("修改了成员", member.getMemberName(), "成员",member.getMemberId());
         dynamicStateService.addDynamicState(dynamicState);
@@ -125,6 +131,17 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void updateMemberPasswordByPhone(Member member) {
         memberMapper.updateMemberPasswordByPhone(member);
+    }
+
+    /**
+     * 通过电话号码查询成员信息
+     *
+     * @param phone
+     * @return
+     */
+    @Override
+    public Member queryMemberByPhone(String phone) {
+        return memberMapper.queryMemberByPhone(phone);
     }
 
 
@@ -202,6 +219,26 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public int queryMemberCountAll() {
         return memberMapper.queryMemberCountAll();
+    }
+
+    /**
+     * 查询所有的成员手机号
+     *
+     * @return
+     */
+    @Override
+    public List<String> queryAllMemberPhone() {
+        return memberMapper.queryAllMemberPhone();
+    }
+
+    /**
+     * 查询所有的成员账号
+     *
+     * @return
+     */
+    @Override
+    public List<String> queryAllMemberAccount() {
+        return memberMapper.queryAllMemberAccount();
     }
 
     /**

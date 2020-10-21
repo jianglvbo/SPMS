@@ -63,18 +63,20 @@ public class MemberController {
 
     /**
      * 修改成员的密码
+     *
      * @return
      */
     @RequestMapping("updateMemberPasswordByPhone")
     @ResponseBody
-    public Map<String,String> updateMemberPasswordByPhone(String password,String phone) {
-        Member member=new Member();
+    public Map<String, String> updateMemberPasswordByPhone(String password, String phone) {
+        Member member = new Member();
         Map<String, String> map1 = encipher.encypt(password);
         member.setMemberPassword(MapUtils.getString(map1, "password"));
-        member.setMemberSalt(MapUtils.getString(map1, "salt"));;
+        member.setMemberSalt(MapUtils.getString(map1, "salt"));
+        ;
         member.setMemberPhone(phone);
         memberService.updateMemberPasswordByPhone(member);
-        Map<String,String> map2=new HashMap<>();
+        Map<String, String> map2 = new HashMap<>();
         return map2;
     }
 
@@ -88,12 +90,10 @@ public class MemberController {
     @RequestMapping("removeMemberByIds")
     @ResponseBody
     public Map<String, String> removeMemberByIds(@RequestBody List<Integer> ids) {
-       return memberService.deleteMemberByIds(ids);
+        return memberService.deleteMemberByIds(ids);
     }
 
     /**
-     * \]]]]]]]\
-     *
      * 跳转到修改成员信息页面
      *
      * @param memberId 编辑的成员
@@ -146,19 +146,20 @@ public class MemberController {
 
     /**
      * 查询同一团队下的所有成员
+     *
      * @param teamId
      * @return
      */
     @RequestMapping("queryMemberByTeamId")
     @ResponseBody
-    public List<Member> queryMemberByTeamId(int teamId){
+    public List<Member> queryMemberByTeamId(int teamId) {
         return memberService.queryMemberByTeamId(teamId);
     }
 
     @RequestMapping("queryMemberCountAll")
     @ResponseBody
-    public Map<String,Integer> queryMemberCountAll(){
-        Map<String,Integer> map=new HashMap<>();
+    public Map<String, Integer> queryMemberCountAll() {
+        Map<String, Integer> map = new HashMap<>();
         int i = memberService.queryMemberCountAll();
         map.put("memberCount", i);
         return map;
@@ -189,6 +190,54 @@ public class MemberController {
         log.debug("跳转到新增成员页面");
         return "member_add";
     }
+
+    /**
+     * 查询所有的成员手机号
+     *
+     * @return
+     */
+    @RequestMapping("queryAllMemberPhone")
+    @ResponseBody
+    public List<String> queryAllMemberPhone() {
+        return memberService.queryAllMemberPhone();
+    }
+
+    /**
+     * 查询所有的成员账号
+     *
+     * @return
+     */
+    @RequestMapping("memberAccountIsExist")
+    @ResponseBody
+    public Map<String, String> queryAllMemberAccount(String memberAccount) {
+        Map<String, String> msg = new HashMap<>();
+        msg.put("temp", "success");
+        msg.put("msg", "该账户未使用");
+        List<String> accounts = memberService.queryAllMemberAccount();
+        for (String account : accounts) {
+            if (account.equals(memberAccount)) {
+                msg.put("temp", "danger");
+                msg.put("msg", "该账户已存在，请重新输入");
+                return msg;
+            }
+        }
+        return msg;
+    }
+
+    @RequestMapping("memberPhoneIsExist")
+    @ResponseBody
+    public Map<String, String> memberPhoneIsExist(String memberPhone) {
+        Map<String, String> msg = new HashMap<>();
+        msg.put("msg", "手机号未使用");
+        msg.put("temp", "success");
+        if (memberService.queryMemberByPhone(memberPhone) != null) {
+            msg.put("msg", "手机号已存在，请重新输入");
+            msg.put("temp", "danger");
+            return msg;
+        }
+        return msg;
+    }
+
 
     /**
      * 跳转到成员页面

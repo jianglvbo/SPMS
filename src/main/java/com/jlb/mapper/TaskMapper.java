@@ -44,7 +44,6 @@ public interface TaskMapper {
      */
     @Update("update task set task_name=#{taskName}," +
             "task_priority=#{taskPriority}," +
-            "task_create_id=#{taskCreateId}," +
             "task_execute_id=#{taskExecuteId}," +
             "task_test_id=#{taskTestId}," +
             "task_relate_project_id=#{taskRelateProjectId}," +
@@ -115,14 +114,24 @@ public interface TaskMapper {
     int queryTaskCountAll();
 
     /**
-     * 通过用户id查询用户相关的任务
+     * 通过用户id查询用户相关未归档任务
      *
      * @param memberId 用户的id
      * @return 用户正在处理的任务
      */
-    @Select("SELECT * FROM task WHERE task_isArchive='0' and task_create_id=#{memberId} or task_execute_id=#{memberId}")
+    @Select("SELECT * FROM task WHERE task_isArchive='0' and (task_create_id=#{memberId} or task_execute_id=#{memberId} or task_test_id=#{memberId})")
     @ResultMap("task_all_info")
     List<Task> queryTaskByMemberId(int memberId);
+
+    /**
+     * 通过用户id查询用户相关归档的任务
+     *
+     * @param memberId 用户的id
+     * @return 用户正在处理的任务
+     */
+    @Select("SELECT * FROM task WHERE task_isArchive='1' and (task_create_id=#{memberId} or task_execute_id=#{memberId} or task_test_id=#{memberId})")
+    @ResultMap("task_all_info")
+    List<Task> queryTaskArchiveByMemberId(int memberId);
 
 
     /**
@@ -150,11 +159,11 @@ public interface TaskMapper {
      * @param projectId
      * @return
      */
-    @Select("SELECT count(*) FROM task where task_relate_project_id=#{projectId}")
+    @Select("SELECT count(*) FROM task where task_relate_project_id=#{projectId} and task_isArchive='0'")
     int queryTaskCountByProjectId(int projectId);
 
     /**
-     * 查询项目关联的任务
+     * 查询项目关联的未归档任务
      *
      * @param projectId
      * @return
@@ -164,12 +173,23 @@ public interface TaskMapper {
     List<Task> queryTaskByProjectId(int projectId);
 
     /**
+     * 查询项目关联的已归档任务
+     *
+     * @param projectId
+     * @return
+     */
+    @Select("select * from task where task_isArchive='1' and task_relate_project_id=#{projectId}")
+    @ResultMap("task_all_info")
+    List<Task> queryTaskArchiveByProjectId(int projectId);
+
+
+    /**
      * 查询用户下的任务数
      *
      * @param memberId
      * @return
      */
-    @Select("select count(*) from task where task_create_id=#{memberId} or task_execute_id=#{memberId}")
+    @Select("select count(*) from task where task_isArchive='0' and (task_create_id=#{memberId} or task_execute_id=#{memberId} or task_test_id=#{memberId})")
     int queryTaskCountByMemberId(int memberId);
 
     /**

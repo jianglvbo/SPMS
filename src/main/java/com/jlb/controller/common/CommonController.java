@@ -1,9 +1,13 @@
 package com.jlb.controller.common;
 
+import com.jlb.model.Member;
 import com.jlb.service.MemberService;
 import com.jlb.service.ProjectService;
 import com.jlb.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,7 +65,7 @@ public class CommonController {
     public Map<String,Integer> queryIndexCount(int memberId,int role) {
         Map<String,Integer> map=new HashMap<>();
         int i = projectService.queryProjectCountByMemberIdAndRole(memberId,role);
-        int i1 = taskService.queryTaskCountByMemberId(memberId,role);
+        int i1 = taskService.queryTaskCountByMemberIdAndRole(memberId,role);
         map.put("projectCount",i);
         map.put("taskCount",i1);
         return map;

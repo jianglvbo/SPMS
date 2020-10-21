@@ -73,6 +73,14 @@ public class TaskController {
         return taskService.queryTaskArchiveAll();
     }
 
+    @RequestMapping("queryTaskAllArchiveByMemberIdAndRole")
+    @ResponseBody
+    public List<Task> queryTaskArchiveAll(int memberId,int role) {
+        return taskService.queryTaskArchiveAll();
+//        return taskService.queryTaskAllArchiveByMemberIdAndRole(memberId,role);
+    }
+
+
     /**
      * 通过用户id查询用户的任务
      *

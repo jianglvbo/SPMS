@@ -89,7 +89,18 @@ public class ProjectController {
     @RequestMapping("queryProjectByMemberIdAndRole")
     @ResponseBody
     public List<Project> queryProjectByMemberIdAndRole(int memberId,int role) {
-        return projectService.queryProjectByMemberIdAndRole(memberId,role);
+       return projectService.queryProjectByMemberIdAndRole(memberId,role);
+    }
+    /**
+     * 通过用户id和角色查询用户参与的归档项目
+     *
+     * @return 项目信息
+     */
+    @RequestMapping("queryProjectArchiveByMemberIdAndRole")
+    @ResponseBody
+    public List<Project> queryProjectArchiveByMemberIdAndRole(int memberId,int role) {
+        return projectService.queryProjectAllArchive();
+//        return projectService.queryProjectArchiveByMemberIdAndRole(memberId,role);
     }
 
     /**

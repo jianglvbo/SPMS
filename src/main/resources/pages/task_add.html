@@ -21,7 +21,7 @@
                                 </button>
                             </div>
                             <div id="task_add_task_name_div" class="col-md-11">
-                                <input class="form-control input-lg" id="task_add_task_name" th:placeholder="请输入项目名称">
+                                <input class="form-control input-lg" id="task_add_task_name" th:maxlength="20" th:placeholder="请输入任务名称">
                             </div>
                         </div>
                         <div class="pull-right"><button class="btn btn-success btn-round" shiro:hasPermission="task:add" id="task_add_save">保存</button></div>
@@ -166,7 +166,7 @@
     //查询关联项目下拉框数据
     function relateProjectSelect() {
         $.ajax({
-            url: "/project/queryProjectAll",
+            url: "/project/queryProjectByMemberIdAndRole?memberId=" + [[${session.user.memberId}]] + "&role=" + [[${session.user.memberRole}]],
             contentType: "application/json;charset=UTF-8",
             type: "post",
             dataType: "json",
@@ -186,14 +186,14 @@
             if($("#task_add_task_name").val()==""){
                 $("#task_add_task_name_div").addClass("has-error");
                 setTimeout(function() {
-                    lightyear.notify('请输入项目名称', 'danger', 100);
+                    lightyear.notify('请输入任务名称', 'danger', 100);
                 }, 200);
                 return;
             }
             if($("#task_add_start_time").val()==""||$("#task_add_end_time").val()==""){
                 $("#task_add_time_div").addClass("has-error");
                 setTimeout(function() {
-                    lightyear.notify('请输入项目时间', 'danger', 100);
+                    lightyear.notify('请输入任务时间', 'danger', 100);
                 }, 200);
                 return;
             }

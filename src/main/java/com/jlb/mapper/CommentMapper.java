@@ -27,6 +27,9 @@ public interface CommentMapper {
     @Delete("delete from comment where comment_type=#{commentType} and comment_type_id=#{commentTypeId}")
     void deleteCommentByComment(Comment comment);
 
+    @Delete("delete from comment where comment_create_id=#{memberId}")
+    void deleteCommentByMemberId(int memberId);
+
     /**
      * 通过类型和类型id查询对应的评论信息
      *

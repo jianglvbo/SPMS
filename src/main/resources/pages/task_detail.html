@@ -21,12 +21,12 @@
                                 </button>
                             </div>
                             <div class="col-md-11">
-                                <input class="form-control input-lg" id="task_detail_task_name">
+                                <input class="form-control input-lg" id="task_detail_task_name" th:maxlength="20" th:placeholder="请输入任务名称">
                             </div>
                         </div>
                         <div class="pull-right" shiro:hasPermission="task:edit">
-                            <button class="btn btn-success btn-round m-b-10" shiro:hasPermission="task:update" id="task_detail_save">保存</button>
-                            <button class="btn btn-danger btn-round m-b-10" shiro:hasPermission="task:update" id="task_detail_cancel">撤销</button>
+                            <button class="btn btn-success btn-round m-b-10" id="task_detail_save">保存</button>
+                            <button class="btn btn-danger btn-round m-b-10"  id="task_detail_cancel">撤销</button>
                         </div>
                     </div>
                     <div class="card-body container-fluid">
@@ -168,9 +168,14 @@
                     pagination: true,//是否分页
                     sidePagination: 'client',//server:服务器端分页|client：前端分页
                     pageSize: 5,//单页记录数
-                    pageList: [10, 15, 20],//可选择单页记录数
+                    pageList: [5, 10, 20],//可选择单页记录数
                     method: 'post',//请求方式
                     classes:"table table-no-bordered table-hover", //设置表格样式
+                trimOnSearch: true,//设置为 true 将自动去掉搜索字符的前后空格。
+                search: true,
+                sortName: 'dynamicStateCreateTime',
+                //设置排序方式
+                sortOrder: 'desc',
                     queryParams:{
                         'type':2,
                         'typeId':[[${task.taskId}]]

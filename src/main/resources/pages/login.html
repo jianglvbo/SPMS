@@ -51,7 +51,7 @@
   <div class="lyear-login">
     <div class="login-center">
       <div class="login-header text-center">
-      <h3 style="margin-top: 20px;color: #1D6FA3">软件开发流程管理系统</h3>
+      <h3 style="margin-top: 20px;color: #1D6FA3">软件开发管理系统</h3>
       </div>
       <form th:action="@{/login/test}">
         <div class="form-group has-feedback feedback-left">
@@ -62,8 +62,7 @@
           <input type="password" placeholder="请输入密码" class="form-control" id="password" name="password" />
           <span class="mdi mdi-lock form-control-feedback" aria-hidden="true"></span>
         </div>
-          <input type="checkbox"/><strong>记住我</strong>
-        <a th:href="@{/login/toLoginPhone}" class="pull-right">短信验证登录</a>
+        <a th:href="@{/login/toLoginPhone}" class="pulbl-right">短信验证登录</a>
         <div class="form-group">
           <button class="btn btn-block btn-primary btn-round" id="login" type="button" >立即登录</button>
           <div class="col-md-12">

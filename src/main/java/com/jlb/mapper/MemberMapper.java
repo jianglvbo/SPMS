@@ -46,24 +46,6 @@ public interface MemberMapper {
     @Delete("delete from member where member_id=#{id}")
     int deleteMemberById(Integer id);
 
-
-    /**
-     * 通过用户手机号查找用户信息
-     * @return 查找的用户信息
-     */
-    @Select("select * from member where member_phone=#{phone}")
-    @ResultMap("member_team")
-    Member queryMemberByPhone(String phone);
-
-    /**
-     * 通过用户id查找用户信息
-     *
-     * @return 查找的用户信息
-     */
-    @Select("select * from member where member_id=#{id}")
-    @ResultMap("member_team")
-    Member queryMemberById(Integer id);
-
     /**
      * 通过用户id查询用户名称
      * @param id
@@ -104,8 +86,27 @@ public interface MemberMapper {
     @Select("select * from member where member_account=#{memberAccount}")
     @Results(id = "member_team",value = {
             @Result(property = "memberTeam",column = "member_team_id",one=@One(select = "com.jlb.mapper.TeamMapper.queryTeamByTeamId"))
+
     })
     Member queryMemberInfoByAccount(String memberAccount);
+
+    /**
+     * 通过用户手机号查找用户信息
+     * @return 查找的用户信息
+     */
+    @Select("select * from member where member_phone=#{phone}")
+    @ResultMap("member_team")
+    Member queryMemberByPhone(String phone);
+
+    /**
+     * 通过用户id查找用户信息
+     *
+     * @return 查找的用户信息
+     */
+    @Select("select * from member where member_id=#{id}")
+    @ResultMap("member_team")
+    Member queryMemberById(Integer id);
+
 
     /**
      * 查询所有成员的信息
@@ -114,6 +115,20 @@ public interface MemberMapper {
     @Select("select * from member")
     @ResultMap(value="member_team")
     List<Member> queryAllMemberInfo();
+
+    /**
+     * 查询所有的成员手机号
+     * @return
+     */
+    @Select("select member_phone from member")
+    List<String> queryAllMemberPhone();
+
+    /**
+     * 查询所有的成员账号
+     * @return
+     */
+    @Select("select member_account from member")
+    List<String> queryAllMemberAccount();
 
     /**
      * 查询一个团队下的所有成员

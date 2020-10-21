@@ -200,6 +200,7 @@
         $("#member_add_account").val([[${member.memberAccount}]]);
         $("#member_add_gender").val([[${member.memberGender}]]);
         if([[${session.user.memberRole}]]!=1){
+            $("#member_add_member_name").attr("disabled","true");
             $("#member_add_role").attr("disabled","true");
             $("#member_add_team").attr("disabled","true");
             $("#member_add_create_time").attr("disabled","true");

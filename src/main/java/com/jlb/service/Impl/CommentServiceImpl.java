@@ -35,6 +35,17 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
+     * 通过成员id删除评论信息
+     *
+     * @param memberId
+     */
+    @Override
+    public void deleteCommentByMemberId(int memberId) {
+        commentMapper.deleteCommentByMemberId(memberId);
+    }
+
+
+    /**
      * 通过类型和类型id查询对应的评论信息
      *
      * @param type   类型

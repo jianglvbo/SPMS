@@ -1,12 +1,16 @@
 package com.jlb.controller;
 
 import com.jlb.model.DynamicState;
+import com.jlb.model.Member;
 import com.jlb.model.Team;
 import com.jlb.service.DynamicStateService;
 import com.jlb.service.MemberService;
 import com.jlb.service.ProjectService;
 import com.jlb.service.TeamService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +44,25 @@ public class TeamController {
     public String toTeam() {
         return "team";
     }
+
+    /**
+     * 跳转到团队页面
+     *
+     * @return
+     */
+    @RequestMapping("toUserTeam")
+    public ModelAndView toUserTeam() {
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession();
+        Member user = (Member) session.getAttribute("user");
+        Integer teamId = user.getMemberTeam().getTeamId();
+        Team team = teamService.queryTeamByTeamId(teamId);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("team", team);
+        modelAndView.setViewName("team_detail");
+        return modelAndView;
+    }
+
 
     /**
      * 跳转到团队详情页面
@@ -104,8 +127,6 @@ public class TeamController {
     @ResponseBody
     public Map<String, String> updateTeamByTeamId(@RequestBody Team team) {
         teamService.updateTeamByTeamId(team);
-        DynamicState dynamicState = new DynamicState("修改了", "团队信息", "团队", team.getTeamId());
-        dynamicStateService.addDynamicState(dynamicState);
         Map<String, String> msg = new HashMap<>();
         msg.put("msg", "修改成功");
         return msg;

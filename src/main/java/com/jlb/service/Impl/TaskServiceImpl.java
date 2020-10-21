@@ -37,17 +37,17 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public void addTask(Task task) {
-       String taskCreateName=memberService.queryMemberNameByMemberId(task.getTaskCreateId());
-       String taskExecuteName= memberService.queryMemberNameByMemberId(task.getTaskExecuteId());
-       String taskTestName=memberService.queryMemberNameByMemberId(task.getTaskTestId());
-       String relateProjectName=projectService.queryProjectNameByProjectId(task.getTaskRelateProjectId());
-       task.setTaskExecuteName(taskExecuteName);
-       task.setTaskCreateName(taskCreateName);
-       task.setTaskTestName(taskTestName);
-       task.setTaskRelateProjectName(relateProjectName);
+        String taskCreateName = memberService.queryMemberNameByMemberId(task.getTaskCreateId());
+        String taskExecuteName = memberService.queryMemberNameByMemberId(task.getTaskExecuteId());
+        String taskTestName = memberService.queryMemberNameByMemberId(task.getTaskTestId());
+        String relateProjectName = projectService.queryProjectNameByProjectId(task.getTaskRelateProjectId());
+        task.setTaskExecuteName(taskExecuteName);
+        task.setTaskCreateName(taskCreateName);
+        task.setTaskTestName(taskTestName);
+        task.setTaskRelateProjectName(relateProjectName);
         taskMapper.addTask(task);
         //钉钉
-        dingTalkUtil.dingTalkLinkAtOne("创建任务:   " + task.getTaskName(), "  " + task.getTaskContent(), "http://localhost/task/toTaskDetail?taskId=" + task.getTaskId());
+        dingTalkUtil.dingTalkLinkAtOne("创建任务:   " + task.getTaskName(),  task.getTaskContent(), "http://localhost/task/toTaskDetail?taskId=" + task.getTaskId());
         //动态
         DynamicState dynamicState = new DynamicState("添加了任务", task.getTaskName(), "任务", task.getTaskId());
         dynamicStateService.addDynamicState(dynamicState);
@@ -91,6 +91,32 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> queryTaskArchiveAll() {
         return taskMapper.queryTaskArchiveAll();
+    }
+
+    /**
+     * 通过角色和id查看归档任务
+     *
+     * @param memberId
+     * @param role
+     */
+    @Override
+    public List<Task> queryTaskAllArchiveByMemberIdAndRole(int memberId, int role) {
+        if (role == 1) {
+            //如果是管理员，查询所有的已归档任务
+            return taskMapper.queryTaskArchiveAll();
+        }
+        if (role == 2) {
+            //如果是项目经理。查询负责项目下的所有已归档任务
+            List<Project> projects = projectService.queryProjectArchiveByMemberIdAndRole(memberId, role);
+            List<Task> tasks = new ArrayList<>();
+            for (Project project : projects) {
+                tasks.addAll(taskMapper.queryTaskArchiveByProjectId(project.getProjectId()));
+            }
+            return tasks;
+        } else {
+            //研发和测试人员查询所有相关任务
+            return taskMapper.queryTaskArchiveByMemberId(memberId);
+        }
     }
 
     /**
@@ -160,16 +186,20 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public List<Task> queryTaskByMemberIdAndRole(int memberId, int role) {
-        if(role==0||role==1){
+        if (role == 1) {
+            //如果是管理员，查询所有的未归档任务
             return taskMapper.queryTaskAllNotArchive();
-        }if(role==2){
+        }
+        if (role == 2) {
+            //如果是项目经理。查询负责项目下的所有未归档任务
             List<Project> projects = projectService.queryProjectByMemberIdAndRole(memberId, role);
-            List<Task> tasks=new ArrayList<>();
+            List<Task> tasks = new ArrayList<>();
             for (Project project : projects) {
                 tasks.addAll(taskMapper.queryTaskByProjectId(project.getProjectId()));
             }
             return tasks;
-        }else{
+        } else {
+            //研发和测试人员查询所有相关任务
             return taskMapper.queryTaskByMemberId(memberId);
         }
     }
@@ -192,18 +222,20 @@ public class TaskServiceImpl implements TaskService {
      * @return
      */
     @Override
-    public int queryTaskCountByMemberId(int memberId,int role) {
-        if(role==0||role==1){
+    public int queryTaskCountByMemberIdAndRole(int memberId, int role) {
+        if (role == 1) {
             return taskMapper.queryTaskCountAll();
-        }if(role==2){
+        }
+        if (role == 2) {
             List<Project> projects = projectService.queryProjectByMemberIdAndRole(memberId, role);
-            int count=0;
+            int count = 0;
             for (Project project : projects) {
-                count+=taskMapper.queryTaskCountByProjectId(project.getProjectId());
+                count += taskMapper.queryTaskCountByProjectId(project.getProjectId());
             }
+//           count+=taskMapper.queryTaskCountByMemberId(memberId);
             return count;
-        }else{
-          return   taskMapper.queryTaskCountByMemberId(memberId);
+        } else {
+            return taskMapper.queryTaskCountByMemberId(memberId);
         }
     }
 
@@ -216,7 +248,7 @@ public class TaskServiceImpl implements TaskService {
     public Map<String, Integer> queryTaskIsFinishCount(List<Task> list) {
         int finish = 0;
         for (Task task : list) {
-            if (task.getTaskStatus().equalsIgnoreCase("3")) {
+            if (task.getTaskStatus().equalsIgnoreCase("4")) {
                 finish++;
             }
         }
@@ -256,6 +288,7 @@ public class TaskServiceImpl implements TaskService {
     public Map<String, Integer> queryTaskStatusCount(List<Task> list) {
         int acting = 0;
         int underway = 0;
+        int test = 0;
         int finish = 0;
         for (Task task : list) {
             if (task.getTaskStatus().equalsIgnoreCase("1")) {
@@ -265,6 +298,9 @@ public class TaskServiceImpl implements TaskService {
                 underway++;
             }
             if (task.getTaskStatus().equalsIgnoreCase("3")) {
+                test++;
+            }
+            if (task.getTaskStatus().equalsIgnoreCase("4")) {
                 finish++;
             }
         }
@@ -272,6 +308,7 @@ public class TaskServiceImpl implements TaskService {
         map.put("acting", acting);
         map.put("underway", underway);
         map.put("finish", finish);
+        map.put("test", test);
         return map;
     }
 
@@ -300,7 +337,7 @@ public class TaskServiceImpl implements TaskService {
                 seriousness++;
             }
         }
-        Map<String,Integer> map=new HashMap<>();
+        Map<String, Integer> map = new HashMap<>();
         map.put("noImportant", noImportant);
         map.put("secondary", secondary);
         map.put("main", main);
@@ -348,17 +385,17 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public Map<String, String> archiveTaskByTaskIds(List<Integer> taskIds) {
-        Map<String,String> msg=new HashMap<>();
+        Map<String, String> msg = new HashMap<>();
         msg.put("temp", "success");
         msg.put("msg", "归档完成");
         //验证数据合理性
         for (Integer taskId : taskIds) {
             Task task = taskMapper.queryTaskByTaskId(taskId);
-            if(task.getTaskSchedule()!=100){
+            if (task.getTaskSchedule() != 100) {
                 msg.put("temp", "danger");
                 msg.put("msg", "任务进度不到100%");
                 return msg;
-            }else if(!task.getTaskStatus().equals("3")){
+            } else if (!task.getTaskStatus().equals("4")) {
                 msg.put("temp", "danger");
                 msg.put("msg", "任务状态需要为已完成");
                 return msg;

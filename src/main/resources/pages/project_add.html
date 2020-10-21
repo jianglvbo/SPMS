@@ -22,7 +22,7 @@
                                     </button>
                                 </div>
                                 <div id="project_add_project_name_div" class="col-md-11">
-                                    <input class="form-control input-lg" id="project_add_project_name" th:placeholder="请输入项目名称...">
+                                    <input class="form-control input-lg" id="project_add_project_name" th:maxlength="20" th:placeholder="请输入项目名称">
                                 </div>
                             </div>
                             <div class="pull-right">
@@ -162,7 +162,7 @@
             dataType: "json",
             success: function (result) {
                 setTimeout(function() {
-                    lightyear.notify(result.msg, 'success', 2000);
+                    lightyear.notify(result.msg, 'success', 100);
                 }, 200);
             }
         });

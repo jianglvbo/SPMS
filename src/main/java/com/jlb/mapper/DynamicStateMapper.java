@@ -3,6 +3,7 @@ package com.jlb.mapper;
 import com.jlb.model.DynamicState;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -14,8 +15,8 @@ public interface DynamicStateMapper {
      *
      * @param dynamicState 动态信息
      */
-    @Insert("insert into dynamic_state (dynamic_state_action, dynamic_state_content, dynamic_state_create_time,\n" +
-            "                           dynamic_state_create_id, dynamic_state_type, dynamic_state_type_id)\n" +
+    @Insert("insert into dynamic_state (dynamic_state_action, dynamic_state_content, dynamic_state_create_time, " +
+            "                           dynamic_state_create_id, dynamic_state_type, dynamic_state_type_id) " +
             "VALUES (#{dynamicStateAction},#{dynamicStateContent},#{dynamicStateCreateTime},#{dynamicStateCreateId},#{dynamicStateType},#{dynamicStateTypeId})")
     void addDynamicState(DynamicState dynamicState);
 
@@ -35,6 +36,12 @@ public interface DynamicStateMapper {
     @Delete("delete from dynamic_state where dynamic_state_type=#{dynamicStateType} and dynamic_state_type_id=#{dynamicStateTypeId}")
     void deleteDynamicStateByDynamicState(DynamicState dynamicState);
 
+    /**
+     * 删除该成员下的所有动态信息
+     * @param memberId
+     */
+    @Delete("delete from dynamic_state where dynamic_state_create_id=#{memberId}")
+    void deleteDynamicStateByMemberId(int memberId);
 
     /**
      * 通过用户的id查询用户的信息
@@ -46,8 +53,6 @@ public interface DynamicStateMapper {
     @ResultMap("dynamic_state_creator")
     List<DynamicState> queryDynamicStateByMemberId(int id);
 
-
-
     /**
      * 查询所有的动态信息
      *
@@ -56,6 +61,13 @@ public interface DynamicStateMapper {
     @Select("select * from dynamic_state")
     @ResultMap("dynamic_state_creator")
     List<DynamicState> queryDynamicStateAll();
+
+    /**
+     * 查询最新的200条动态信息
+     */
+    @Select("SELECT * FROM dynamic_state ORDER BY dynamic_state_create_time DESC LIMIT 0,100")
+    @ResultMap("dynamic_state_creator")
+    List<DynamicState> queryDynamicStateLimit();
 
     /**
      * 通过类型id查找对应类型的所有动态信息

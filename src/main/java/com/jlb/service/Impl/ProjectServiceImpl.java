@@ -113,10 +113,25 @@ public class ProjectServiceImpl implements ProjectService {
      */
     @Override
     public List<Project> queryProjectByMemberIdAndRole(int memberId, int role) {
-        if (role == 0 || role == 1) {
+        if (role == 1) {
             return projectMapper.queryProjectAllNotArchive();
         } else {
             return projectMapper.queryProjectByMemberId(memberId);
+        }
+    }
+
+    /**
+     * 通过用户id和角色查询用户相关的归档信息
+     * @param memberId
+     * @param role
+     * @return
+     */
+    @Override
+    public List<Project> queryProjectArchiveByMemberIdAndRole(int memberId, int role) {
+        if (role == 1) {
+            return projectMapper.queryProjectAllArchive();
+        } else {
+            return projectMapper.queryProjectAllArchiveByMemberId(memberId);
         }
     }
 
@@ -150,11 +165,23 @@ public class ProjectServiceImpl implements ProjectService {
      */
     @Override
     public int queryProjectCountByMemberIdAndRole(int memberId, int role) {
-        if (role == 0 || role == 1) {
+        if (role == 1) {
             return projectMapper.queryProjectCountAll();
         } else {
             return projectMapper.queryProjectCountByMemberId(memberId);
         }
+    }
+
+    /**
+     * 查询用户负责的项目数
+     *
+     * @param memberId
+     * @param role
+     * @return
+     */
+    @Override
+    public int queryPrincipalProjectCountByMemberId(int memberId) {
+        return projectMapper.queryPrincipalProjectCountByMemberId(memberId);
     }
 
     /**

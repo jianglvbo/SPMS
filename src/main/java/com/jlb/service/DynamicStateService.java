@@ -30,6 +30,12 @@ public interface DynamicStateService {
     void deleteDynamicStateByDynamicState(DynamicState dynamicState);
 
     /**
+     * 删除成员下的所有动态信息
+     * @param memberId
+     */
+    void deleteDynamicStateByMemberId(int memberId);
+
+    /**
      * 通过用户的id查询用户的信息
      *
      * @param id 用户的id
@@ -43,6 +49,11 @@ public interface DynamicStateService {
      * @return 所有动态信息
      */
     List<DynamicState> queryDynamicStateAll();
+
+    /**
+     * 查询最新的200条动态信息
+     */
+    List<DynamicState> queryDynamicStateLimit();
 
     /**
      * 通过类型id查找对应类型的所有动态信息

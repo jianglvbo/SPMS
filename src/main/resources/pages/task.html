@@ -154,9 +154,15 @@
                         sortable: true,
                         switchable:true,
                         formatter:function (value,row,index) {
-                            return    '<a href="#" onclick="toMemberDetail('+value.memberId+')">'+
-                                value.memberName +
-                                '</a>';
+                            if(row.taskStatus=="3"){
+                                return    '<a href="#" onclick="toMemberDetail('+row.taskTester.memberId+')">'+
+                                    row.taskTestName +
+                                    '</a>';
+                            }else{
+                                return    '<a href="#" onclick="toMemberDetail('+value.memberId+')">'+
+                                    value.memberName +
+                                    '</a>';
+                            }
                         }
                     }, {
                         title: '关联项目',

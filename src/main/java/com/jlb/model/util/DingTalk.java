@@ -8,6 +8,6 @@ import org.springframework.stereotype.Component;
 @Data
 public class DingTalk {
     private OapiRobotSendRequest request;
-    private String secret="";
-    private String serverUrl="";
+    private String secret;
+    private String serverUrl;
 }

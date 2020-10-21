@@ -35,6 +35,11 @@ public interface TaskService {
     List<Task> queryTaskArchiveAll();
 
     /**
+     * 通过角色和id查看归档任务
+     */
+    List<Task> queryTaskAllArchiveByMemberIdAndRole(int memberId,int role);
+
+    /**
      * 通过任务id查询归档的任务信息
      * @return
      */
@@ -91,7 +96,7 @@ public interface TaskService {
      * @param memberId
      * @return
      */
-    int queryTaskCountByMemberId(int memberId, int role);
+    int queryTaskCountByMemberIdAndRole(int memberId, int role);
 
     /**
      * 根据任务是否完成数量

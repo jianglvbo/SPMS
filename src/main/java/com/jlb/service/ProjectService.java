@@ -63,6 +63,14 @@ public interface ProjectService {
     List<Project> queryProjectByMemberIdAndRole(int memberId, int role);
 
     /**
+     * 通过用户id和角色查询用户相关的归档信息
+     * @param memberId
+     * @param role
+     * @return
+     */
+    List<Project> queryProjectArchiveByMemberIdAndRole(int memberId,int role);
+
+    /**
      * 通过项目id查询项目名称
      * @param projectId
      * @return
@@ -77,12 +85,20 @@ public interface ProjectService {
     List<Project> queryProjectByMemberId(int memberId);
 
     /**
-     * 查询用户负责的项目数
+     * 查询用户负责的或者相关的项目数
      *
      * @param memberId
      * @return
      */
     int queryProjectCountByMemberIdAndRole(int memberId, int role);
+
+    /**
+     * 查询用户负责的项目数
+     * @param memberId
+     * @param role
+     * @return
+     */
+    int queryPrincipalProjectCountByMemberId(int memberId);
 
     /**
      * 通过团队id查询团队负责的项目数
